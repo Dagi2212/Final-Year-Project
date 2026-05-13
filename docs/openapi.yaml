@@ -1,0 +1,2611 @@
+openapi: 3.0.3
+info:
+  title: Adonis Field Operations API
+  version: 1.0.0
+  description: |
+    Exhaustive OpenAPI specification for the current AdonisJS API surface.
+
+    Notes:
+    - Routes are documented exactly as implemented in start/routes.ts.
+    - Some endpoints that are often protected in production are currently not guarded by auth middleware in code.
+    - Pagination schemas match Adonis Lucid paginator JSON shape at a practical level (meta + data).
+servers:
+  - url: /
+    description: Base server URL
+
+tags:
+  - name: Health
+  - name: Auth
+  - name: Account
+  - name: Dashboard
+  - name: Organizations
+  - name: App Users
+  - name: Devices
+  - name: Crop Types
+  - name: Farmers
+  - name: Plots
+  - name: Observations
+  - name: Attachments
+  - name: Sync Queue
+  - name: Audit Logs
+
+paths:
+  /:
+    get:
+      tags: [Health]
+      summary: Root health check
+      operationId: getRootHealth
+      responses:
+        '200':
+          description: Root service metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hello:
+                    type: string
+                  version:
+                    type: string
+                required: [hello, version]
+
+  /api/v1/auth/signup:
+    post:
+      tags: [Auth]
+      summary: Create account and return access token
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login and return access token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Rotate access token
+      operationId: refreshToken
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccess'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout current session
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/auth/logout-all:
+    post:
+      tags: [Auth]
+      summary: Logout all sessions
+      operationId: logoutAll
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out all sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/auth/tokens:
+    get:
+      tags: [Auth]
+      summary: List active tokens for current user
+      operationId: listTokens
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthTokenInfo'
+
+  /api/v1/auth/tokens/{tokenId}:
+    delete:
+      tags: [Auth]
+      summary: Revoke specific token
+      operationId: revokeToken
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TokenIdPath'
+      responses:
+        '200':
+          description: Token revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/v1/auth/password/forgot:
+    post:
+      tags: [Auth]
+      summary: Trigger password reset flow
+      operationId: forgotPassword
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: Password reset initiation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/auth/password/reset:
+    post:
+      tags: [Auth]
+      summary: Complete password reset
+      operationId: resetPassword
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset completion response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/auth/email/verification-notification:
+    post:
+      tags: [Auth]
+      summary: Send email verification notification
+      operationId: sendEmailVerification
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Verification email response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/auth/email/verify:
+    post:
+      tags: [Auth]
+      summary: Verify email token
+      operationId: verifyEmail
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/account/profile:
+    get:
+      tags: [Account]
+      summary: Get current user profile
+      operationId: getProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUser'
+    patch:
+      tags: [Account]
+      summary: Update current user profile
+      operationId: updateProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUser'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Account]
+      summary: Delete current user account
+      operationId: deleteProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+      responses:
+        '200':
+          description: Account deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/dashboard:
+    get:
+      tags: [Dashboard]
+      summary: Unified dashboard aggregate
+      operationId: dashboardIndex
+      responses:
+        '200':
+          description: Aggregated dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardIndexResponse'
+
+  /api/v1/dashboard/farmer-counts:
+    get:
+      tags: [Dashboard]
+      summary: Farmer counts view
+      operationId: dashboardFarmerCounts
+      responses:
+        '200':
+          description: Farmer counts per organization
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DashboardFarmerCount'
+
+  /api/v1/dashboard/yield-summary:
+    get:
+      tags: [Dashboard]
+      summary: Yield summary view
+      operationId: dashboardYieldSummary
+      responses:
+        '200':
+          description: Yield summary per crop type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DashboardYieldSummary'
+
+  /api/v1/dashboard/sync-status:
+    get:
+      tags: [Dashboard]
+      summary: Sync status view
+      operationId: dashboardSyncStatus
+      responses:
+        '200':
+          description: Sync status by device
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DashboardSyncStatus'
+
+  /api/v1/dashboard/health:
+    get:
+      tags: [Dashboard]
+      summary: API and DB health check
+      operationId: dashboardHealth
+      responses:
+        '200':
+          description: Healthy status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Unhealthy status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthFailureResponse'
+
+  /api/v1/organizations:
+    get:
+      tags: [Organizations]
+      summary: List organizations
+      operationId: listOrganizations
+      parameters:
+        - $ref: '#/components/parameters/TypeQuery'
+        - $ref: '#/components/parameters/RegionQuery'
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated organizations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganization'
+    post:
+      tags: [Organizations]
+      summary: Create organization
+      operationId: createOrganization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganizationRequest'
+      responses:
+        '201':
+          description: Organization created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/organizations/{id}:
+    get:
+      tags: [Organizations]
+      summary: Get organization by id
+      operationId: getOrganization
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Organization with preloaded farmers
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Organization'
+                  - type: object
+                    properties:
+                      farmers:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Farmer'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    patch:
+      tags: [Organizations]
+      summary: Update organization
+      operationId: updateOrganization
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrganizationRequest'
+      responses:
+        '200':
+          description: Updated organization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Organizations]
+      summary: Delete organization
+      operationId: deleteOrganization
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '204':
+          description: Organization deleted
+
+  /api/v1/organizations/{id}/dashboard:
+    get:
+      tags: [Organizations]
+      summary: Organization dashboard snapshot
+      operationId: organizationDashboard
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Dashboard data or no data message
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DashboardFarmerCount'
+                  - $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/app-users:
+    get:
+      tags: [App Users]
+      summary: List app users
+      operationId: listAppUsers
+      parameters:
+        - name: organizationId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [admin, field_agent, supervisor]
+        - name: isActive
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated app users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAppUser'
+    post:
+      tags: [App Users]
+      summary: Create app user
+      operationId: createAppUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppUserRequest'
+      responses:
+        '201':
+          description: App user created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppUser'
+
+  /api/v1/app-users/{id}:
+    get:
+      tags: [App Users]
+      summary: Get app user by id
+      operationId: getAppUser
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: App user with organization and devices
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/AppUser'
+                  - type: object
+                    properties:
+                      organization:
+                        $ref: '#/components/schemas/Organization'
+                      devices:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Device'
+    patch:
+      tags: [App Users]
+      summary: Update app user
+      operationId: updateAppUser
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAppUserRequest'
+      responses:
+        '200':
+          description: Updated app user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppUser'
+    delete:
+      tags: [App Users]
+      summary: Deactivate or hard-delete app user
+      operationId: deleteAppUser
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+        - name: hard
+          in: query
+          schema: { type: boolean, default: false }
+      responses:
+        '200':
+          description: Soft deactivation message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '204':
+          description: Hard deleted
+
+  /api/v1/app-users/{id}/activate:
+    patch:
+      tags: [App Users]
+      summary: Reactivate app user
+      operationId: activateAppUser
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Activation success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/app-users/{id}/devices:
+    get:
+      tags: [App Users]
+      summary: List devices for app user
+      operationId: listAppUserDevices
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Devices for user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+
+  /api/v1/devices:
+    get:
+      tags: [Devices]
+      summary: List devices
+      operationId: listDevices
+      parameters:
+        - name: userId
+          in: query
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated devices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDevice'
+    post:
+      tags: [Devices]
+      summary: Create device
+      operationId: createDevice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeviceRequest'
+      responses:
+        '201':
+          description: Device created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+
+  /api/v1/devices/{id}:
+    get:
+      tags: [Devices]
+      summary: Get device by id
+      operationId: getDevice
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Device with user
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Device'
+                  - type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/AppUser'
+    patch:
+      tags: [Devices]
+      summary: Update device
+      operationId: updateDevice
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDeviceRequest'
+      responses:
+        '200':
+          description: Updated device
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+    delete:
+      tags: [Devices]
+      summary: Delete device
+      operationId: deleteDevice
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '204':
+          description: Device deleted
+
+  /api/v1/devices/by-uuid/{deviceUuid}:
+    get:
+      tags: [Devices]
+      summary: Get device by hardware UUID
+      operationId: getDeviceByUuid
+      parameters:
+        - name: deviceUuid
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 255
+      responses:
+        '200':
+          description: Device with user
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Device'
+                  - type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/AppUser'
+
+  /api/v1/devices/{id}/sync:
+    patch:
+      tags: [Devices]
+      summary: Mark device synced now
+      operationId: markDeviceSynced
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Sync stamp updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  lastSyncAt: { type: string, format: date-time, nullable: true }
+
+  /api/v1/crop-types:
+    get:
+      tags: [Crop Types]
+      summary: List crop types
+      operationId: listCropTypes
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Crop type list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CropType'
+    post:
+      tags: [Crop Types]
+      summary: Create crop type
+      operationId: createCropType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCropTypeRequest'
+      responses:
+        '201':
+          description: Crop type created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CropType'
+
+  /api/v1/crop-types/categories:
+    get:
+      tags: [Crop Types]
+      summary: List distinct crop categories
+      operationId: listCropCategories
+      responses:
+        '200':
+          description: Distinct categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /api/v1/crop-types/{id}:
+    get:
+      tags: [Crop Types]
+      summary: Get crop type
+      operationId: getCropType
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Crop type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CropType'
+    patch:
+      tags: [Crop Types]
+      summary: Update crop type
+      operationId: updateCropType
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCropTypeRequest'
+      responses:
+        '200':
+          description: Updated crop type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CropType'
+    delete:
+      tags: [Crop Types]
+      summary: Delete crop type
+      operationId: deleteCropType
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '204':
+          description: Crop type deleted
+
+  /api/v1/farmers:
+    get:
+      tags: [Farmers]
+      summary: List farmers
+      operationId: listFarmers
+      parameters:
+        - name: organizationId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: region
+          in: query
+          schema: { type: string }
+        - name: zone
+          in: query
+          schema: { type: string }
+        - name: woreda
+          in: query
+          schema: { type: string }
+        - name: createdBy
+          in: query
+          schema: { type: string, format: uuid }
+        - name: deviceId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: includeDeleted
+          in: query
+          schema: { type: boolean, default: false }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated farmers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFarmer'
+    post:
+      tags: [Farmers]
+      summary: Create farmer
+      operationId: createFarmer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFarmerRequest'
+      responses:
+        '201':
+          description: Farmer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Farmer'
+
+  /api/v1/farmers/stats:
+    get:
+      tags: [Farmers]
+      summary: Farmer counts by region
+      operationId: farmerStats
+      parameters:
+        - name: organizationId
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Regional farmer counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    location_region:
+                      type: string
+                      nullable: true
+                    total:
+                      type: integer
+
+  /api/v1/farmers/{id}:
+    get:
+      tags: [Farmers]
+      summary: Get farmer
+      operationId: getFarmer
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Farmer with relations
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Farmer'
+                  - type: object
+                    properties:
+                      organization:
+                        $ref: '#/components/schemas/Organization'
+                      creator:
+                        $ref: '#/components/schemas/AppUser'
+                      device:
+                        $ref: '#/components/schemas/Device'
+                      plots:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Plot'
+    patch:
+      tags: [Farmers]
+      summary: Update farmer
+      operationId: updateFarmer
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFarmerRequest'
+      responses:
+        '200':
+          description: Updated farmer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Farmer'
+    delete:
+      tags: [Farmers]
+      summary: Soft-delete farmer
+      operationId: deleteFarmer
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Soft-delete confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdMessageResponse'
+
+  /api/v1/farmers/{id}/restore:
+    post:
+      tags: [Farmers]
+      summary: Restore soft-deleted farmer
+      operationId: restoreFarmer
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Restore confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdMessageResponse'
+
+  /api/v1/farmers/{id}/plots:
+    get:
+      tags: [Farmers]
+      summary: List active plots for farmer
+      operationId: listFarmerPlots
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Farmer plots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plot'
+
+  /api/v1/plots:
+    get:
+      tags: [Plots]
+      summary: List plots
+      operationId: listPlots
+      parameters:
+        - name: farmerId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: createdBy
+          in: query
+          schema: { type: string, format: uuid }
+        - name: soilType
+          in: query
+          schema: { type: string }
+        - name: irrigation
+          in: query
+          schema: { type: boolean }
+        - name: latMin
+          in: query
+          schema: { type: number, format: double }
+        - name: latMax
+          in: query
+          schema: { type: number, format: double }
+        - name: lngMin
+          in: query
+          schema: { type: number, format: double }
+        - name: lngMax
+          in: query
+          schema: { type: number, format: double }
+        - name: includeDeleted
+          in: query
+          schema: { type: boolean, default: false }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated plots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPlot'
+    post:
+      tags: [Plots]
+      summary: Create plot
+      operationId: createPlot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePlotRequest'
+      responses:
+        '201':
+          description: Plot created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plot'
+
+  /api/v1/plots/nearby:
+    get:
+      tags: [Plots]
+      summary: Find plots near coordinates
+      operationId: nearbyPlots
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema: { type: number, format: double }
+        - name: lng
+          in: query
+          required: true
+          schema: { type: number, format: double }
+        - name: radiusKm
+          in: query
+          required: false
+          schema: { type: number, format: double, default: 5 }
+      responses:
+        '200':
+          description: Nearby plots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plot'
+        '400':
+          description: Missing coordinates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/plots/{id}:
+    get:
+      tags: [Plots]
+      summary: Get plot
+      operationId: getPlot
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Plot with relations
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Plot'
+                  - type: object
+                    properties:
+                      farmer:
+                        $ref: '#/components/schemas/Farmer'
+                      creator:
+                        $ref: '#/components/schemas/AppUser'
+                      device:
+                        $ref: '#/components/schemas/Device'
+                      observations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Observation'
+    patch:
+      tags: [Plots]
+      summary: Update plot (optimistic lock via version)
+      operationId: updatePlot
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlotRequest'
+      responses:
+        '200':
+          description: Updated plot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plot'
+        '409':
+          description: Version conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionConflict'
+    delete:
+      tags: [Plots]
+      summary: Soft-delete plot
+      operationId: deletePlot
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Soft-delete confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdMessageResponse'
+
+  /api/v1/plots/{id}/restore:
+    post:
+      tags: [Plots]
+      summary: Restore soft-deleted plot
+      operationId: restorePlot
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Restore confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdMessageResponse'
+
+  /api/v1/observations:
+    get:
+      tags: [Observations]
+      summary: List observations
+      operationId: listObservations
+      parameters:
+        - name: plotId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: cropTypeId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: growthStage
+          in: query
+          schema: { type: string }
+        - name: healthStatus
+          in: query
+          schema: { type: string }
+        - name: createdBy
+          in: query
+          schema: { type: string, format: uuid }
+        - name: deviceId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: fromDate
+          in: query
+          schema: { type: string, format: date }
+        - name: toDate
+          in: query
+          schema: { type: string, format: date }
+        - name: includeDeleted
+          in: query
+          schema: { type: boolean, default: false }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated observations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedObservation'
+    post:
+      tags: [Observations]
+      summary: Create observation
+      operationId: createObservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateObservationRequest'
+      responses:
+        '201':
+          description: Observation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+
+  /api/v1/observations/summary:
+    get:
+      tags: [Observations]
+      summary: Yield summary grouped by crop type
+      operationId: observationSummary
+      responses:
+        '200':
+          description: Aggregated summary rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ObservationSummaryRow'
+
+  /api/v1/observations/{id}:
+    get:
+      tags: [Observations]
+      summary: Get observation
+      operationId: getObservation
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Observation with relations and attachments
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Observation'
+                  - type: object
+                    properties:
+                      plot:
+                        $ref: '#/components/schemas/Plot'
+                      cropType:
+                        $ref: '#/components/schemas/CropType'
+                      creator:
+                        $ref: '#/components/schemas/AppUser'
+                      device:
+                        $ref: '#/components/schemas/Device'
+                      attachments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Attachment'
+    patch:
+      tags: [Observations]
+      summary: Update observation (optimistic lock via version)
+      operationId: updateObservation
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateObservationRequest'
+      responses:
+        '200':
+          description: Updated observation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+        '409':
+          description: Version conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionConflict'
+    delete:
+      tags: [Observations]
+      summary: Soft-delete observation
+      operationId: deleteObservation
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Soft-delete confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdMessageResponse'
+
+  /api/v1/observations/{id}/restore:
+    post:
+      tags: [Observations]
+      summary: Restore soft-deleted observation
+      operationId: restoreObservation
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Restore confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdMessageResponse'
+
+  /api/v1/observations/{id}/harvest:
+    patch:
+      tags: [Observations]
+      summary: Record harvest yield for observation
+      operationId: harvestObservation
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordHarvestRequest'
+      responses:
+        '200':
+          description: Updated observation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Observation'
+
+  /api/v1/observations/{observationId}/attachments:
+    get:
+      tags: [Attachments]
+      summary: List attachments by observation
+      operationId: listObservationAttachments
+      parameters:
+        - name: observationId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Attachment list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+
+  /api/v1/attachments:
+    get:
+      tags: [Attachments]
+      summary: List attachments
+      operationId: listAttachments
+      parameters:
+        - name: observationId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: uploadedBy
+          in: query
+          schema: { type: string, format: uuid }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/LimitQuery'
+      responses:
+        '200':
+          description: Paginated attachments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAttachment'
+    post:
+      tags: [Attachments]
+      summary: Create attachment
+      operationId: createAttachment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAttachmentRequest'
+      responses:
+        '201':
+          description: Attachment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+
+  /api/v1/attachments/{id}:
+    get:
+      tags: [Attachments]
+      summary: Get attachment
+      operationId: getAttachment
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Attachment with relations
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Attachment'
+                  - type: object
+                    properties:
+                      observation:
+                        $ref: '#/components/schemas/Observation'
+                      uploader:
+                        $ref: '#/components/schemas/AppUser'
+                      device:
+                        $ref: '#/components/schemas/Device'
+    patch:
+      tags: [Attachments]
+      summary: Update attachment
+      operationId: updateAttachment
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAttachmentRequest'
+      responses:
+        '200':
+          description: Updated attachment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+    delete:
+      tags: [Attachments]
+      summary: Delete attachment
+      operationId: deleteAttachment
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '204':
+          description: Attachment deleted
+
+  /api/v1/sync-queue:
+    get:
+      tags: [Sync Queue]
+      summary: List sync queue items
+      operationId: listSyncQueue
+      parameters:
+        - name: deviceId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: userId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: batchId
+          in: query
+          schema: { type: string }
+        - name: entityType
+          in: query
+          schema:
+            type: string
+            enum: [farmer, plot, observation, attachment]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, processing, completed, failed, conflict]
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/Limit50Query'
+      responses:
+        '200':
+          description: Paginated sync queue items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSyncQueue'
+    post:
+      tags: [Sync Queue]
+      summary: Create sync queue item
+      operationId: createSyncQueue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSyncQueueRequest'
+      responses:
+        '201':
+          description: Sync queue item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncQueueItem'
+
+  /api/v1/sync-queue/stats:
+    get:
+      tags: [Sync Queue]
+      summary: Count sync queue items by status
+      operationId: syncQueueStats
+      parameters:
+        - name: deviceId
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Status counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                    count:
+                      type: integer
+
+  /api/v1/sync-queue/batch:
+    post:
+      tags: [Sync Queue]
+      summary: Bulk create sync queue items
+      operationId: batchSyncQueue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchSyncQueueRequest'
+      responses:
+        '200':
+          description: Batch enqueue result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchSyncQueueResponse'
+        '400':
+          description: Invalid batch payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/sync-queue/{id}:
+    get:
+      tags: [Sync Queue]
+      summary: Get sync queue item
+      operationId: getSyncQueue
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Sync queue item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncQueueItem'
+    delete:
+      tags: [Sync Queue]
+      summary: Delete sync queue item
+      operationId: deleteSyncQueue
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '204':
+          description: Deleted
+
+  /api/v1/sync-queue/{id}/status:
+    patch:
+      tags: [Sync Queue]
+      summary: Update sync queue status
+      operationId: updateSyncQueueStatus
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSyncQueueStatusRequest'
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncQueueItem'
+
+  /api/v1/sync-queue/{id}/retry:
+    post:
+      tags: [Sync Queue]
+      summary: Retry sync queue item
+      operationId: retrySyncQueue
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Retry accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  retryCount: { type: integer }
+        '400':
+          description: Retry limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /api/v1/audit-logs:
+    get:
+      tags: [Audit Logs]
+      summary: List audit logs
+      operationId: listAuditLogs
+      parameters:
+        - name: userId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: tableName
+          in: query
+          schema: { type: string }
+        - name: recordId
+          in: query
+          schema: { type: string }
+        - name: action
+          in: query
+          schema:
+            type: string
+            enum: [INSERT, UPDATE, DELETE, SYNC]
+        - name: fromDate
+          in: query
+          schema: { type: string, format: date-time }
+        - name: toDate
+          in: query
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/Limit50Query'
+      responses:
+        '200':
+          description: Paginated audit logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditLog'
+    post:
+      tags: [Audit Logs]
+      summary: Create audit log entry
+      operationId: createAuditLog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAuditLogRequest'
+      responses:
+        '201':
+          description: Audit log created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+
+  /api/v1/audit-logs/stats:
+    get:
+      tags: [Audit Logs]
+      summary: Audit counts by table and action
+      operationId: auditLogStats
+      responses:
+        '200':
+          description: Aggregated stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    table_name: { type: string }
+                    action: { type: string }
+                    count: { type: integer }
+
+  /api/v1/audit-logs/record/{tableName}/{recordId}:
+    get:
+      tags: [Audit Logs]
+      summary: List audit logs for a specific record
+      operationId: auditLogsByRecord
+      parameters:
+        - name: tableName
+          in: path
+          required: true
+          schema: { type: string }
+        - name: recordId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Record-specific audit history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+
+  /api/v1/audit-logs/{id}:
+    get:
+      tags: [Audit Logs]
+      summary: Get audit log by id
+      operationId: getAuditLog
+      parameters:
+        - $ref: '#/components/parameters/UuidIdPath'
+      responses:
+        '200':
+          description: Audit log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    UuidIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TokenIdPath:
+      name: tokenId
+      in: path
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+    PageQuery:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitQuery:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
+    Limit50Query:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 50
+    TypeQuery:
+      name: type
+      in: query
+      schema:
+        type: string
+        enum: [cooperative, ngo, government, private]
+    RegionQuery:
+      name: region
+      in: query
+      schema:
+        type: string
+
+  responses:
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnauthorizedError:
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFoundError:
+      description: Entity not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+          nullable: true
+        errors:
+          type: array
+          nullable: true
+          items:
+            type: object
+            additionalProperties: true
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    IdMessageResponse:
+      type: object
+      properties:
+        message: { type: string }
+        id: { type: string, format: uuid }
+      required: [message, id]
+
+    VersionConflict:
+      type: object
+      properties:
+        message: { type: string }
+        serverVersion: { type: integer }
+      required: [message, serverVersion]
+
+    PaginationMeta:
+      type: object
+      properties:
+        total: { type: integer }
+        perPage: { type: integer }
+        currentPage: { type: integer }
+        lastPage: { type: integer }
+        firstPage: { type: integer }
+        firstPageUrl: { type: string, nullable: true }
+        lastPageUrl: { type: string, nullable: true }
+        nextPageUrl: { type: string, nullable: true }
+        previousPageUrl: { type: string, nullable: true }
+
+    PublicUser:
+      type: object
+      properties:
+        id: { type: integer }
+        fullName: { type: string, nullable: true }
+        email: { type: string, format: email }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time, nullable: true }
+        initials: { type: string }
+      required: [id, email, createdAt, initials]
+
+    AuthSuccess:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/PublicUser'
+        token:
+          type: string
+      required: [user, token]
+
+    AuthTokenInfo:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string, nullable: true }
+        type: { type: string }
+        createdAt: { type: string, format: date-time, nullable: true }
+        updatedAt: { type: string, format: date-time, nullable: true }
+        lastUsedAt: { type: string, format: date-time, nullable: true }
+        expiresAt: { type: string, format: date-time, nullable: true }
+        isCurrent: { type: boolean }
+
+    SignupRequest:
+      type: object
+      properties:
+        fullName: { type: string, maxLength: 120, nullable: true }
+        email: { type: string, format: email, maxLength: 254 }
+        password: { type: string, minLength: 8, maxLength: 32 }
+        passwordConfirmation: { type: string, minLength: 8, maxLength: 32 }
+        deviceName: { type: string, maxLength: 80 }
+      required: [email, password, passwordConfirmation]
+
+    LoginRequest:
+      type: object
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        password: { type: string }
+        deviceName: { type: string, maxLength: 80 }
+      required: [email, password]
+
+    RefreshTokenRequest:
+      type: object
+      properties:
+        deviceName: { type: string, maxLength: 80 }
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        fullName: { type: string, maxLength: 120, nullable: true }
+        email: { type: string, format: email, maxLength: 254 }
+
+    DeleteAccountRequest:
+      type: object
+      properties:
+        password: { type: string }
+      required: [password]
+
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+      required: [email]
+
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token: { type: string, maxLength: 512 }
+        password: { type: string, minLength: 8, maxLength: 32 }
+        passwordConfirmation: { type: string, minLength: 8, maxLength: 32 }
+      required: [token, password, passwordConfirmation]
+
+    VerifyEmailRequest:
+      type: object
+      properties:
+        token: { type: string, maxLength: 512 }
+      required: [token]
+
+    Organization:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, maxLength: 255 }
+        type:
+          type: string
+          nullable: true
+          enum: [cooperative, ngo, government, private]
+        region: { type: string, nullable: true, maxLength: 100 }
+        contactPhone: { type: string, nullable: true, maxLength: 20 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, name]
+
+    AppUser:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        organizationId: { type: string, format: uuid, nullable: true }
+        email: { type: string, format: email, nullable: true, maxLength: 255 }
+        fullName: { type: string, maxLength: 255 }
+        phone: { type: string, nullable: true, maxLength: 20 }
+        role:
+          type: string
+          nullable: true
+          enum: [admin, field_agent, supervisor]
+        isActive: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, fullName]
+
+    Device:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        deviceName: { type: string, nullable: true, maxLength: 100 }
+        deviceUuid: { type: string, maxLength: 255 }
+        lastSyncAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, userId, deviceUuid]
+
+    CropType:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, maxLength: 100 }
+        localName: { type: string, nullable: true, maxLength: 100 }
+        category: { type: string, nullable: true, maxLength: 50 }
+        description: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, name]
+
+    Farmer:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        organizationId: { type: string, format: uuid, nullable: true }
+        fullName: { type: string, maxLength: 255 }
+        phone: { type: string, nullable: true, maxLength: 20 }
+        locationRegion: { type: string, nullable: true, maxLength: 100 }
+        locationZone: { type: string, nullable: true, maxLength: 100 }
+        locationWoreda: { type: string, nullable: true, maxLength: 100 }
+        householdSize: { type: integer, nullable: true, minimum: 1 }
+        notes: { type: string, nullable: true }
+        createdBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid, nullable: true }
+        clientCreatedAt: { type: string, format: date-time, nullable: true }
+        clientUpdatedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        deletedAt: { type: string, format: date-time, nullable: true }
+      required: [id, fullName, createdBy]
+
+    Plot:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        farmerId: { type: string, format: uuid }
+        plotName: { type: string, nullable: true, maxLength: 100 }
+        areaSqm: { type: number, format: double, nullable: true }
+        areaLocal: { type: string, nullable: true, maxLength: 50 }
+        latitude: { type: number, format: double, nullable: true, minimum: -90, maximum: 90 }
+        longitude: { type: number, format: double, nullable: true, minimum: -180, maximum: 180 }
+        altitude: { type: number, format: double, nullable: true }
+        soilType: { type: string, nullable: true, maxLength: 50 }
+        irrigation: { type: boolean }
+        createdBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid, nullable: true }
+        clientCreatedAt: { type: string, format: date-time, nullable: true }
+        clientUpdatedAt: { type: string, format: date-time, nullable: true }
+        version: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        deletedAt: { type: string, format: date-time, nullable: true }
+      required: [id, farmerId, createdBy]
+
+    Observation:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        plotId: { type: string, format: uuid }
+        cropTypeId: { type: string, format: uuid }
+        plantingDate: { type: string, format: date, nullable: true }
+        expectedYieldKg: { type: number, format: double, nullable: true }
+        actualYieldKg: { type: number, format: double, nullable: true }
+        yieldEstimateDate: { type: string, format: date, nullable: true }
+        growthStage: { type: string, nullable: true, maxLength: 50 }
+        healthStatus: { type: string, nullable: true, maxLength: 50 }
+        pestIssues: { type: string, nullable: true }
+        fertilizerUsed: { type: boolean }
+        notes: { type: string, nullable: true }
+        metadata:
+          type: object
+          additionalProperties: true
+        createdBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid, nullable: true }
+        clientCreatedAt: { type: string, format: date-time, nullable: true }
+        clientUpdatedAt: { type: string, format: date-time, nullable: true }
+        version: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        deletedAt: { type: string, format: date-time, nullable: true }
+      required: [id, plotId, cropTypeId, createdBy]
+
+    Attachment:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        observationId: { type: string, format: uuid, nullable: true }
+        fileUrl: { type: string, format: uri, maxLength: 2048 }
+        fileType: { type: string, nullable: true, maxLength: 50 }
+        fileSizeBytes: { type: number, format: double, nullable: true }
+        caption: { type: string, nullable: true, maxLength: 255 }
+        uploadedBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid, nullable: true }
+        clientCreatedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, fileUrl, uploadedBy]
+
+    SyncQueueItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        batchId: { type: string, maxLength: 255 }
+        entityType:
+          type: string
+          enum: [farmer, plot, observation, attachment]
+        entityId: { type: string, format: uuid, nullable: true }
+        operation:
+          type: string
+          enum: [CREATE, UPDATE, DELETE]
+        payload:
+          type: object
+          additionalProperties: true
+        clientTimestamp: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [pending, processing, completed, failed, conflict]
+        retryCount: { type: integer }
+        errorMessage: { type: string, nullable: true }
+        resolvedAt: { type: string, format: date-time, nullable: true }
+        serverTimestamp: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        processedAt: { type: string, format: date-time, nullable: true }
+      required: [id, deviceId, userId, batchId, entityType, operation, payload, clientTimestamp]
+
+    AuditLog:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid, nullable: true }
+        tableName: { type: string }
+        recordId: { type: string }
+        action:
+          type: string
+          enum: [INSERT, UPDATE, DELETE, SYNC]
+        oldValues:
+          type: object
+          nullable: true
+          additionalProperties: true
+        newValues:
+          type: object
+          nullable: true
+          additionalProperties: true
+        ipAddress: { type: string, nullable: true }
+        userAgent: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, tableName, recordId, action]
+
+    CreateOrganizationRequest:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 255 }
+        type:
+          type: string
+          enum: [cooperative, ngo, government, private]
+        region: { type: string, maxLength: 100 }
+        contactPhone: { type: string, maxLength: 20 }
+      required: [name]
+
+    UpdateOrganizationRequest:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 255 }
+        type:
+          type: string
+          enum: [cooperative, ngo, government, private]
+        region: { type: string, maxLength: 100 }
+        contactPhone: { type: string, maxLength: 20 }
+
+    CreateAppUserRequest:
+      type: object
+      properties:
+        organizationId: { type: string, format: uuid }
+        email: { type: string, format: email, maxLength: 255 }
+        passwordHash: { type: string, maxLength: 255 }
+        fullName: { type: string, minLength: 1, maxLength: 255 }
+        phone: { type: string, maxLength: 20 }
+        role:
+          type: string
+          enum: [admin, field_agent, supervisor]
+        isActive: { type: boolean }
+      required: [fullName]
+
+    UpdateAppUserRequest:
+      type: object
+      properties:
+        organizationId: { type: string, format: uuid }
+        email: { type: string, format: email, maxLength: 255 }
+        passwordHash: { type: string, maxLength: 255 }
+        fullName: { type: string, minLength: 1, maxLength: 255 }
+        phone: { type: string, maxLength: 20 }
+        role:
+          type: string
+          enum: [admin, field_agent, supervisor]
+        isActive: { type: boolean }
+
+    CreateDeviceRequest:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        deviceName: { type: string, maxLength: 100 }
+        deviceUuid: { type: string, maxLength: 255 }
+      required: [userId, deviceUuid]
+
+    UpdateDeviceRequest:
+      type: object
+      properties:
+        deviceName: { type: string, maxLength: 100 }
+        lastSyncAt: { type: string, format: date-time }
+
+    CreateCropTypeRequest:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 100 }
+        localName: { type: string, maxLength: 100 }
+        category: { type: string, maxLength: 50 }
+        description: { type: string }
+      required: [name]
+
+    UpdateCropTypeRequest:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 100 }
+        localName: { type: string, maxLength: 100 }
+        category: { type: string, maxLength: 50 }
+        description: { type: string }
+
+    CreateFarmerRequest:
+      type: object
+      properties:
+        organizationId: { type: string, format: uuid }
+        fullName: { type: string, minLength: 1, maxLength: 255 }
+        phone: { type: string, maxLength: 20 }
+        locationRegion: { type: string, maxLength: 100 }
+        locationZone: { type: string, maxLength: 100 }
+        locationWoreda: { type: string, maxLength: 100 }
+        householdSize: { type: integer, minimum: 1 }
+        notes: { type: string }
+        createdBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid }
+        clientCreatedAt: { type: string, format: date-time }
+        clientUpdatedAt: { type: string, format: date-time }
+      required: [fullName, createdBy]
+
+    UpdateFarmerRequest:
+      type: object
+      properties:
+        organizationId: { type: string, format: uuid }
+        fullName: { type: string, minLength: 1, maxLength: 255 }
+        phone: { type: string, maxLength: 20 }
+        locationRegion: { type: string, maxLength: 100 }
+        locationZone: { type: string, maxLength: 100 }
+        locationWoreda: { type: string, maxLength: 100 }
+        householdSize: { type: integer, minimum: 1 }
+        notes: { type: string }
+        deviceId: { type: string, format: uuid }
+        clientUpdatedAt: { type: string, format: date-time }
+
+    CreatePlotRequest:
+      type: object
+      properties:
+        farmerId: { type: string, format: uuid }
+        plotName: { type: string, maxLength: 100 }
+        areaSqm: { type: number, format: double, exclusiveMinimum: 0 }
+        areaLocal: { type: string, maxLength: 50 }
+        latitude: { type: number, format: double, minimum: -90, maximum: 90 }
+        longitude: { type: number, format: double, minimum: -180, maximum: 180 }
+        altitude: { type: number, format: double }
+        soilType: { type: string, maxLength: 50 }
+        irrigation: { type: boolean }
+        createdBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid }
+        clientCreatedAt: { type: string, format: date-time }
+        clientUpdatedAt: { type: string, format: date-time }
+      required: [farmerId, createdBy]
+
+    UpdatePlotRequest:
+      type: object
+      properties:
+        plotName: { type: string, maxLength: 100 }
+        areaSqm: { type: number, format: double, exclusiveMinimum: 0 }
+        areaLocal: { type: string, maxLength: 50 }
+        latitude: { type: number, format: double, minimum: -90, maximum: 90 }
+        longitude: { type: number, format: double, minimum: -180, maximum: 180 }
+        altitude: { type: number, format: double }
+        soilType: { type: string, maxLength: 50 }
+        irrigation: { type: boolean }
+        deviceId: { type: string, format: uuid }
+        clientUpdatedAt: { type: string, format: date-time }
+        version: { type: integer }
+
+    CreateObservationRequest:
+      type: object
+      properties:
+        plotId: { type: string, format: uuid }
+        cropTypeId: { type: string, format: uuid }
+        plantingDate: { type: string, format: date-time }
+        expectedYieldKg: { type: number, format: double, exclusiveMinimum: 0 }
+        actualYieldKg: { type: number, format: double, exclusiveMinimum: 0 }
+        yieldEstimateDate: { type: string, format: date-time }
+        growthStage: { type: string, maxLength: 50 }
+        healthStatus: { type: string, maxLength: 50 }
+        pestIssues: { type: string }
+        fertilizerUsed: { type: boolean }
+        notes: { type: string }
+        metadata:
+          type: object
+          additionalProperties: true
+        createdBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid }
+        clientCreatedAt: { type: string, format: date-time }
+        clientUpdatedAt: { type: string, format: date-time }
+      required: [plotId, cropTypeId, createdBy]
+
+    UpdateObservationRequest:
+      type: object
+      properties:
+        cropTypeId: { type: string, format: uuid }
+        plantingDate: { type: string, format: date-time }
+        expectedYieldKg: { type: number, format: double, exclusiveMinimum: 0 }
+        actualYieldKg: { type: number, format: double, exclusiveMinimum: 0 }
+        yieldEstimateDate: { type: string, format: date-time }
+        growthStage: { type: string, maxLength: 50 }
+        healthStatus: { type: string, maxLength: 50 }
+        pestIssues: { type: string }
+        fertilizerUsed: { type: boolean }
+        notes: { type: string }
+        metadata:
+          type: object
+          additionalProperties: true
+        deviceId: { type: string, format: uuid }
+        clientUpdatedAt: { type: string, format: date-time }
+        version: { type: integer }
+
+    RecordHarvestRequest:
+      type: object
+      properties:
+        actualYieldKg: { type: number, format: double }
+        notes: { type: string }
+      required: [actualYieldKg]
+
+    ObservationSummaryRow:
+      type: object
+      properties:
+        crop_type_id: { type: string, format: uuid }
+        observation_count: { type: integer }
+        avg_expected_yield_kg: { type: number, format: double, nullable: true }
+        avg_actual_yield_kg: { type: number, format: double, nullable: true }
+        earliest_planting: { type: string, format: date, nullable: true }
+        latest_planting: { type: string, format: date, nullable: true }
+        cropType:
+          $ref: '#/components/schemas/CropType'
+
+    CreateAttachmentRequest:
+      type: object
+      properties:
+        observationId: { type: string, format: uuid }
+        fileUrl: { type: string, format: uri, maxLength: 2048 }
+        fileType: { type: string, maxLength: 50 }
+        fileSizeBytes: { type: number, format: double, exclusiveMinimum: 0 }
+        caption: { type: string, maxLength: 255 }
+        uploadedBy: { type: string, format: uuid }
+        deviceId: { type: string, format: uuid }
+        clientCreatedAt: { type: string, format: date-time }
+      required: [fileUrl, uploadedBy]
+
+    UpdateAttachmentRequest:
+      type: object
+      properties:
+        caption: { type: string, maxLength: 255 }
+        fileType: { type: string, maxLength: 50 }
+
+    CreateSyncQueueRequest:
+      type: object
+      properties:
+        deviceId: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        batchId: { type: string, maxLength: 255 }
+        entityType:
+          type: string
+          enum: [farmer, plot, observation, attachment]
+        entityId: { type: string, format: uuid }
+        operation:
+          type: string
+          enum: [CREATE, UPDATE, DELETE]
+        payload:
+          type: object
+          additionalProperties: true
+        clientTimestamp: { type: string, format: date-time }
+      required: [deviceId, userId, batchId, entityType, operation, payload, clientTimestamp]
+
+    BatchSyncQueueRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CreateSyncQueueRequest'
+      required: [items]
+
+    BatchSyncQueueResponse:
+      type: object
+      properties:
+        accepted: { type: integer }
+        rejected: { type: integer }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              index: { type: integer }
+              error: { type: string }
+            required: [index, error]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncQueueItem'
+      required: [accepted, rejected, errors, items]
+
+    UpdateSyncQueueStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, processing, completed, failed, conflict]
+        errorMessage: { type: string }
+        entityId: { type: string, format: uuid }
+        resolvedAt: { type: string, format: date-time }
+      required: [status]
+
+    CreateAuditLogRequest:
+      type: object
+      properties:
+        userId: { type: string, format: uuid, nullable: true }
+        tableName: { type: string }
+        recordId: { type: string }
+        action:
+          type: string
+          enum: [INSERT, UPDATE, DELETE, SYNC]
+        oldValues:
+          type: object
+          nullable: true
+          additionalProperties: true
+        newValues:
+          type: object
+          nullable: true
+          additionalProperties: true
+        ipAddress: { type: string }
+        userAgent: { type: string }
+      required: [tableName, recordId, action]
+
+    HealthResponse:
+      type: object
+      properties:
+        status: { type: string, enum: [healthy] }
+        database: { type: string, enum: [connected] }
+        timestamp: { type: string, format: date-time }
+      required: [status, database, timestamp]
+
+    HealthFailureResponse:
+      type: object
+      properties:
+        status: { type: string, enum: [unhealthy] }
+        database: { type: string, enum: [disconnected] }
+        error: { type: string }
+      required: [status, database, error]
+
+    DashboardFarmerCount:
+      type: object
+      additionalProperties: true
+
+    DashboardYieldSummary:
+      type: object
+      additionalProperties: true
+
+    DashboardSyncStatus:
+      type: object
+      additionalProperties: true
+
+    DashboardIndexResponse:
+      type: object
+      properties:
+        farmerCounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardFarmerCount'
+        yieldSummary:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardYieldSummary'
+        syncStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardSyncStatus'
+      required: [farmerCounts, yieldSummary, syncStatus]
+
+    PaginatedOrganization:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Organization' }
+      required: [meta, data]
+
+    PaginatedAppUser:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/AppUser' }
+      required: [meta, data]
+
+    PaginatedDevice:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Device' }
+      required: [meta, data]
+
+    PaginatedFarmer:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Farmer' }
+      required: [meta, data]
+
+    PaginatedPlot:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Plot' }
+      required: [meta, data]
+
+    PaginatedObservation:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Observation' }
+      required: [meta, data]
+
+    PaginatedAttachment:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Attachment' }
+      required: [meta, data]
+
+    PaginatedSyncQueue:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/SyncQueueItem' }
+      required: [meta, data]
+
+    PaginatedAuditLog:
+      type: object
+      properties:
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/AuditLog' }
+      required: [meta, data]

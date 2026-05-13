@@ -1,0 +1,74 @@
+{
+  "version": "20260512_112525",
+  "model_type": "GradientBoostingRegressor",
+  "feature_columns": [
+    "area_hectares",
+    "rainfall_mm",
+    "temperature_celsius",
+    "fertilizer_amount_kg",
+    "year",
+    "crop_name_enc",
+    "season_enc"
+  ],
+  "numeric_features": [
+    "area_hectares",
+    "rainfall_mm",
+    "temperature_celsius",
+    "fertilizer_amount_kg",
+    "year"
+  ],
+  "categorical_features": [
+    "crop_name",
+    "season"
+  ],
+  "encoders": {
+    "crop_name": {
+      "classes": [
+        "barley",
+        "chickpea",
+        "coffee",
+        "maize",
+        "sesame",
+        "sorghum",
+        "teff",
+        "wheat"
+      ],
+      "mapping": {
+        "barley": 0,
+        "chickpea": 1,
+        "coffee": 2,
+        "maize": 3,
+        "sesame": 4,
+        "sorghum": 5,
+        "teff": 6,
+        "wheat": 7
+      }
+    },
+    "season": {
+      "classes": [
+        "belg",
+        "meher"
+      ],
+      "mapping": {
+        "belg": 0,
+        "meher": 1
+      }
+    }
+  },
+  "means": {
+    "area_hectares": 10.036560000000001,
+    "rainfall_mm": 1049.36025,
+    "temperature_celsius": 22.7377,
+    "fertilizer_amount_kg": 100.504,
+    "year": 2019.4075
+  },
+  "stds": {
+    "area_hectares": 5.691823731906808,
+    "rainfall_mm": 432.78339166029235,
+    "temperature_celsius": 7.09442556850613,
+    "fertilizer_amount_kg": 57.229113043011985,
+    "year": 2.8809015163266842
+  },
+  "mae_kg": 2424.24,
+  "rmse_kg": 3408.94
+}
