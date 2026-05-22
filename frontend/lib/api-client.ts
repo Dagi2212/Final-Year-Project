@@ -89,7 +89,7 @@ class ApiClient {
 
         const errorData = await response.json().catch(() => ({}));
         throw {
-          message: errorData.message || errorData.error || 'Request failed',
+          message: errorData.details || errorData.message || errorData.error || 'Request failed',
           status: response.status,
         } as ApiError;
       }

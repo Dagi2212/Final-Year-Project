@@ -38,13 +38,21 @@ export default class RoleGuardMiddleware {
     let userRole: string = user.role ?? ''
 
     if (!userRole && user.email) {
-      const appUser = await AppUser.query().select('role').where('email', user.email).first()
-      userRole = appUser?.role ?? 'field_agent'
+      let appUser = await AppUser.query().where('email', user.email).first()
+      if (!appUser) {
+        appUser = await AppUser.create({
+          email: user.email,
+          fullName: (user as any).fullName ?? user.email,
+          role: 'researcher',
+          isActive: true,
+        })
+      }
+      userRole = appUser?.role ?? 'researcher'
     }
 
-    // Default to field_agent for authenticated users without an explicit role mapping
+    // Default to researcher for authenticated users without an explicit role mapping
     if (!userRole) {
-      userRole = 'field_agent'
+      userRole = 'researcher'
     }
 
     if (!allowedRoles.includes(userRole as AppRole)) {

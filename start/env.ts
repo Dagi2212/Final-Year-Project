@@ -70,6 +70,24 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Cerebras API – RAG intelligent query system
+  |----------------------------------------------------------
+  */
+  CEREBRAS_API_KEY: Env.schema.string.optional(),
+  CEREBRAS_MODEL: Env.schema.string.optional(),
+  CEREBRAS_API_URL: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | OpenRouter API – RAG intelligent query system
+  |----------------------------------------------------------
+  */
+  OPENROUTER_API_KEY: Env.schema.string.optional(),
+  OPENROUTER_MODEL: Env.schema.string.optional(),
+  OPENROUTER_API_URL: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
   | Chapa Payment Gateway (Ethiopian payment processor)
   |----------------------------------------------------------
   */

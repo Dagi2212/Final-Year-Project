@@ -99,24 +99,25 @@ async function retrieveObservationStats(
   const query = db
     .from('observations as o')
     .join('plots as p', 'p.id', 'o.plot_id')
+    .join('farmers as f', 'f.id', 'p.farmer_id')
     .join('crop_types as ct', 'ct.id', 'o.crop_type_id')
     .whereNull('o.deleted_at')
     .select(
       'ct.name as crop_name',
-      'p.location_region as region',
-      'p.location_woreda as woreda',
+      'f.location_region as region',
+      'f.location_woreda as woreda',
       db.raw('COUNT(o.id) as observation_count'),
       db.raw('AVG(o.expected_yield_kg) as avg_expected_yield_kg'),
       db.raw('AVG(o.actual_yield_kg) as avg_actual_yield_kg'),
-      db.raw('AVG(p.area_hectares) as avg_plot_area_hectares'),
+      db.raw('AVG(p.area_sqm) / 10000.0 as avg_plot_area_hectares'),
       db.raw("SUM(CASE WHEN o.health_status = 'good' THEN 1 ELSE 0 END) as healthy_count"),
       db.raw("SUM(CASE WHEN o.pest_issues IS NOT NULL THEN 1 ELSE 0 END) as pest_issue_count")
     )
-    .groupBy('ct.name', 'p.location_region', 'p.location_woreda')
+    .groupBy('ct.name', 'f.location_region', 'f.location_woreda')
     .orderBy('observation_count', 'desc')
     .limit(25)
 
-  if (filters?.region) query.where('p.location_region', 'ilike', `%${filters.region}%`)
+  if (filters?.region) query.where('f.location_region', 'ilike', `%${filters.region}%`)
   if (filters?.crop_name) query.where('ct.name', 'ilike', `%${filters.crop_name}%`)
 
   const rows = await query
@@ -323,7 +324,7 @@ async function buildContext(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// LLM call (Claude via Anthropic API)
+// LLM call (Cerebras or Anthropic)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SYSTEM_PROMPT = `You are an agricultural data analyst assistant for Ethiopia's Integrated Agricultural Data System.
@@ -397,6 +398,119 @@ Please analyze the data above and provide a clear, specific answer.`
   return { answer, tokens_used }
 }
 
+async function callCerebras(
+  question: string,
+  context: string
+): Promise<{ answer: string; tokens_used: number }> {
+  const apiKey = env.get('CEREBRAS_API_KEY')
+  if (!apiKey) {
+    throw new Error('CEREBRAS_API_KEY is not configured. Please add it to your .env file.')
+  }
+
+  const apiUrl = env.get('CEREBRAS_API_URL', 'https://api.cerebras.ai/v1/chat/completions')
+  const model = env.get('CEREBRAS_MODEL', 'llama3.1-70b')
+
+  const userMessage = `Here is the current agricultural data from the database:\n\n${context}\n\n---\n\nQuestion: ${question}\n\nPlease analyze the data above and provide a clear, specific answer.`
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userMessage },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    const body = await response.text()
+    throw new Error(`Cerebras API error ${response.status}: ${body}`)
+  }
+
+  const data = (await response.json()) as {
+    choices?: Array<{ message?: { content?: string } }>
+    usage?: { total_tokens?: number }
+  }
+
+  const answer = data.choices?.[0]?.message?.content?.trim() || 'No answer returned.'
+  const tokens_used = data.usage?.total_tokens ?? 0
+
+  return { answer, tokens_used }
+}
+
+async function callOpenRouter(
+  question: string,
+  context: string
+): Promise<{ answer: string; tokens_used: number }> {
+  const apiKey = env.get('OPENROUTER_API_KEY')
+  if (!apiKey) {
+    throw new Error('OPENROUTER_API_KEY is not configured. Please add it to your .env file.')
+  }
+
+  const apiUrl = env.get('OPENROUTER_API_URL', 'https://openrouter.ai/api/v1/chat/completions')
+  const model = env.get('OPENROUTER_MODEL', 'meta-llama/llama-3.1-8b-instruct')
+
+  const userMessage = `Here is the current agricultural data from the database:\n\n${context}\n\n---\n\nQuestion: ${question}\n\nPlease analyze the data above and provide a clear, specific answer.`
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.2,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userMessage },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    const body = await response.text()
+    throw new Error(`OpenRouter API error ${response.status}: ${body}`)
+  }
+
+  const data = (await response.json()) as {
+    choices?: Array<{ message?: { content?: string } }>
+    usage?: { total_tokens?: number }
+  }
+
+  const answer = data.choices?.[0]?.message?.content?.trim() || 'No answer returned.'
+  const tokens_used = data.usage?.total_tokens ?? 0
+
+  return { answer, tokens_used }
+}
+
+async function callLLM(
+  question: string,
+  context: string
+): Promise<{ answer: string; tokens_used: number }> {
+  if (env.get('OPENROUTER_API_KEY')) {
+    return callOpenRouter(question, context)
+  }
+
+  if (env.get('CEREBRAS_API_KEY')) {
+    return callCerebras(question, context)
+  }
+
+  if (env.get('ANTHROPIC_API_KEY')) {
+    return callClaude(question, context)
+  }
+
+  throw new Error(
+    'No LLM API key configured. Please set OPENROUTER_API_KEY, CEREBRAS_API_KEY, or ANTHROPIC_API_KEY.'
+  )
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
@@ -416,7 +530,7 @@ export class RagService {
       .join(', ')
 
     // 3. Call Claude with the context
-    const { answer, tokens_used } = await callClaude(options.question, context)
+    const { answer, tokens_used } = await callLLM(options.question, context)
 
     return {
       answer,
@@ -444,12 +558,25 @@ export class RagService {
       // db unreachable
     }
 
-    const api_key_configured = Boolean(env.get('ANTHROPIC_API_KEY'))
+    const openrouterConfigured = Boolean(env.get('OPENROUTER_API_KEY'))
+    const cerebrasConfigured = Boolean(env.get('CEREBRAS_API_KEY'))
+    const anthropicConfigured = Boolean(env.get('ANTHROPIC_API_KEY'))
+    const api_key_configured = openrouterConfigured || cerebrasConfigured || anthropicConfigured
+    const provider = openrouterConfigured
+      ? 'OpenRouter'
+      : cerebrasConfigured
+        ? 'Cerebras'
+        : 'Anthropic'
+    const model = openrouterConfigured
+      ? env.get('OPENROUTER_MODEL', 'meta-llama/llama-3.1-8b-instruct')
+      : cerebrasConfigured
+        ? env.get('CEREBRAS_MODEL', 'llama3.1-70b')
+        : 'claude-haiku-4-5-20251001'
 
     return {
       rag_status: api_key_configured && db_accessible ? 'ready' : 'degraded',
-      llm_provider: 'Anthropic',
-      llm_model: 'claude-haiku-4-5-20251001',
+      llm_provider: provider,
+      llm_model: model,
       api_key_configured,
       db_accessible,
     }

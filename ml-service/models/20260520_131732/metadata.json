@@ -1,0 +1,74 @@
+{
+  "version": "20260520_131732",
+  "model_type": "GradientBoostingRegressor",
+  "mae_kg": 863.54,
+  "rmse_kg": 1539.96,
+  "feature_columns": [
+    "area_hectares",
+    "rainfall_mm",
+    "temperature_celsius",
+    "fertilizer_amount_kg",
+    "year",
+    "crop_name_enc",
+    "season_enc"
+  ],
+  "numeric_features": [
+    "area_hectares",
+    "rainfall_mm",
+    "temperature_celsius",
+    "fertilizer_amount_kg",
+    "year"
+  ],
+  "categorical_features": [
+    "crop_name",
+    "season"
+  ],
+  "means": {
+    "area_hectares": 10.29186472283438,
+    "rainfall_mm": 1048.2140532293608,
+    "temperature_celsius": 22.702271571452787,
+    "fertilizer_amount_kg": 0.0,
+    "year": 2019.425326326496
+  },
+  "stds": {
+    "area_hectares": 5.759869638422296,
+    "rainfall_mm": 430.01363888977846,
+    "temperature_celsius": 7.055172888726209,
+    "fertilizer_amount_kg": 1.0,
+    "year": 2.8468259185597393
+  },
+  "encoders": {
+    "crop_name": {
+      "classes": [
+        "barley",
+        "chickpea",
+        "coffee",
+        "maize",
+        "sesame",
+        "sorghum",
+        "teff",
+        "wheat"
+      ],
+      "mapping": {
+        "barley": 0,
+        "chickpea": 1,
+        "coffee": 2,
+        "maize": 3,
+        "sesame": 4,
+        "sorghum": 5,
+        "teff": 6,
+        "wheat": 7
+      }
+    },
+    "season": {
+      "classes": [
+        "belg",
+        "meher"
+      ],
+      "mapping": {
+        "belg": 0,
+        "meher": 1
+      }
+    }
+  }
+}

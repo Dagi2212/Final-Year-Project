@@ -1,4 +1,5 @@
 import User from '#models/user'
+import AppUser from '#models/app_user'
 import AuthMailService from '#services/auth_mail_service'
 import AuthTokensService from '#services/auth_tokens_service'
 import { ACCESS_TOKEN_EXPIRES_IN } from '#services/auth_constants'
@@ -11,6 +12,15 @@ export default class NewAccountController {
     const { fullName, email, password, deviceName } = await request.validateUsing(signupValidator)
 
     const user = await User.create({ fullName, email, password })
+    const existingAppUser = await AppUser.query().where('email', email).first()
+    if (!existingAppUser) {
+      await AppUser.create({
+        email,
+        fullName: fullName ?? email,
+        role: 'researcher',
+        isActive: true,
+      })
+    }
     const token = await User.accessTokens.create(user, ['*'], {
       name: deviceName ?? 'api-client',
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,

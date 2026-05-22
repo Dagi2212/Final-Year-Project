@@ -35,7 +35,7 @@ export interface AppUser {
   firstName?: string | null;
   lastName?: string | null;
   phone?: string | null;
-  role?: 'admin' | 'field_agent' | 'supervisor' | null;
+  role?: 'admin' | 'field_agent' | 'supervisor' | 'gov' | 'ngo' | 'trader' | 'researcher' | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

@@ -28,7 +28,7 @@ export default class AppUser extends compose(BaseModel, Auditable) {
   declare phone: string | null
 
   @column()
-  declare role: 'admin' | 'field_agent' | 'supervisor' | null
+  declare role: 'admin' | 'field_agent' | 'supervisor' | 'gov' | 'ngo' | 'trader' | 'researcher' | null
 
   @column()
   declare isActive: boolean

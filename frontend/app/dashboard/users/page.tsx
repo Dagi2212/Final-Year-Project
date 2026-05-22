@@ -27,7 +27,7 @@ export default function UsersPage() {
   const [formData, setFormData] = useState({
     email: '',
     fullName: '',
-    role: 'field_agent' as 'admin' | 'supervisor' | 'field_agent',
+    role: 'field_agent' as 'admin' | 'supervisor' | 'field_agent' | 'gov' | 'ngo' | 'trader' | 'researcher',
     password: '',
   });
 
@@ -264,6 +264,10 @@ export default function UsersPage() {
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="supervisor">Supervisor</SelectItem>
                 <SelectItem value="field_agent">Field Agent</SelectItem>
+                <SelectItem value="gov">Government</SelectItem>
+                <SelectItem value="ngo">NGO</SelectItem>
+                <SelectItem value="trader">Trader</SelectItem>
+                <SelectItem value="researcher">Researcher</SelectItem>
               </SelectContent>
             </Select>
           </div>

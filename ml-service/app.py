@@ -20,7 +20,10 @@ import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from .model import FEATURE_COLUMNS, load_latest_model, preprocess_input
+try:
+    from .model import FEATURE_COLUMNS, load_latest_model, preprocess_input
+except ImportError:
+    from model import FEATURE_COLUMNS, load_latest_model, preprocess_input
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
