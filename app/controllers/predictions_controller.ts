@@ -3,14 +3,38 @@ import { MlService } from '#services/ml_service'
 import Prediction from '#models/prediction'
 import ImportedRecord from '#models/imported_record'
 import AuditLog from '#models/audit_log'
+import AppUser from '#models/app_user'
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+const isUuid = (value: string | null): value is string => {
+  return !!value && UUID_REGEX.test(value)
+}
 
 export default class PredictionsController {
+  private async resolveRequestedBy(user: any): Promise<string | null> {
+    const directId = user?.id ? String(user.id) : null
+    if (isUuid(directId)) {
+      return directId
+    }
+
+    const email = user?.email ? String(user.email).trim() : null
+    if (!email) {
+      return null
+    }
+
+    const appUser = await AppUser.query().where('email', email).first()
+    return appUser?.id ?? null
+  }
+
   /**
    * POST /api/v1/predictions
    * Request a yield prediction for a single imported record or an ad-hoc payload.
    */
   async store({ request, auth, response }: HttpContext) {
     const user = auth.user as any
+    const requestedBy = await this.resolveRequestedBy(user)
 
     const {
       imported_record_id: importedRecordId,
@@ -44,7 +68,7 @@ export default class PredictionsController {
     }
 
     const prediction = await Prediction.create({
-      requestedBy: user?.id ? String(user.id) : null,
+      requestedBy,
       importJobId: importJobId ?? null,
       importedRecordId: importedRecordId ?? null,
       modelVersion: 'unknown',
@@ -55,7 +79,7 @@ export default class PredictionsController {
 
     // Audit
     await AuditLog.create({
-      userId: user?.id ? String(user.id) : null,
+      userId: requestedBy,
       tableName: 'predictions',
       recordId: prediction.id,
       action: 'PREDICT',
@@ -99,7 +123,12 @@ export default class PredictionsController {
     const query = Prediction.query().orderBy('created_at', 'desc')
 
     if (user?.role !== 'admin' && user?.role !== 'supervisor') {
-      query.where('requested_by', String(user?.id ?? ''))
+      const requestedBy = await this.resolveRequestedBy(user)
+      if (requestedBy) {
+        query.where('requested_by', requestedBy)
+      } else {
+        query.whereRaw('1 = 0')
+      }
     }
 
     if (status) query.where('status', status)
