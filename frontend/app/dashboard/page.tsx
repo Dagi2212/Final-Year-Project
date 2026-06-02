@@ -4,8 +4,29 @@ import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { DashboardIndexResponse } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Cpu, MapPin, Eye, Users } from 'lucide-react';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Eye, MapPin, Users, Wheat } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DashboardPage() {
@@ -38,21 +59,46 @@ export default function DashboardPage() {
 
   const totalFarmers = dashboardData?.summary?.totalFarmers || 0;
   const totalPlots = dashboardData?.summary?.totalPlots || 0;
-  const pendingSyncs = dashboardData?.summary?.pendingSyncs || 0;
-  
-  const syncStatus = dashboardData?.syncStatus || [];
-  const pending = syncStatus.reduce((sum, item) => sum + Number(item.pending_count || 0), 0);
-  const failed = syncStatus.reduce((sum, item) => sum + Number(item.failed_count || 0), 0);
-  const conflict = syncStatus.reduce((sum, item) => sum + Number(item.conflict_count || 0), 0);
+  const totalExpectedYieldKg = dashboardData?.summary?.totalExpectedYieldKg || 0;
+  const totalActualYieldKg = dashboardData?.summary?.totalActualYieldKg || 0;
 
-  const deviceStatusData = [
-    { name: 'Pending', value: pending },
-    { name: 'Failed', value: failed },
-    { name: 'Conflict', value: conflict },
-  ].filter(d => d.value > 0);
+  const yieldSummary = dashboardData?.yieldSummary || [];
+  const totalObservations = yieldSummary.reduce(
+    (sum, item) => sum + Number(item.observation_count || 0),
+    0,
+  );
 
+  const yieldPerformancePct =
+    totalExpectedYieldKg > 0
+      ? (totalActualYieldKg / totalExpectedYieldKg) * 100
+      : 0;
 
-  const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
+  const yieldChartData = yieldSummary.slice(0, 10).map(item => {
+    const expected = Number(item.avg_expected_yield_kg || 0);
+    const actual = Number(item.avg_actual_yield_kg || 0);
+    const efficiency = expected > 0 ? (actual / expected) * 100 : 0;
+    return {
+      crop: item.crop_name || 'Unknown',
+      expected,
+      actual,
+      observations: Number(item.observation_count || 0),
+      efficiency: Math.min(200, Number(efficiency.toFixed(1))),
+    };
+  });
+
+  const farmerChartData = (dashboardData?.farmerCounts || [])
+    .slice(0, 8)
+    .map(item => ({
+      name: item.organization_name || 'Unknown',
+      total: Number(item.farmer_count) || 0,
+      new30d: Number(item.new_farmers_30d) || 0,
+    }));
+
+  const observationShareData = yieldChartData
+    .map(item => ({ name: item.crop, value: item.observations }))
+    .filter(item => item.value > 0);
+
+  const COLORS = ['#16a34a', '#0ea5e9', '#f97316', '#a855f7', '#eab308', '#14b8a6'];
 
   return (
     <div className="p-8">
@@ -90,20 +136,21 @@ export default function DashboardPage() {
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalPlots}</div>
+            <div className="text-2xl font-bold">{totalObservations}</div>
             <p className="text-xs text-muted-foreground mt-1">Field observations recorded</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sync Pending</CardTitle>
-            <Cpu className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Yield Performance</CardTitle>
+            <Wheat className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingSyncs}</div>
-            <p className="text-xs text-muted-foreground mt-1">Items waiting to sync</p>
-
+            <div className="text-2xl font-bold">{yieldPerformancePct.toFixed(1)}%</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Actual vs expected yield ({totalActualYieldKg.toFixed(1)}kg / {totalExpectedYieldKg.toFixed(1)}kg)
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -111,31 +158,23 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <Card>
           <CardHeader>
-            <CardTitle>Sync Status</CardTitle>
+            <CardTitle>Yield by Crop (Expected vs Actual)</CardTitle>
           </CardHeader>
           <CardContent>
-            {deviceStatusData.length > 0 ? (
+            {yieldChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={deviceStatusData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {deviceStatusData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
+                <AreaChart data={yieldChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="crop" />
+                  <YAxis />
                   <Tooltip />
-                </PieChart>
+                  <Legend />
+                  <Area type="monotone" dataKey="expected" name="Expected" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.25} />
+                  <Area type="monotone" dataKey="actual" name="Actual" stroke="#16a34a" fill="#16a34a" fillOpacity={0.25} />
+                </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-center text-muted-foreground py-12">No sync data available</p>
+              <p className="text-center text-muted-foreground py-12">No yield data available</p>
             )}
           </CardContent>
         </Card>
@@ -143,27 +182,94 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Farmer Counts by Organization</CardTitle>
-
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={(dashboardData?.farmerCounts || []).slice(0, 10).map(item => ({
-                  name: item.organization_name || 'Unknown',
-                  value: Number(item.farmer_count) || 0,
-                }))}
-
-              >
+              <BarChart data={farmerChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#3b82f6" />
+                <Legend />
+                <Bar dataKey="total" name="Total" fill="#3b82f6" />
+                <Bar dataKey="new30d" name="New (30d)" fill="#f97316" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Observation Share by Crop</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {observationShareData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={observationShareData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={90}
+                    dataKey="value"
+                  >
+                    {observationShareData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-muted-foreground py-12">No observation data available</p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Yield Efficiency by Crop</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {yieldChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={yieldChartData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="crop" />
+                  <PolarRadiusAxis angle={30} domain={[0, 200]} />
+                  <Radar name="Efficiency" dataKey="efficiency" stroke="#16a34a" fill="#16a34a" fillOpacity={0.3} />
+                  <Tooltip />
+                </RadarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-muted-foreground py-12">No yield data available</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Farmer Growth Signals</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={farmerChartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="total" name="Total Farmers" stroke="#0ea5e9" strokeWidth={2} />
+              <Line type="monotone" dataKey="new30d" name="New (30d)" stroke="#f97316" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
