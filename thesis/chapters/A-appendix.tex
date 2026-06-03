@@ -1,0 +1,406 @@
+% ==============================================================================
+% APPENDIX A: API REFERENCE
+% ==============================================================================
+
+\chapter{API Reference}
+
+\section{Authentication Endpoints}
+
+\begin{longtable}{lll}
+\caption{Authentication API Endpoints}
+\label{tab:auth-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\caption*{Table~\ref{tab:auth-api}: Authentication API Endpoints (continued)} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomline
+\endlastfoot
+POST & /api/v1/auth/signup & Create a new user account \\
+POST & /api/v1/auth/login & Authenticate and receive access token \\
+POST & /api/v1/auth/refresh & Refresh current access token \\
+POST & /api/v1/auth/logout & Revoke current access token \\
+POST & /api/v1/auth/logout-all & Revoke all access tokens \\
+GET & /api/v1/auth/tokens & List active access tokens \\
+DELETE & /api/v1/auth/tokens/:id & Revoke specific access token \\
+POST & /api/v1/auth/password/forgot & Request password reset email \\
+POST & /api/v1/auth/password/reset & Reset password with token \\
+POST & /api/v1/auth/email/verification-notification & Send verification email \\
+POST & /api/v1/auth/email/verify & Verify email with token \\
+\end{longtable}
+
+\section{Dashboard Endpoints}
+
+\begin{longtable}{lll}
+\caption{Dashboard API Endpoints}
+\label{tab:dashboard-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/dashboard & Unified overview (role-filtered) \\
+GET & /api/v1/dashboard/farmer-counts & Farmer counts per organization \\
+GET & /api/v1/dashboard/yield-summary & Yield by crop type \\
+GET & /api/v1/dashboard/sync-status & Sync queue status per device \\
+GET & /api/v1/dashboard/health & API health check \\
+\end{longtable}
+
+\section{Agricultural Data Endpoints}
+
+\begin{longtable}{lll}
+\caption{Agricultural Data API Endpoints}
+\label{tab:data-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/farmers & List farmers (paginated) \\
+POST & /api/v1/farmers & Create farmer \\
+GET & /api/v1/farmers/stats & Farmer statistics \\
+GET & /api/v1/farmers/:id & Get farmer details \\
+PATCH & /api/v1/farmers/:id & Update farmer \\
+DELETE & /api/v1/farmers/:id & Soft-delete farmer \\
+POST & /api/v1/farmers/:id/restore & Restore deleted farmer \\
+GET & /api/v1/farmers/:id/plots & Get farmer's plots \\
+GET & /api/v1/plots & List plots (paginated) \\
+POST & /api/v1/plots & Create plot \\
+GET & /api/v1/plots/nearby & Find nearby plots \\
+GET & /api/v1/plots/:id & Get plot details \\
+PATCH & /api/v1/plots/:id & Update plot \\
+DELETE & /api/v1/plots/:id & Soft-delete plot \\
+POST & /api/v1/plots/:id/restore & Restore deleted plot \\
+GET & /api/v1/observations & List observations (paginated) \\
+POST & /api/v1/observations & Create observation \\
+GET & /api/v1/observations/summary & Observation summary \\
+GET & /api/v1/observations/:id & Get observation details \\
+PATCH & /api/v1/observations/:id & Update observation \\
+DELETE & /api/v1/observations/:id & Soft-delete observation \\
+POST & /api/v1/observations/:id/restore & Restore deleted observation \\
+PATCH & /api/v1/observations/:id/harvest & Record harvest data \\
+\end{longtable}
+
+\section{Machine Learning Endpoints}
+
+\begin{longtable}{lll}
+\caption{ML Prediction API Endpoints}
+\label{tab:ml-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/predictions/ml-health & ML service health status \\
+POST & /api/v1/predictions & Submit single prediction \\
+GET & /api/v1/predictions & List prediction history \\
+GET & /api/v1/predictions/:id & Get prediction details \\
+GET & /health & (ML service) Service health \\
+POST & /predict/yield & (ML service) Single prediction \\
+POST & /predict/yield/batch & (ML service) Batch prediction \\
+\end{longtable}
+
+\section{Data Import Endpoints}
+
+\begin{longtable}{lll}
+\caption{Data Import API Endpoints}
+\label{tab:import-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+POST & /api/v1/imports & Upload CSV/Excel file \\
+GET & /api/v1/imports & List import jobs \\
+GET & /api/v1/imports/:id & Get import job details \\
+GET & /api/v1/imports/:id/schema & Get detected schema \\
+GET & /api/v1/imports/:id/records & Get imported records \\
+\end{longtable}
+
+\section{RAG Query Endpoints}
+
+\begin{longtable}{lll}
+\caption{RAG Query API Endpoints}
+\label{tab:rag-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/rag/status & RAG system health \\
+POST & /api/v1/rag/query & Submit natural language query \\
+\end{longtable}
+
+\section{Synchronization Endpoints}
+
+\begin{longtable}{lll}
+\caption{Sync Queue API Endpoints}
+\label{tab:sync-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/sync-queue & List sync queue entries \\
+POST & /api/v1/sync-queue & Create sync entry \\
+GET & /api/v1/sync-queue/stats & Sync queue statistics \\
+POST & /api/v1/sync-queue/batch & Batch sync submission \\
+GET & /api/v1/sync-queue/:id & Get sync entry details \\
+PATCH & /api/v1/sync-queue/:id/status & Update sync status \\
+POST & /api/v1/sync-queue/:id/retry & Retry failed sync \\
+DELETE & /api/v1/sync-queue/:id & Delete sync entry \\
+\end{longtable}
+
+\section{Administration Endpoints}
+
+\begin{longtable}{lll}
+\caption{Administration API Endpoints}
+\label{tab:admin-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/app-users & List application users \\
+POST & /api/v1/app-users & Create application user \\
+GET & /api/v1/app-users/:id & Get user details \\
+PATCH & /api/v1/app-users/:id & Update user \\
+DELETE & /api/v1/app-users/:id & Delete user \\
+PATCH & /api/v1/app-users/:id/activate & Activate/deactivate user \\
+GET & /api/v1/app-users/:id/devices & List user's devices \\
+GET & /api/v1/organizations & List organizations \\
+POST & /api/v1/organizations & Create organization \\
+GET & /api/v1/organizations/:id & Get organization details \\
+PATCH & /api/v1/organizations/:id & Update organization \\
+DELETE & /api/v1/organizations/:id & Delete organization \\
+GET & /api/v1/organizations/:id/dashboard & Organization dashboard \\
+GET & /api/v1/crop-types & List crop types \\
+POST & /api/v1/crop-types & Create crop type \\
+GET & /api/v1/crop-types/categories & List crop categories \\
+GET & /api/v1/crop-types/:id & Get crop type details \\
+PATCH & /api/v1/crop-types/:id & Update crop type \\
+DELETE & /api/v1/crop-types/:id & Delete crop type \\
+GET & /api/v1/devices & List devices \\
+POST & /api/v1/devices & Register device \\
+GET & /api/v1/devices/by-uuid/:uuid & Find device by UUID \\
+GET & /api/v1/devices/:id & Get device details \\
+PATCH & /api/v1/devices/:id & Update device \\
+PATCH & /api/v1/devices/:id/sync & Mark device synced \\
+DELETE & /api/v1/devices/:id & Delete device \\
+\end{longtable}
+
+\section{Audit and Monetization Endpoints}
+
+\begin{longtable}{lll}
+\caption{Audit and Monetization API Endpoints}
+\label{tab:audit-api} \\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+GET & /api/v1/audit-logs & List audit logs \\
+POST & /api/v1/audit-logs & Create audit log entry \\
+GET & /api/v1/audit-logs/stats & Audit log statistics \\
+GET & /api/v1/audit-logs/record/:table/:id & Get audit trail for record \\
+GET & /api/v1/audit-logs/:id & Get audit log details \\
+GET & /api/v1/monetization/products & List data products \\
+POST & /api/v1/monetization/products & Create data product \\
+GET & /api/v1/monetization/products/:id & Get product details \\
+PATCH & /api/v1/monetization/products/:id & Update product \\
+GET & /api/v1/monetization/subscriptions & List subscriptions \\
+POST & /api/v1/monetization/subscriptions & Create subscription \\
+GET & /api/v1/monetization/transactions & List transactions \\
+POST & /api/v1/monetization/chapa/webhook & Chapa payment webhook \\
+\end{longtable}
+
+% ==============================================================================
+% APPENDIX B: DEPLOYMENT CONFIGURATION
+% ==============================================================================
+
+\chapter{Deployment Configuration}
+
+\section{Environment Variables}
+
+The following environment variables are required for system deployment:
+
+\begin{longtable}{ll}
+\caption{Required Environment Variables}
+\label{tab:env-vars} \\
+\toprule
+\textbf{Variable} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+DATABASE\_URL & PostgreSQL connection string \\
+ML\_SERVICE\_URL & FastAPI microservice URL \\
+ANTHROPIC\_API\_KEY & Claude API key for RAG \\
+CEREBRAS\_API\_KEY & Cerebras API key (alternative) \\
+OPENROUTER\_API\_KEY & OpenRouter API key (fallback) \\
+CHAPA\_SECRET\_KEY & Chapa payment gateway key \\
+SESSION\_DRIVER & Session storage driver \\
+MAIL\_HOST & SMTP server for email \\
+MAIL\_PORT & SMTP port \\
+MAIL\_USERNAME & SMTP authentication username \\
+MAIL\_PASSWORD & SMTP authentication password \\
+REDIS\_HOST & Redis cache host (optional) \\
+REDIS\_PORT & Redis cache port (optional) \\
+\end{longtable}
+
+\section{Database Migration Commands}
+
+The following commands manage the database schema:
+
+\begin{lstlisting}[caption=Database Migration Commands,language=bash]
+# Run all pending migrations
+node ace migration:run
+
+# Rollback last migration batch
+node ace migration:rollback
+
+# Run all migrations from scratch
+node ace migration:run --force
+
+# Create a new migration file
+node ace make:migration table_name
+
+# Refresh database views
+node ace migration:refresh
+\end{lstlisting}
+
+\section{ML Service Training Commands}
+
+The following commands train and manage ML models:
+
+\begin{lstlisting}[caption=ML Service Training Commands,language=bash]
+# Train using PostgreSQL database (default)
+python -m ml_service.train --source db
+
+# Train using CSV file
+python -m ml_service.train --source csv \
+  --data ml-service/data/sample_yield.csv
+
+# Train with custom hyperparameters
+python -m ml_service.train \
+  --n-estimators 300 \
+  --max-depth 7 \
+  --lr 0.08
+
+# Start ML microservice for inference
+python -m ml_service
+
+# Run ML service tests
+python -m pytest ml-service/tests/
+\end{lstlisting}
+
+% ==============================================================================
+% APPENDIX C: SAMPLE TRAINING DATA
+% ==============================================================================
+
+\chapter{Sample Training Data}
+
+\section{Training Data Format}
+
+The training data is stored in CSV format with the following columns:
+
+\begin{longtable}{ll}
+\caption{Training Data Column Descriptions}
+\label{tab:train-cols} \\
+\toprule
+\textbf{Column} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+crop\_name & Crop type (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) \\
+season & Growing season (meher, belg) \\
+region & Administrative region (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) \\
+year & Harvest year (2015--2024) \\
+area\_hectares & Cultivated area in hectares \\
+rainfall\_mm & Annual rainfall in millimeters \\
+temperature\_celsius & Average growing season temperature \\
+fertilizer\_amount\_kg & Fertilizer applied in kilograms \\
+actual\_yield\_kg & Actual harvested yield in kilograms (target) \\
+\end{longtable}
+
+\section{Sample Records}
+
+The first ten records from the training dataset illustrate the data format and range of values:
+
+\begin{table}[H]
+\centering
+\caption{Sample Training Records}
+\label{tab:sample-records}
+\begin{tabular}{llllrrrrr}
+\toprule
+\textbf{Crop} & \textbf{Season} & \textbf{Region} & \textbf{Year} & \textbf{Area} & \textbf{Rain} & \textbf{Temp} & \textbf{Fert} & \textbf{Yield} \\
+\midrule
+maize & meher & Afar & 2019 & 5.28 & 509.3 & 12.6 & 148.1 & 14242.5 \\
+teff & meher & Oromia & 2018 & 5.04 & 1203.0 & 24.0 & 143.2 & 9599.5 \\
+sesame & meher & Tigray & 2024 & 5.92 & 1604.0 & 29.0 & 31.9 & 5454.9 \\
+sorghum & belg & Oromia & 2016 & 7.91 & 838.5 & 18.6 & 52.9 & 17479.3 \\
+teff & belg & Sidama & 2016 & 19.48 & 867.8 & 23.8 & 165.9 & 30890.9 \\
+sorghum & meher & Oromia & 2018 & 15.57 & 1777.8 & 31.4 & 173.3 & 35483.0 \\
+sesame & belg & Tigray & 2020 & 3.67 & 832.9 & 26.8 & 140.4 & 3581.1 \\
+wheat & meher & Amhara & 2022 & 7.90 & 1784.3 & 26.0 & 111.4 & 22795.9 \\
+coffee & meher & Amhara & 2015 & 16.20 & 901.7 & 11.7 & 182.6 & 16957.4 \\
+sorghum & belg & Tigray & 2022 & 3.29 & 509.4 & 28.6 & 107.8 & 6115.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dataset contains 2,000 records with the following distribution characteristics:
+\begin{itemize}
+  \item Area ranges from approximately 3 to 20 hectares
+  \item Rainfall ranges from approximately 500 to 1800 mm
+  \item Temperature ranges from approximately 11 to 33 degrees Celsius
+  \item Fertilizer ranges from approximately 30 to 185 kg
+  \item Yield ranges from approximately 3,500 to 85,000 kg
+\end{itemize}
+
+\section{Data Quality Notes}
+
+The training data was cleaned and preprocessed before model training:
+\begin{itemize}
+  \item Records with missing target (actual\_yield\_kg) values were excluded
+  \item Infinite values were replaced with NaN and imputed using column median
+  \item Numerical features were normalized using z-score standardization
+  \item Categorical features were encoded using label encoding
+  \item Season names were normalized to lowercase
+  \item The final dataset passed all validation checks with a 100 percent valid row rate
+\end{itemize}

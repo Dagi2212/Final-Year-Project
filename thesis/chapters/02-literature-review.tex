@@ -1,0 +1,126 @@
+% ==============================================================================
+% CHAPTER 2: LITERATURE REVIEW
+% ==============================================================================
+
+\chapter{Literature Review}
+
+\section{Theoretical Review}
+
+Agricultural data systems refer to the integrated collection of technologies, processes, and methodologies used to capture, store, analyze, and disseminate agricultural information to support decision-making by farmers, extension workers, policymakers, and other stakeholders. The fundamental premise underlying agricultural data systems is that timely, accurate, and accessible information enables better resource allocation, early intervention against crop threats, and improved market efficiency \cite{fao2023}. These systems have evolved from simple paper-based record-keeping to sophisticated digital platforms incorporating artificial intelligence, cloud computing, and mobile technologies.
+
+The Technology Acceptance Model (TAM), developed by Davis in 1989, provides a foundational framework for understanding how users come to accept and use new information technologies \cite{davis1989}. According to this model, two primary constructs determine technology acceptance: perceived usefulness, defined as the degree to which a user believes that using the system will enhance their job performance, and perceived ease of use, defined as the degree to which a user believes that using the system will be free of effort. These constructs have been validated across numerous information systems contexts, including agricultural technology adoption in developing countries. Studies have shown that perceived usefulness and ease of use are significant predictors of farmers' and extension workers' intention to adopt digital agricultural tools.
+
+For agricultural data systems in developing countries, the TAM framework is particularly relevant because it highlights the importance of designing systems that are both useful and easy to use for populations with varying levels of technical literacy. The present project applies TAM principles by providing an intuitive web interface with role-based dashboards that require minimal training, and by ensuring that the system delivers immediate value through yield predictions and natural language querying.
+
+Offline-first architecture represents a design paradigm where applications are built to function without continuous internet connectivity, treating network connectivity as an enhancement rather than a requirement. This approach is particularly relevant for rural agricultural contexts in developing countries where internet infrastructure remains unreliable. Key principles of offline-first design include local-first data access, where applications read from and write to local storage first, treating the server as a synchronization target; queue-based synchronization, where changes are queued locally and transmitted when connectivity becomes available; and optimistic user interfaces, which update immediately based on local changes without waiting for server confirmation \cite{islam2021}.
+
+Data synchronization theory addresses the challenge of maintaining consistency across distributed systems when network connectivity is intermittent. The fundamental problem of synchronizing data between a client and server involves detecting conflicts when the same data has been modified in multiple locations and applying resolution strategies. Common conflict resolution approaches include last-write-wins based on timestamps, version vectors that track update histories, and operational transforms that merge concurrent edits. For agricultural data collection applications where field agents may submit observations offline, the choice of conflict resolution strategy directly affects data integrity and user trust \cite{islam2021}.
+
+The present project implements a server-side queue-based synchronization approach with timestamp-based conflict resolution. This approach was chosen over peer-to-peer synchronization or operational transforms because it provides a good balance between implementation complexity and data consistency for the agricultural domain. The server acts as the authoritative source of truth, and conflicts are resolved by accepting the most recent update based on client-provided timestamps.
+
+Machine learning for agricultural applications has advanced significantly with the development of algorithms capable of processing tabular data, time-series information, and imagery. Among the various machine learning approaches, ensemble tree-based methods have consistently demonstrated superior performance for structured data tasks. The Gradient Boosting Regressor, in particular, has become a widely adopted algorithm for regression tasks on tabular data.
+
+Gradient boosting builds an ensemble of weak learners (typically shallow decision trees) in a sequential manner. At each iteration, a new tree is trained to predict the residual errors of the current ensemble. The final prediction is the sum of all tree predictions, weighted by the learning rate. This sequential approach allows gradient boosting to capture complex non-linear relationships while maintaining computational efficiency.
+
+The key theoretical advantages of gradient boosting for agricultural yield prediction include:
+\begin{enumerate}
+  \item \textbf{Handling of non-linear relationships:} Agricultural systems exhibit complex, non-linear relationships between inputs (rainfall, temperature, fertilizer) and outputs (yield). Gradient boosting can model these relationships without requiring explicit specification of interaction terms.
+  \item \textbf{Robustness to missing data:} Tree-based models can handle missing values in input features by using surrogate splits or by learning separate paths for missing values.
+  \item \textbf{Feature importance:} Gradient boosting provides built-in feature importance metrics that can help identify which factors most strongly influence yield predictions.
+  \item \textbf{Scalability:} The algorithm scales well to datasets with thousands to hundreds of thousands of records, making it suitable for agricultural applications at regional or national scales.
+\end{enumerate}
+
+Retrieval-Augmented Generation represents an emerging paradigm for natural language querying of structured and unstructured data \cite{lewis2020}. RAG systems combine a retrieval component, which searches a knowledge base for information relevant to the user's query, with a generation component, typically a large language model, which synthesizes an answer based on the retrieved context.
+
+The theoretical advantage of RAG over pure generation is that responses are grounded in actual data from the knowledge base, reducing hallucination and improving factual accuracy. For agricultural applications, RAG enables non-technical users to interact with complex datasets using natural language questions such as "Which regions have shown declining maize yields over the past three years?" or "What is the average yield of teff in Oromia?"
+
+The RAG architecture consists of three main components:
+\begin{enumerate}
+  \item \textbf{Retriever:} Given a user query, the retriever searches a knowledge base (e.g., vector database, SQL database, or document store) for relevant information. Common retrieval methods include keyword search, vector similarity search, and SQL query generation.
+  \item \textbf{Augmenter:} The retrieved information is formatted into a structured context that provides the generation component with relevant background knowledge.
+  \item \textbf{Generator:} A large language model uses the augmented context to generate a natural language response that directly answers the user's question.
+\end{enumerate}
+
+The present project implements a RAG system that uses SQL-based retrieval from PostgreSQL rather than vector similarity search. This approach is well-suited for structured agricultural data where precise numerical aggregation is required. The system executes targeted SQL queries based on keyword analysis of the user's question, formats the results as structured context, and sends the context to an LLM for response generation with citations to specific data sources.
+
+The current state of knowledge indicates that while individual technologies for offline data collection, machine learning-based yield prediction, and natural language querying have been demonstrated in isolation, their integration into comprehensive agricultural data platforms for developing country contexts remains an open challenge. The background studies are not sufficient because they either focus on specific technical components without addressing the full workflow from data collection to decision support, or they assume infrastructure conditions that do not match the Ethiopian context of unreliable connectivity and limited technical expertise among end users.
+
+\section{Empirical Review}
+
+\subsection{Offline-First Data Collection Systems}
+
+Islam and colleagues in 2021 conducted a comprehensive study on the design of offline-first mobile applications for rural areas \cite{islam2021}. The authors evaluated three design patterns for synchronization: queue-and-check, background sync with exponential backoff, and peer-assisted synchronization. Their experimental results, based on deployments in rural Bangladesh, showed that the queue-and-check pattern achieved the highest reliability at 94.7 percent success rate under intermittent connectivity conditions. The study also identified that users preferred applications that indicated sync status clearly, with visual indicators for pending, synced, and failed states.
+
+The strength of this study lies in its empirical evaluation under real-world conditions. However, its limitation is that it focused on general data collection scenarios rather than agricultural-specific data with complex relationships between entities such as farmers, fields, crops, and observations. The present project extends this work by implementing a queue-and-check synchronization engine tailored for agricultural data with entity-level conflict resolution and comprehensive sync status tracking across five states (pending, processing, completed, failed, conflict).
+
+Trivedi and colleagues in 2021 developed a deep neural network for tomato leaf disease detection but acknowledged that their system assumed constant internet connectivity for cloud-based inference \cite{trivedi2021}. The authors noted that this assumption limited the system's applicability in rural farming contexts where connectivity is unreliable. This study highlights the gap between high-accuracy models developed in research settings and deployable systems that function under real-world connectivity constraints.
+
+The strong side of existing offline data collection systems is that they have demonstrated the technical feasibility of queue-based synchronization and local storage. The shortcoming is that most of these systems are designed for general data collection and do not integrate AI-powered analytics that can provide real-time feedback during data collection. The present project addresses this by combining offline synchronization with machine learning yield prediction that can be triggered after data synchronization.
+
+\subsection{Machine Learning for Agricultural Yield Prediction}
+
+Extensive research has been conducted on applying machine learning to crop yield prediction. Gradient boosting algorithms have consistently demonstrated strong performance for this task due to their ability to model non-linear relationships and handle mixed data types. Studies on agricultural data across different regions and crops have shown that gradient boosting can achieve R-squared values exceeding 0.85 when trained on adequate historical data with relevant features.
+
+The choice of features significantly impacts prediction accuracy. Common features used in yield prediction studies include:
+\begin{itemize}
+  \item \textbf{Climatic features:} Rainfall, temperature, solar radiation, humidity
+  \item \textbf{Management features:} Fertilizer amount, irrigation method, planting density, pesticide use
+  \item \textbf{Soil features:} Soil type, organic matter content, pH, nutrient levels
+  \item \textbf{Spatial features:} Region, elevation, latitude, longitude
+  \item \textbf{Temporal features:} Year, season, growing degree days
+\end{itemize}
+
+Studies have shown that the inclusion of both climatic and management factors improves prediction accuracy compared to models using either type of feature alone. The present project uses a combination of climatic features (rainfall, temperature), management features (fertilizer amount, area), and contextual features (crop type, season, region, year).
+
+Feature engineering approaches vary across studies. Some researchers use raw feature values, while others apply normalization or standardization to improve model convergence. Categorical features such as crop type, season, and region are typically encoded using one-hot encoding or label encoding depending on the algorithm used. For gradient boosting, label encoding is often sufficient as the algorithm can handle ordinal relationships implicitly through its tree-based structure.
+
+\subsection{Retrieval-Augmented Generation for Agriculture}
+
+Recent advances in RAG systems have demonstrated their effectiveness for domain-specific question answering. Lewis and colleagues in 2020 introduced the RAG architecture, combining pre-trained sequence-to-sequence models with dense passage retrieval \cite{lewis2020}. Their experiments showed that RAG outperformed pure generation models on knowledge-intensive tasks by 12 to 18 percent in terms of factual accuracy.
+
+Applications of RAG in agriculture remain limited but growing. Agricultural question answering systems have demonstrated that farmers and extension workers can successfully obtain answers to questions about crop management using natural language queries. However, most existing systems operate on static knowledge bases of extension materials and cannot query live agricultural data such as current season yields or farmer demographics.
+
+A key challenge for RAG in agriculture is the need to query both structured data from databases and unstructured data from text documents. Most existing RAG systems focus on one type of data source. The present project addresses this challenge by implementing a RAG system that uses SQL queries to retrieve structured data from PostgreSQL, formats it as context, and passes it to an LLM for response generation. This approach provides grounded answers with citations to specific database tables and records.
+
+The choice of using SQL-based retrieval over vector similarity search was deliberate for this agricultural domain. Agricultural data is inherently structured with well-defined fields (crop names, regions, yield figures, seasons), and questions typically require precise aggregation (averages, sums, comparisons) rather than semantic similarity. SQL-based retrieval provides exact answers to aggregation questions, while vector search would be more appropriate for unstructured text retrieval.
+
+\subsection{Agricultural Data Management Systems in Developing Countries}
+
+Several digital agricultural platforms have been deployed in developing countries with varying degrees of success. Platforms such as the Digital Green system in India and the Agricultural Market Information System (AMIS) in various African countries have demonstrated the potential of digital technologies to improve agricultural outcomes.
+
+However, these systems face common challenges including:
+\begin{itemize}
+  \item Limited internet connectivity in rural areas
+  \item Low digital literacy among target users
+  \item High costs of hardware and data plans
+  \item Fragmented data across multiple platforms
+  \item Lack of integration with existing workflows
+  \item Sustainability beyond donor funding cycles
+\end{itemize}
+
+The present project addresses these challenges through its offline synchronization capability, intuitive web interface designed for varying technical literacy levels, use of standard web technologies that run on affordable devices, and modular architecture that can evolve incrementally.
+
+\section{Research Gaps}
+
+Based on the empirical review, the following research gaps have been identified. Each gap corresponds to a specific objective of this study.
+
+\paragraph{Gap 1: Integration of Offline-First Architecture with AI Analytics.}
+Existing offline data collection systems such as those studied by Islam and colleagues \cite{islam2021} demonstrate robust synchronization capabilities but lack integrated AI analytics. Conversely, existing AI-powered yield prediction systems assume constant internet connectivity for cloud-based inference. The gap is the absence of a system that combines offline-capable data collection with server-side machine learning analytics, enabling field agents to collect data in the field and subsequently obtain yield predictions and insights. This study addresses this gap by designing a synchronization engine that works alongside a FastAPI-based ML microservice, allowing data collection with deferred analytical processing.
+
+\paragraph{Gap 2: RAG-Based Querying of Integrated Agricultural Data.}
+Existing agricultural question answering systems operate on static knowledge bases of extension materials and cannot query live agricultural data from databases. The gap is the absence of a unified query interface that can answer questions requiring aggregation from structured data, such as "Show me the regions with highest maize yields." This study addresses this gap by implementing a RAG system that uses SQL queries to retrieve structured data from PostgreSQL, formats it as context, and generates answers using an LLM with citations to specific database records.
+
+\paragraph{Gap 3: Stakeholder-Specific Data Visualization for Ethiopian Agriculture.}
+Existing agricultural dashboards typically provide a single view of data, failing to recognize that different stakeholders including government officials, NGOs, traders, and researchers need different information at different levels of aggregation. The gap is the absence of role-based, permissioned dashboards tailored to the specific needs of each stakeholder group in the Ethiopian agricultural context. This study addresses this gap by implementing distinct dashboard views with role-based access control, different data visibility levels, and appropriate visualizations for each stakeholder group.
+
+\paragraph{Gap 4: Comprehensive Data Governance for Agricultural Platforms.}
+Most agricultural data platforms lack comprehensive audit logging and data governance features, making it difficult to track data provenance, ensure accountability, and meet regulatory requirements. This gap is particularly important in contexts where data quality and trust are essential for decision-making. This study addresses this gap by implementing a comprehensive audit logging system that tracks all data operations including INSERT, UPDATE, DELETE, SYNC, IMPORT, PREDICT, QUERY, and PAYMENT actions, with user identification, IP address tracking, and before/after value recording.
+
+\paragraph{Gap 5: Technology Stack Integration for Ethiopian Agricultural Context.}
+There is limited published research on the integration of modern web technologies (AdonisJS, Next.js, FastAPI) with machine learning for agricultural applications in the Ethiopian context. Most existing agricultural data systems in Ethiopia use older, less flexible technology stacks or are built as monolithic applications. This study contributes a reference architecture for building modern, modular agricultural data systems using contemporary web technologies that can be easily maintained and extended.
+
+\section{Summary of Literature}
+
+The literature review reveals that significant progress has been made in individual component technologies for agricultural data systems, but their integration into comprehensive, deployable platforms remains an open challenge. Offline data synchronization, machine learning-based yield prediction, natural language querying, and stakeholder-specific dashboards have each been demonstrated in isolation, but no existing system combines all these capabilities in a way that addresses the specific constraints of the Ethiopian agricultural context.
+
+The present project fills this gap by developing an integrated system that combines these technologies into a cohesive platform with a unified data model, role-based access control, and a modular architecture that can evolve to meet changing requirements. The system is built using modern, well-supported technologies and is designed for deployment in resource-constrained environments with limited internet connectivity and technical expertise.

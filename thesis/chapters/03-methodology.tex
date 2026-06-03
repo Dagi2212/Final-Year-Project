@@ -1,0 +1,644 @@
+% ==============================================================================
+% CHAPTER 3: METHODOLOGY AND DESIGN
+% ==============================================================================
+
+\chapter{Methodology and Design}
+
+\section{Methodology}
+
+The development methodology followed five sequential but iterative phases, each informed by the outputs of the preceding phase and subject to revision based on testing outcomes and advisor feedback.
+
+\subsection{Phase 1: Requirements Analysis}
+
+Technical documentation review and architectural pattern evaluation were conducted to identify core functional requirements. This phase involved reviewing existing agricultural data systems, studying available agricultural datasets, and consulting with domain experts to understand the data needs of different stakeholder groups including government officials, NGOs, traders, researchers, and field agents.
+
+The requirements analysis identified the following key functional requirements:
+\begin{itemize}
+  \item User authentication with role-based access control for seven user types
+  \item CRUD operations for farmers, plots, observations, crop types, and organizations
+  \item CSV and Excel file import with automatic schema detection
+  \item Machine learning-based crop yield prediction
+  \item Natural language querying of agricultural data
+  \item Offline data collection with synchronization
+  \item Stakeholder-specific dashboards with interactive visualizations
+  \item Audit logging for data governance
+  \item Monetization framework for data access
+\end{itemize}
+
+\subsection{Phase 2: System Design}
+
+Detailed system diagrams, database entity-relationship models, interface wireframes, and API specifications were produced. The technology stack was finalized during this phase based on an evaluation of alternatives against the criteria of offline capability, development efficiency, and deployment cost.
+
+The database schema was designed with 15 tables organized into six domains: user management, organizations, entity tracking, agricultural data, data management, analytics, and system operations. Database views were designed for dashboard aggregation queries to optimize read performance.
+
+The API was designed following RESTful conventions with resource-oriented URLs, standard HTTP methods, and consistent response formats. Authentication was designed using database-backed access tokens with token refresh and revocation capabilities.
+
+\subsection{Phase 3: Iterative Development}
+
+The system was built through weekly development cycles over a period of four months, beginning with core data collection functionality and progressively adding analytical and AI capabilities. Each weekly cycle included unit testing, integration testing, and advisor review.
+
+The development was organized into the following sprints:
+\begin{enumerate}
+  \item \textbf{Sprint 1:} Project setup, database schema, authentication, user management
+  \item \textbf{Sprint 2:} CRUD APIs for farmers, plots, observations, crop types
+  \item \textbf{Sprint 3:} Organizations, devices, attachments, sync queue
+  \item \textbf{Sprint 4:} CSV/Excel import module with schema detection
+  \item \textbf{Sprint 5:} ML model training and FastAPI microservice
+  \item \textbf{Sprint 6:} Frontend dashboard with charts and maps
+  \item \textbf{Sprint 7:} RAG query system with LLM integration
+  \item \textbf{Sprint 8:} Audit logging, monetization, testing, documentation
+\end{enumerate}
+
+\subsection{Phase 4: Technical Validation}
+
+A multi-layered testing strategy was employed including component testing, system integration testing, performance benchmarking, and end-to-end user workflow validation. The ML model was evaluated on a held-out test set using standard regression metrics including Mean Absolute Error (MAE) and Root Mean Square Error (RMSE).
+
+Backend tests were implemented using Japa test runner with API client integration. ML service tests covered the FastAPI endpoints, model preprocessing, and training pipeline. Frontend testing was conducted through manual workflow validation across different user roles.
+
+\subsection{Phase 5: Documentation and Deployment}
+
+Comprehensive technical documentation was produced covering API endpoints, database schema, deployment configuration, and user workflows. The backend was deployed with database migrations, and the ML microservice was configured for deployment alongside the main application.
+
+\section{Data Collection and Preparation}
+
+\subsection{Dataset Description}
+
+The data collection process involved sourcing a comprehensive dataset of crop yield records representative of Ethiopian agricultural conditions. The training dataset was compiled from publicly available agricultural data sources covering Ethiopian crop production across major regions and crop types.
+
+The complete dataset contains 2,000 crop yield records spanning ten years (2015 to 2024) across six major agricultural regions of Ethiopia: Afar, Amhara, Oromia, Sidama, SNNPR, and Tigray. The data covers eight crop types: teff, wheat, maize, barley, sorghum, sesame, chickpea, and coffee. These crops represent the major staple and cash crops of Ethiopian agriculture. Two growing seasons are represented: Meher (the main rainy season with harvest from June to September) and Belg (the short rainy season with harvest from February to May).
+
+\subsection{Dataset Features}
+
+The dataset includes the following features used for model training and prediction:
+
+\begin{itemize}
+  \item \textbf{Crop name:} Type of crop planted. Eight distinct values: teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee. Each crop has different growing requirements, yield potentials, and economic values.
+  
+  \item \textbf{Season:} Growing season. Two values: Meher (main season, June--September harvest) and Belg (short season, February--May harvest). Season affects water availability, temperature patterns, and expected yields.
+  
+  \item \textbf{Region:} Administrative region. Six values: Afar, Amhara, Oromia, Sidama, SNNPR, Tigray. Different regions have different climates, soil types, and agricultural practices.
+  
+  \item \textbf{Year:} Harvest year ranging from 2015 to 2024. Year captures technological improvements, climate trends, and policy changes over time.
+  
+  \item \textbf{Area (hectares):} Land area cultivated for the specific crop. Values in the training data range from smallholder plots of under one hectare to larger commercial farms.
+  
+  \item \textbf{Rainfall (mm):} Annual rainfall amount, ranging from approximately 500~mm to 1800~mm across different regions and seasons.
+  
+  \item \textbf{Temperature (Celsius):} Average temperature during the growing season, ranging from approximately 11--33 degrees Celsius depending on region and elevation.
+  
+  \item \textbf{Fertilizer amount (kg):} Amount of fertilizer applied, ranging from zero (no fertilizer) to approximately 180~kg.
+  
+  \item \textbf{Actual yield (kg):} The harvested yield in kilograms, serving as the target variable for the regression model.
+\end{itemize}
+
+\subsection{Dataset Statistics}
+
+The training data statistics from the trained model metadata provide insight into the dataset characteristics:
+
+\begin{table}[H]
+\centering
+\caption{Training Data Feature Statistics (from Model Metadata)}
+\label{tab:feature-stats}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Feature} & \textbf{Mean} & \textbf{Std Dev} \\
+\midrule
+Area (hectares) & 10.29 & 5.76 \\
+Rainfall (mm) & 1048.21 & 430.01 \\
+Temperature (Celsius) & 22.70 & 7.06 \\
+Fertilizer (kg) & 0.0* & 1.0* \\
+Year & 2019.43 & 2.85 \\
+\bottomrule
+\multicolumn{3}{l}{*Fertilizer values were imputed to 0.0 with std dev of 1.0 in this model version.}
+\end{tabular}
+\end{table}
+
+The categorical feature encodings captured the following class distributions:
+\begin{itemize}
+  \item \textbf{Crop name (8 classes):} barley, chickpea, coffee, maize, sesame, sorghum, teff, wheat
+  \item \textbf{Season (2 classes):} belg, meher
+\end{itemize}
+
+The dataset was partitioned into training and test sets using an 85:15 ratio:
+\begin{itemize}
+  \item Training set: 1,700 records
+  \item Test set: 300 records
+\end{itemize}
+
+\subsection{Data Preprocessing}
+
+Several preprocessing steps were carried out to prepare the data for training the machine learning model:
+
+\subsubsection{Numerical Feature Normalization}
+
+Numerical features including area\_hectares, rainfall\_mm, temperature\_celsius, fertilizer\_amount\_kg, and year were normalized using z-score standardization. This ensured that all features contributed equally to model training and prevented features with larger magnitudes from dominating the learning process.
+
+The z-score normalization transforms each feature value \(x\) using:
+
+\[
+z = \frac{x - \mu}{\sigma}
+\]
+
+where \(\mu\) is the mean and \(\sigma\) is the standard deviation of the feature calculated from the training set. The mean and standard deviation values were persisted in the model metadata file for consistent preprocessing during inference.
+
+\subsubsection{Categorical Feature Encoding}
+
+Categorical features including crop\_name and season were encoded using label encoding. This approach maps each distinct category value to an integer:
+
+\begin{table}[H]
+\centering
+\caption{Label Encoding Mappings}
+\label{tab:label-encoding}
+\begin{tabular}{ll}
+\toprule
+\textbf{Feature} & \textbf{Mapping} \\
+\midrule
+crop\_name & barley=0, chickpea=1, coffee=2, maize=3, \\
+           & sesame=4, sorghum=5, teff=6, wheat=7 \\
+season & belg=0, meher=1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For unseen category values during inference, a default value of 0 was assigned to prevent runtime errors while acknowledging that the prediction for unseen categories may be less reliable.
+
+\subsubsection{Feature Vector Construction}
+
+The final feature vector for each record consisted of seven elements in the following order:
+\begin{enumerate}
+  \item area\_hectares (z-score normalized)
+  \item rainfall\_mm (z-score normalized)
+  \item temperature\_celsius (z-score normalized)
+  \item fertilizer\_amount\_kg (z-score normalized)
+  \item year (z-score normalized)
+  \item crop\_name\_enc (label encoded)
+  \item season\_enc (label encoded)
+\end{enumerate}
+
+\subsection{Model Selection and Architecture}
+
+\subsubsection{Algorithm Justification}
+
+The Gradient Boosting Regressor from scikit-learn was selected as the primary prediction engine for the following reasons:
+
+\begin{enumerate}
+  \item \textbf{Performance on tabular data:} Gradient boosting has consistently demonstrated state-of-the-art performance on structured (tabular) data, outperforming deep learning approaches for datasets with fewer than 10,000 samples.
+  
+  \item \textbf{Non-linear relationship modeling:} Agricultural yield relationships are inherently non-linear. For example, the effect of rainfall on yield follows a non-monotonic pattern: too little rain causes drought stress, while too much rain can lead to waterlogging and disease. Gradient boosting can capture these complex relationships without requiring explicit feature engineering.
+  
+  \item \textbf{Mixed data type handling:} The algorithm naturally handles both numerical and categorical features through tree-based splitting, making it suitable for datasets with diverse feature types.
+  
+  \item \textbf{Robustness to outliers:} The sequential nature of gradient boosting, where each tree corrects the errors of previous trees, provides inherent robustness to outliers in the training data.
+  
+  \item \textbf{Computational efficiency:} Gradient boosting can be trained and deployed on modest hardware without requiring GPUs, making it suitable for deployment in resource-constrained environments.
+  
+  \item \textbf{Proven track record:} Ensemble tree-based methods have been widely validated in agricultural yield prediction research and are commonly used in operational systems.
+\end{enumerate}
+
+\subsubsection{Model Configuration}
+
+The GradientBoostingRegressor was configured with the following hyperparameters:
+
+\begin{table}[H]
+\centering
+\caption{Gradient Boosting Model Hyperparameters}
+\label{tab:hyperparameters}
+\begin{tabular}{lc}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value} \\
+\midrule
+n\_estimators & 200 \\
+max\_depth & 5 \\
+learning\_rate & 0.1 \\
+subsample & 0.8 \\
+random\_state & 42 \\
+Loss function & Squared error \\
+Criterion & Friedman MSE \\
+Min samples split & 2 \\
+Min samples leaf & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The hyperparameter choices were based on a combination of default values, empirical testing, and computational constraints:
+\begin{itemize}
+  \item \texttt{n\_estimators = 200}: Provides sufficient boosting stages for model convergence while maintaining reasonable training time.
+  \item \texttt{max\_depth = 5}: Limits tree depth to prevent overfitting while allowing sufficient complexity for interaction capture.
+  \item \texttt{learning\_rate = 0.1}: Standard learning rate that balances training speed and accuracy.
+  \item \texttt{subsample = 0.8}: Uses 80 percent of samples for each tree, introducing stochasticity that improves generalization.
+\end{itemize}
+
+\subsubsection{Feature Engineering Pipeline}
+
+The complete feature engineering pipeline consists of three stages:
+
+\begin{enumerate}
+  \item \textbf{Column Mapping:} Raw input column names are mapped to canonical feature names through a fixed column mapping dictionary.
+  \item \textbf{Z-score Normalization:} Numerical features are transformed using the mean and standard deviation calculated during training and stored in the model metadata.
+  \item \textbf{Label Encoding:} Categorical features are transformed using the mapping dictionaries stored in the model metadata.
+\end{enumerate}
+
+The feature engineering pipeline is implemented in the \texttt{preprocess\_input} function, which takes a raw record dictionary and model metadata as input and returns a flat feature vector. This function is used both during training (for consistency) and during inference (for production predictions).
+
+\subsection{Model Training}
+
+\subsubsection{Training Process}
+
+The model was trained using the following process:
+
+\begin{enumerate}
+  \item \textbf{Data Loading:} Training data is loaded either from the PostgreSQL database (imported\_records table) or from a CSV file. The data source is configurable via command-line arguments.
+  
+  \item \textbf{Data Cleaning:} Rows with missing target values are removed. Infinite values are replaced with NaN and then imputed. Numerical features are filled with their median values. Categorical features are standardized to lowercase with whitespace trimming.
+  
+  \item \textbf{Feature Engineering:} The \texttt{build\_features} function constructs the feature matrix \(X\) and target vector \(y\). Numerical features are z-score normalized, and categorical features are label-encoded.
+  
+  \item \textbf{Train/Test Split:} The data is split into training (85 percent) and test (15 percent) sets using stratified random sampling with a fixed random seed (42) for reproducibility.
+  
+  \item \textbf{Model Fitting:} The GradientBoostingRegressor is trained on the training set using the configured hyperparameters.
+  
+  \item \textbf{Evaluation:} The trained model is evaluated on the held-out test set. MAE and RMSE are calculated and recorded.
+  
+  \item \textbf{Model Persistence:} The trained model, along with feature engineering metadata, is saved to a timestamped directory. The model is serialized using Python's pickle format. Metadata is saved as JSON for easy inspection.
+\end{enumerate}
+
+\subsubsection{Training Configuration}
+
+\begin{table}[H]
+\centering
+\caption{Training Configuration}
+\label{tab:training-config}
+\begin{tabular}{lc}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Train/Test Split & 85\% / 15\% \\
+Training Records & 1,700 \\
+Test Records & 300 \\
+Feature Dimension & 7 \\
+Random Seed & 42 \\
+Model Storage & Pickle + JSON metadata \\
+Data Sources & PostgreSQL or CSV \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{System Design and Implementation}
+
+\subsection{System Architecture}
+
+The Integrated Agricultural Data System follows a modular, three-tier architecture with clear separation of concerns between the presentation layer, application logic layer, and data persistence layer.
+
+\subsubsection{Architecture Layers}
+
+\begin{description}
+  \item[Presentation Layer (Frontend):] Built with Next.js 16, a React-based framework providing server-side rendering, static site generation, and client-side routing. The frontend communicates with the backend through RESTful API calls. Tailwind CSS v4 provides utility-first styling for responsive design across desktop and mobile devices.
+  
+  \item[Application Logic Layer (Backend):] Built with AdonisJS 7, a full-featured Node.js MVC framework providing routing, middleware, ORM (Lucid), authentication, validation (VineJS), and mail services. The backend exposes RESTful API endpoints consumed by the frontend and manages business logic, data validation, and orchestration between services.
+  
+  \item[Machine Learning Layer:] A separate FastAPI microservice written in Python that handles model loading, feature preprocessing, and inference. This separation allows independent scaling of ML inference and ensures that ML model dependencies do not conflict with backend dependencies.
+  
+  \item[Data Persistence Layer:] PostgreSQL 15 serves as the primary relational database. The database schema consists of 15 tables, 3 views, and supporting indexes. Database migrations are managed through AdonisJS Lucid migration system.
+\end{description}
+
+\subsubsection{Technology Stack Justification}
+
+The technology stack was selected based on the following criteria:
+
+\begin{itemize}
+  \item \textbf{AdonisJS:} Provides a complete MVC framework with built-in ORM, authentication, validation, and testing utilities. Its TypeScript support ensures type safety across the backend codebase.
+  \item \textbf{Next.js:} Offers server-side rendering for improved performance and SEO, static site generation for dashboard pages, and a rich ecosystem of React components and libraries.
+  \item \textbf{FastAPI:} Provides automatic OpenAPI documentation, Pydantic-based request validation, and asynchronous request handling. Its performance characteristics are superior to Flask for ML inference workloads.
+  \item \textbf{PostgreSQL:} Offers robust relational database features including JSON support, full-text search, and materialized views. The Neon PostgreSQL cloud service provides a managed database with automated backups and scaling.
+  \item \textbf{scikit-learn:} Provides a mature, well-documented implementation of Gradient Boosting Regressor with optimized training algorithms and comprehensive evaluation metrics.
+\end{itemize}
+
+\subsection{Backend Implementation}
+
+\subsubsection{Authentication Module}
+
+The authentication system uses AdonisJS Auth with database-backed access tokens. Unlike JWT (JSON Web Tokens) which encode user information in the token itself, this system uses opaque tokens stored in the database and linked to user accounts. This approach provides immediate token revocation capabilities without relying on token expiry.
+
+The authentication module provides the following endpoints:
+\begin{itemize}
+  \item \texttt{POST /api/v1/auth/signup}: User registration with email, password, and profile information
+  \item \texttt{POST /api/v1/auth/login}: User login returning an access token
+  \item \texttt{POST /api/v1/auth/refresh}: Refresh the current access token
+  \item \texttt{POST /api/v1/auth/logout}: Destroy the current access token
+  \item \texttt{POST /api/v1/auth/logout-all}: Destroy all tokens for the current user
+  \item \texttt{GET /api/v1/auth/tokens}: List active tokens for the current user
+  \item \texttt{DELETE /api/v1/auth/tokens/:tokenId}: Revoke a specific token
+  \item \texttt{POST /api/v1/auth/password/forgot}: Send password reset email
+  \item \texttt{POST /api/v1/auth/password/reset}: Reset password with token
+  \item \texttt{POST /api/v1/auth/email/verification-notification}: Send email verification
+  \item \texttt{POST /api/v1/auth/email/verify}: Verify email with token
+\end{itemize}
+
+User roles are defined in the application and stored in the app\_users table. The available roles are: admin, supervisor, field\_agent, gov, ngo, trader, and researcher. Role-based access control is enforced through middleware that checks the user's role against the allowed roles for each endpoint.
+
+\subsubsection{Data Management Controllers}
+
+The backend implements resource-oriented RESTful controllers for all agricultural data entities:
+
+\begin{description}
+  \item[Farmers Controller:] Endpoints for creating, reading, updating, and soft-deleting farmer records. Each farmer record includes personal information (name, phone), location data (region, zone, woreda), household size, and organizational affiliation. Support for geospatial queries through organization and device associations.
+  
+  \item[Plots Controller:] Endpoints for managing agricultural plots associated with farmers. Each plot record includes area, GPS coordinates (latitude, longitude, altitude), soil type, irrigation status, and version-based optimistic locking for conflict detection during offline sync.
+  
+  \item[Observations Controller:] Endpoints for recording field observations including crop type, planting date, expected yield, growth stage, health status, pest issues, and fertilizer usage. Supports recording harvest data with actual yield values.
+  
+  \item[Crop Types Controller:] Endpoints for managing crop type reference data including crop name, local name (Amharic), category, and description.
+  
+  \item[Organizations Controller:] Endpoints for managing organizations (cooperatives, NGOs, government agencies, private companies) that use the system.
+  
+  \item[Devices Controller:] Endpoints for registering and managing field devices, tracking device UUID, name, and last synchronization timestamp.
+  
+  \item[Attachments Controller:] Endpoints for managing file attachments associated with observations, including file URL, type, size, and captions.
+\end{description}
+
+All data controllers implement soft-delete functionality (deleted\_at timestamp) and automatically populate audit logs through the Auditable mixin.
+
+\subsubsection{Role-Based Access Control}
+
+The role-based access control system is implemented through:
+\begin{enumerate}
+  \item \textbf{Role Constants:} Defined in \texttt{role\_constants.ts}, specifying which roles have access to which features.
+  \item \textbf{Auth Middleware:} Authenticates the user and attaches user information to the request context.
+  \item \textbf{Role Guard Middleware:} Checks the authenticated user's role against the allowed roles for the endpoint.
+  \item \textbf{Dashboard Controller Filtering:} Dynamically filters dashboard data based on the user's role at query time.
+\end{enumerate}
+
+The role constants define the following access groups:
+\begin{itemize}
+  \item \textbf{PRIVILEGED\_ROLES:} admin, supervisor --- can manage data on behalf of others
+  \item \textbf{ANALYTICS\_ROLES:} admin, supervisor, gov, ngo, trader, researcher --- can access aggregated analytics
+  \item \textbf{PREDICTION\_ROLES:} admin, supervisor, researcher, ngo --- can trigger ML predictions
+  \item \textbf{IMPORT\_ROLES:} admin, supervisor, field\_agent --- can upload data files
+  \item \textbf{QUERY\_ROLES:} admin, supervisor, gov, ngo, researcher --- can use the RAG query system
+\end{itemize}
+
+\subsection{Machine Learning Microservice}
+
+\subsubsection{Service Architecture}
+
+The ML microservice is built with FastAPI and follows a clean separation of concerns:
+
+\begin{description}
+  \item[app.py:] Entry point that defines the FastAPI application, request/response schemas using Pydantic, and API route handlers. Handles model loading during application startup and manages the model lifecycle.
+  
+  \item[model.py:] Defines feature engineering functions (\texttt{preprocess\_input}), model persistence helpers (\texttt{save\_model}, \texttt{load\_latest\_model}), and feature definitions (NUMERIC\_FEATURES, CATEGORICAL\_FEATURES).
+  
+  \item[train.py:] Training script that loads data from the database or a CSV file, engineers features, trains the Gradient Boosting Regressor, evaluates on a test split, and persists the trained model with metadata.
+\end{description}
+
+\subsubsection{API Endpoints}
+
+The microservice exposes three endpoints:
+
+\begin{description}
+  \item[\texttt{GET /health}:] Returns the service status, loaded model version, model type, MAE, RMSE, and available feature columns. Used by the backend for health monitoring.
+  
+  \item[\texttt{POST /predict/yield}:] Accepts a single yield prediction input (crop\_name, area\_hectares, rainfall\_mm, temperature\_celsius, fertilizer\_amount\_kg, season, year) and returns the predicted yield in kilograms along with confidence score and model version.
+  
+  \item[\texttt{POST /predict/yield/batch}:] Accepts a batch of prediction inputs and returns an array of prediction results. Used for bulk prediction requests, such as predicting yields for all imported records.
+\end{description}
+
+\subsubsection{Model Persistence}
+
+Trained models are stored in timestamped directories under the \texttt{models/} directory:
+
+\begin{verbatim}
+ml-service/models/
+├── latest.txt              # Points to the latest model version
+├── 20260520_131732/        # Latest model (trained May 20, 2026)
+│   ├── model.pkl           # Pickled GradientBoostingRegressor
+│   └── metadata.json       # Feature means, stds, encoders, metrics
+└── 20260512_112525/        # Previous model version
+    ├── model.pkl
+    └── metadata.json
+\end{verbatim}
+
+\subsection{Frontend Implementation}
+
+\subsubsection{Component Architecture}
+
+The frontend is built with Next.js 16 using the App Router pattern. Key architectural components include:
+
+\begin{description}
+  \item[\texttt{ApiClient}:] A singleton class that manages HTTP communication with the backend. Handles token storage in localStorage, automatic Authorization header injection, and 401 redirect handling.
+  
+  \item[\texttt{AuthContext}:] A React context provider that manages authentication state including login, signup, logout, user information, and role data.
+  
+  \item[\texttt{ProtectedRoute}:] A wrapper component that checks authentication status and redirects unauthenticated users to the login page.
+  
+  \item[\texttt{Sidebar}:] Navigation component with grouped links for Overview, Field Data, Intelligence, and Admin sections, with active route highlighting.
+  
+  \item[\texttt{DataTable}:] A reusable, generic paginated table component with search functionality, action buttons, and row selection.
+  
+  \item[\texttt{FormModal}:] A dialog-based form component for creating and editing records, with support for edit mode and loading states.
+  
+  \item[\texttt{PlotMap}:] A Leaflet-based interactive map component supporting two modes: display mode for showing plot markers, and interactive mode for selecting plot locations by click or drag.
+\end{description}
+
+\subsubsection{Dashboard Pages}
+
+The application includes the following dashboard pages:
+\begin{itemize}
+  \item \texttt{/dashboard}: Main dashboard with summary stats, charts, and map
+  \item \texttt{/dashboard/farmers}: Farmer management with CRUD operations
+  \item \texttt{/dashboard/plots}: Plot management with interactive map
+  \item \texttt{/dashboard/observations}: Field observation recording and harvest data entry
+  \item \texttt{/dashboard/crop-types}: Crop type reference management
+  \item \texttt{/dashboard/organizations}: Organization management
+  \item \texttt{/dashboard/users}: User management (admin only)
+  \item \texttt{/dashboard/devices}: Device registration and tracking
+  \item \texttt{/dashboard/imports}: CSV/Excel file upload and import history
+  \item \texttt{/dashboard/predictions}: ML yield prediction interface
+  \item \texttt{/dashboard/ai-query}: RAG natural language query interface
+  \item \texttt{/dashboard/sync-queue}: Offline synchronization monitoring
+  \item \texttt{/dashboard/audit-logs}: Data governance audit trail
+  \item \texttt{/dashboard/settings}: User profile and preferences
+\end{itemize}
+
+\subsection{Offline Synchronization Mechanism}
+
+The offline synchronization system is implemented through a dedicated sync queue table and controller:
+
+\subsubsection{Sync Queue Data Model}
+
+Each sync queue entry tracks:
+\begin{itemize}
+  \item \textbf{deviceId:} The device that originated the operation
+  \item \textbf{userId:} The user who performed the operation
+  \item \textbf{batchId:} Group identifier for batch processing
+  \item \textbf{entityType:} The type of entity (farmer, plot, observation, attachment)
+  \item \textbf{entityId:} The ID of the affected entity
+  \item \textbf{operation:} The operation type (CREATE, UPDATE, DELETE)
+  \item \textbf{payload:} The complete data payload in JSON format
+  \item \textbf{clientTimestamp:} When the operation occurred on the device
+  \item \textbf{status:} Current status (pending, processing, completed, failed, conflict)
+  \item \textbf{retryCount:} Number of retry attempts
+  \item \textbf{errorMessage:} Error details for failed operations
+\end{itemize}
+
+\subsubsection{Synchronization Flow}
+
+The synchronization process follows these steps:
+\begin{enumerate}
+  \item Field agents submit data through the web interface, which stores pending sync entries.
+  \item The sync engine periodically checks for pending entries and processes them in batches.
+  \item Each entry is processed by applying the operation (CREATE, UPDATE, DELETE) to the corresponding database table.
+  \item Conflict detection uses timestamp comparison: if the server record has been modified after the client timestamp, a conflict is flagged.
+  \item Conflicts are resolved using a newest-wins strategy based on timestamps.
+  \item Successful operations are marked as completed; failed operations are marked for retry.
+\end{enumerate}
+
+\subsection{Legacy Data Import Module}
+
+The import module is one of the most technically complex components of the system. It handles the complete workflow from file upload to data persistence.
+
+\subsubsection{Schema Detection}
+
+The automatic schema detection system matches column headers from uploaded files to canonical database fields using a comprehensive alias dictionary. The system recognizes over 80 different column name variations across 20 canonical fields. For example, the canonical \texttt{cropName} field can be detected from any of these column headers: crop, crop\_name, crop name, crop\_type, crop type, plant, item, commodity.
+
+The schema detection algorithm works as follows:
+\begin{enumerate}
+  \item Read the header row from the uploaded file
+  \item For each header, normalize it by trimming whitespace, converting to lowercase, and replacing spaces/hyphens with underscores
+  \item Look up the normalized header in the alias dictionary
+  \item If found, map the original header to the canonical field name
+  \item If not found, skip the column (it will be stored in the rawValues field)
+\end{enumerate}
+
+\subsubsection{Data Normalization}
+
+Each imported record undergoes normalization:
+\begin{itemize}
+  \item String fields are trimmed of whitespace
+  \item Numeric fields are converted from string to number with validation
+  \item Date fields are normalized to ISO 8601 format (YYYY-MM-DD), supporting both ISO and DD/MM/YYYY input formats
+  \item Season names are normalized to lowercase
+  \item Raw values are preserved in a JSON field for audit purposes
+\end{itemize}
+
+\subsubsection{Validation Rules}
+
+The import module enforces the following validation rules:
+\begin{itemize}
+  \item Area: must be between 0 and 100,000 hectares
+  \item Actual yield: must be between 0 and 1,000,000 kg
+  \item Rainfall: must be between 0 and 20,000 mm
+  \item Temperature: must be between -90 and 60 degrees Celsius
+  \item Year: must be between 1900 and 2100
+\end{itemize}
+
+Records that fail validation are marked as invalid and excluded from import. A detailed validation report is generated showing the total number of records, valid records, invalid records, and per-row error messages.
+
+\subsection{RAG Query System}
+
+\subsubsection{RAG Architecture}
+
+The RAG system follows the retrieve-augment-generate paradigm without requiring a vector database:
+
+\begin{enumerate}
+  \item \textbf{Retrieve:} The system runs targeted SQL queries against PostgreSQL based on the user's question. Query selection uses keyword heuristics: questions containing yield-related terms trigger yield statistics queries; questions containing farmer-related terms trigger farmer distribution queries; questions containing observation or health terms trigger field observation queries.
+  
+  \item \textbf{Augment:} Retrieved data is formatted into a structured context block with section headers and markdown-formatted JSON data. Each data source is accompanied by a citation describing the source and row count.
+  
+  \item \textbf{Generate:} The context is sent to the configured LLM along with a system prompt that provides Ethiopian agricultural context. The LLM generates a grounded answer with specific references to the data.
+\end{enumerate}
+
+\subsubsection{LLM Provider Integration}
+
+The RAG system supports three LLM providers with automatic fallback:
+\begin{itemize}
+  \item \textbf{OpenRouter:} Checked first. Supports multiple models including meta-llama/llama-3.1-8b-instruct.
+  \item \textbf{Cerebras:} Checked second. Uses llama3.1-70b model for high-performance inference.
+  \item \textbf{Anthropic Claude:} Default provider. Uses claude-haiku-4-5-20251001 model optimized for speed and cost.
+\end{itemize}
+
+The system prompt provides the LLM with context about Ethiopian agriculture:
+\begin{itemize}
+  \item Main crops: teff, maize, wheat, sorghum, barley, coffee
+  \item Growing seasons: Meher (main season) and Belg (short season)
+  \item Regions: Oromia, Amhara, Tigray, SNNPR, Somali, and others
+  \item Instruction to cite specific data when available
+  \item Instruction to acknowledge data limitations
+\end{itemize}
+
+\subsection{Database Design}
+
+The database schema consists of 15 tables organized by domain:
+
+\subsubsection{User and Organization Domain}
+\begin{itemize}
+  \item \textbf{users:} Authentication users with email, password, and email verification
+  \item \textbf{app\_users:} Application users with role assignment, organization affiliation, and profile information
+  \item \textbf{organizations:} Agricultural organizations (cooperatives, NGOs, government, private)
+\end{itemize}
+
+\subsubsection{Agricultural Data Domain}
+\begin{itemize}
+  \item \textbf{farmers:} Farmer records with personal information, location, and household data
+  \item \textbf{plots:} Agricultural plots with area, GPS coordinates, soil type, and irrigation status
+  \item \textbf{observations:} Field observations linking plots to crop types with yield estimates and health status
+  \item \textbf{crop\_types:} Crop reference data with names, local names, and categories
+  \item \textbf{attachments:} File attachments (images, documents) linked to observations
+\end{itemize}
+
+\subsubsection{Data Management Domain}
+\begin{itemize}
+  \item \textbf{import\_jobs:} Track CSV/Excel import operations with status, row counts, and validation errors
+  \item \textbf{imported\_records:} Individual imported records with all agricultural data fields
+\end{itemize}
+
+\subsubsection{Analytics Domain}
+\begin{itemize}
+  \item \textbf{predictions:} ML prediction results with input features, predicted yield, confidence score, and model version
+\end{itemize}
+
+\subsubsection{System Domain}
+\begin{itemize}
+  \item \textbf{devices:} Field device registration with UUID tracking and last sync timestamp
+  \item \textbf{sync\_queue:} Offline synchronization queue with entity tracking and retry mechanism
+  \item \textbf{audit\_logs:} Comprehensive data operation audit trail
+\end{itemize}
+
+\subsubsection{Monetization Domain}
+\begin{itemize}
+  \item \textbf{products:} Data products available for purchase
+  \item \textbf{subscriptions:} User subscriptions to data products
+  \item \textbf{transactions:} Payment transaction records
+  \item \textbf{dataset\_permissions:} Granular data access permissions
+\end{itemize}
+
+\section{Tools and Technologies}
+
+\begin{table}[H]
+\centering
+\caption{Complete Technology Stack}
+\label{tab:full-tech-stack}
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Technology} & \textbf{Version and Purpose} \\
+\midrule
+AdonisJS & v7.3 — Node.js MVC framework with Lucid ORM \\
+Next.js & v16.2 — React framework with App Router \\
+PostgreSQL (Neon) & v15 — Cloud-hosted relational database \\
+FastAPI & v0.111 — Python ML inference microservice \\
+scikit-learn & v1.4 — GradientBoostingRegressor \\
+pandas & v2.0 — Data manipulation and preprocessing \\
+NumPy & v1.26 — Numerical computing \\
+Anthropic Claude API & claude-haiku-4-5 — LLM for RAG \\
+Cerebras API & llama3.1-70b — Alternative LLM provider \\
+OpenRouter API & meta-llama/llama-3.1-8b — Fallback LLM \\
+Chapa API & v1 — Ethiopian payment gateway (sandbox) \\
+Leaflet.js & v1.9 — Interactive maps \\
+Recharts & v2.15 — Data visualization charts \\
+Radix UI & Latest — Accessible UI primitives \\
+Tailwind CSS & v4.2 — Utility-first CSS framework \\
+TypeScript & v6.0 — Type-safe JavaScript \\
+Python & v3.12 — ML service runtime \\
+\bottomrule
+\end{tabularx}
+\end{table}
