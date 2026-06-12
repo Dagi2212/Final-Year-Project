@@ -1,4 +1,4 @@
-# Files Created - Smart Process Dashboard
+# Files Created - Agricultural Data Platform Dashboard
 
 ## Core Application Files
 

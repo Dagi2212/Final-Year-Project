@@ -1,4 +1,4 @@
-# Smart Process - Farm Management Dashboard
+# Agricultural Data Platform - Farm Management Dashboard
 
 A comprehensive Next.js-based admin dashboard for agricultural farm management and monitoring.
 

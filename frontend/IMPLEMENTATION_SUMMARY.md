@@ -1,4 +1,4 @@
-# Smart Process Dashboard - Implementation Summary
+# Agricultural Data Platform Dashboard - Implementation Summary
 
 ## Overview
 

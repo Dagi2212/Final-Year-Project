@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { apiClient } from '@/lib/api-client';
 import { Plot, Farmer } from '@/lib/types';
 import { DataTable } from '@/components/data-table';
@@ -16,6 +17,8 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
+
+const PlotMap = dynamic(() => import('@/components/plot-map'), { ssr: false });
 
 export default function PlotsPage() {
   const { user } = useAuth();
@@ -38,6 +41,8 @@ export default function PlotsPage() {
     cropType: '',
     plantingDate: '',
     farmerId: '',
+    latitude: '',
+    longitude: '',
   });
 
   useEffect(() => {
@@ -77,6 +82,8 @@ export default function PlotsPage() {
       cropType: '',
       plantingDate: '',
       farmerId: '',
+      latitude: '',
+      longitude: '',
     });
     setEditingPlot(null);
     setIsEdit(false);
@@ -91,6 +98,8 @@ export default function PlotsPage() {
       cropType: plot.soilType || '',
       plantingDate: '',
       farmerId: plot.farmerId,
+      latitude: plot.latitude?.toString() || '',
+      longitude: plot.longitude?.toString() || '',
     });
     setEditingPlot(plot);
     setIsEdit(true);
@@ -154,6 +163,8 @@ export default function PlotsPage() {
         farmerId: formData.farmerId,
         areaSqm: formData.areaSize ? parseFloat(formData.areaSize) : undefined,
         soilType: formData.cropType || undefined,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
         createdBy: String(user?.appUserId || ''),
       };
 
@@ -318,6 +329,36 @@ export default function PlotsPage() {
               />
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Location
+            </label>
+            <PlotMap
+              mode="interactive"
+              latitude={formData.latitude ? parseFloat(formData.latitude) : null}
+              longitude={formData.longitude ? parseFloat(formData.longitude) : null}
+              onChange={(lat, lng) =>
+                setFormData({ ...formData, latitude: lat.toString(), longitude: lng.toString() })
+              }
+              height="h-48"
+            />
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <Input
+                type="number"
+                step="0.0001"
+                value={formData.latitude}
+                onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                placeholder="Latitude"
+              />
+              <Input
+                type="number"
+                step="0.0001"
+                value={formData.longitude}
+                onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                placeholder="Longitude"
+              />
+            </div>
+          </div>
         </div>
       </FormModal>
 
@@ -330,6 +371,20 @@ export default function PlotsPage() {
         loading={nearbyLoading}
       >
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Click on the map or enter coordinates
+            </label>
+            <PlotMap
+              mode="interactive"
+              latitude={nearbyForm.lat ? parseFloat(nearbyForm.lat) : null}
+              longitude={nearbyForm.lng ? parseFloat(nearbyForm.lng) : null}
+              onChange={(lat, lng) =>
+                setNearbyForm({ ...nearbyForm, lat: lat.toString(), lng: lng.toString() })
+              }
+              height="h-48"
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">

@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { apiClient } from '@/lib/api-client';
-import { DashboardIndexResponse } from '@/lib/types';
+import { DashboardIndexResponse, Plot } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+const PlotMap = dynamic(() => import('@/components/plot-map'), { ssr: false });
 import {
   Area,
   AreaChart,
@@ -31,13 +34,18 @@ import { toast } from 'sonner';
 
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState<DashboardIndexResponse | null>(null);
+  const [plots, setPlots] = useState<Plot[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        const data = await apiClient.get<DashboardIndexResponse>('/dashboard');
+        const [data, plotsRes] = await Promise.all([
+          apiClient.get<DashboardIndexResponse>('/dashboard'),
+          apiClient.get<{ meta: any; data: Plot[] }>('/plots?limit=500'),
+        ]);
         setDashboardData(data);
+        setPlots(plotsRes.data);
       } catch (error: any) {
         console.log('[v0] Error fetching dashboard stats:', error);
         toast.error('Failed to load dashboard stats');
@@ -154,6 +162,15 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Plot Locations ({plots.filter(p => p.latitude && p.longitude).length} mapped)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PlotMap mode="display" plots={plots} height="h-80" />
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <Card>

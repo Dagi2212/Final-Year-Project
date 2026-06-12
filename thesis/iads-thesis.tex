@@ -1,5 +1,5 @@
 % ==============================================================================
-% INTEGRATED AGRICULTURAL DATA SYSTEM - FINAL YEAR PROJECT THESIS
+% AGRICULTURAL DATA PLATFORM - FINAL YEAR PROJECT THESIS
 % Addis Ababa Science and Technology University
 % Single self-contained .tex file — ~19,000 words, ~60 pages
 % Compile: pdflatex iads-thesis && bibtex iads-thesis && pdflatex iads-thesis && pdflatex iads-thesis
@@ -10,19 +10,20 @@
 % ── Packages ──────────────────────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{geometry}
 \usepackage{setspace}
 \usepackage{tocloft}
-\usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{enumitem}
 \usepackage{caption}
 \usepackage{float}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{listings}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{appendix}
@@ -31,10 +32,20 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{makecell}
+\usepackage{parskip}
+
+\definecolor{headerblue}{RGB}{24, 95, 165}
+\definecolor{rowalt}{RGB}{248, 248, 248}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\setlength{\extrarowheight}{2pt}
+\onehalfspacing
+
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows, positioning, fit, backgrounds, calc, shadows}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
+
 
 % ── TikZ styles ───────────────────────────────────────────────────────────────
 \tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=0.9cm, text centered, draw=black!60, fill=red!15]
@@ -189,33 +200,37 @@
 % ==============================================================================
 \begin{titlepage}
 \begin{center}
-\vspace*{2cm}
-{\LARGE\bfseries ADDIS ABABA SCIENCE AND TECHNOLOGY UNIVERSITY}\\[0.5cm]
-{\large College of Engineering}\\[0.2cm]
-{\large Department of Electrical and Computer Engineering}\\[1.5cm]
-{\Huge\bfseries Integrated Agricultural Data System}\\[1.5cm]
-{\large Final Year Project Report}\\[1cm]
-\begin{tabular}{ll}
-\textbf{Name} & \textbf{ID} \\
-Kidan Dibekulu  & ETS0916/14 \\
-Kaleab Kebede   & ETS0857/14 \\
-Kalkidan Yishak & ETS0888/14 \\
-Dagmawi Shewaye & ETS0425/14 \\
-\end{tabular}\\[1.5cm]
-{\large Submitted to Addis Ababa Science and Technology University}\\
-{\large for the award of Bachelor of Science Degree in}\\
-{\large Electrical and Computer Engineering (Computer Engineering)}\\[1cm]
-{\large Advisor: Ir. Esubalew M.}\\[1cm]
-{\large June 2026}
+\vspace*{1cm}
+\includegraphics[width=3.5cm]{aastu-logo.png}\\[1cm]
+{\fontsize{16}{19}\selectfont\bfseries ADDIS ABABA SCIENCE AND TECHNOLOGY UNIVERSITY}\\[0.8cm]
+{\large\bfseries College of Engineering}\\[0.4cm]
+{\large\bfseries Department of Electrical and Computer Engineering}\\[1.2cm]
+{\large\bfseries Final Year Project on}\\[0.6cm]
+{\fontsize{14}{17}\selectfont\bfseries Agricultural Data Platform}\\[2cm]
+\begin{tabular}{lc}
+ & \\
+\textbf{Name} & \multicolumn{1}{r}{\textbf{ID}} \\
+ & \\
+1. Kidan Dibekulu  & \multicolumn{1}{r}{ETS0916/14} \\
+2. Kaleab Kebede   & \multicolumn{1}{r}{ETS0857/14} \\
+3. Kalkidan Yishak & \multicolumn{1}{r}{ETS0888/14} \\
+4. Dagmawi Shewaye & \multicolumn{1}{r}{ETS0425/14} \\
+\end{tabular}
+
+\vfill
+
+{\normalsize\textit{Submitted to Addis Ababa Science and Technology University for the award of Bachelor of Science Degree in Electrical and Computer Engineering (Computer Engineering)}}
 \end{center}
 \end{titlepage}
+
+\pagenumbering{roman}
 
 % ==============================================================================
 % DECLARATION
 % ==============================================================================
 \chapter*{Declaration}
 \addcontentsline{toc}{chapter}{Declaration}
-We, the undersigned, hereby declare that the project work entitled ``Integrated Agricultural Data System'' is our original work and has been carried out in partial fulfillment of the requirements for the Bachelor of Science Degree in Computer Engineering at Addis Ababa Science and Technology University.
+We, the undersigned, hereby declare that the project work entitled ``Agricultural Data Platform'' is our original work and has been carried out in partial fulfillment of the requirements for the Bachelor of Science Degree in Computer Engineering at Addis Ababa Science and Technology University.
 
 This project has not been submitted, in whole or in part, to any other institution or university for the award of any academic degree or diploma. All sources of information used during the course of this research have been duly acknowledged and referenced. Where the work of others has been quoted or paraphrased, the source has been explicitly cited in accordance with standard academic referencing practices.
 
@@ -283,7 +298,7 @@ CSV    & Comma-Separated Values \\
 FAO    & Food and Agriculture Organization \\
 GB     & Gradient Boosting \\
 HTTP   & Hypertext Transfer Protocol \\
-IADS   & Integrated Agricultural Data System \\
+ADP   & Agricultural Data Platform \\
 JWT    & JSON Web Token \\
 LLM    & Large Language Model \\
 MAE    & Mean Absolute Error \\
@@ -310,7 +325,7 @@ XLSX   & Microsoft Excel Open XML Spreadsheet \\
 % ==============================================================================
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Agricultural data collection and management in Ethiopia face significant challenges due to unreliable internet connectivity, fragmented record-keeping systems, and lack of access to predictive analytics. Traditional methods relying on paper-based surveys are time-consuming, error-prone, and inaccessible in many rural and under-resourced areas. This study presents the development of an Integrated Agricultural Data System (IADS), an offline-capable geospatial crop monitoring platform that combines offline-first architecture, AI-powered analytics, and stakeholder-specific dashboards to address these challenges.
+Agricultural data collection and management in Ethiopia face significant challenges due to unreliable internet connectivity, fragmented record-keeping systems, and lack of access to predictive analytics. Traditional methods relying on paper-based surveys are time-consuming, error-prone, and inaccessible in many rural and under-resourced areas. This study presents the development of an Agricultural Data Platform (ADP), an offline-capable geospatial crop monitoring platform that combines offline-first architecture, AI-powered analytics, and stakeholder-specific dashboards to address these challenges.
 
 The system integrates five core components: an offline data synchronization module using a queue-and-check mechanism for reliable field data collection in low-connectivity environments; a legacy data import tool for bulk ingestion of CSV and Excel files with automatic schema detection supporting over 80 column header variations; a scikit-learn-based Gradient Boosting Regressor for crop yield prediction achieving a Mean Absolute Error of 863.54~kg/ha and Root Mean Square Error of 1539.96~kg/ha; a Retrieval-Augmented Generation (RAG) system using Anthropic Claude or Cerebras large language models enabling natural language queries on agricultural datasets; and stakeholder-specific dynamic dashboards tailored for government, NGO, trader, and researcher users with role-based access control across seven user roles.
 
@@ -323,55 +338,22 @@ This project contributes to the field of digital agriculture by offering a compr
 % ==============================================================================
 % CHAPTER 1: INTRODUCTION
 % ==============================================================================
+\clearpage
+\pagenumbering{arabic}
 \chapter{Introduction}
 
 \section{Background of the Study}
-Agricultural data systems refer to the collection of technologies, processes, and methodologies used to capture, store, analyze, and disseminate information related to farming activities, including farmer demographics, crop types, field sizes, yields, and disease occurrences. The significance of these systems lies in their potential to enhance decision-making, ensure food security, and reduce economic losses in agriculture. Traditional methods of data collection rely heavily on paper surveys and manual entry by extension workers, which can be time-consuming, labor-intensive, and prone to human error \cite{vanklinken2022}. As a result, automated and technology-driven solutions have gained increasing attention from researchers, policymakers, and development organizations worldwide.
+Agricultural data systems are technologies and processes for capturing, storing, analyzing, and disseminating farming-related information to enhance decision-making and food security. Traditional paper-based data collection is time-consuming, error-prone, and difficult to scale, particularly in developing regions \cite{vanklinken2022}. Automated and technology-driven solutions are therefore essential for modernizing agricultural data management.
 
-Agriculture undeniably remains the cornerstone of the Ethiopian economy, providing employment to over 80 percent of the population and contributing approximately 33 percent to the national Gross Domestic Product. The sector is characterized by smallholder farming systems, with the majority of farmers cultivating less than two hectares of land. These smallholder farmers produce the vast majority of the country's staple crops including teff, maize, wheat, barley, and sorghum, as well as cash crops such as coffee and sesame. According to the World Bank, agriculture remains one of the most important sectors economically, playing a key role in both commercial farming and household livelihoods across the nation.
+Ethiopian agriculture employs over 80 percent of the population and contributes approximately 33 percent of national GDP, yet it faces severe challenges including yield uncertainty, resource misallocation, poor rural connectivity, and fragmented record-keeping. Internet penetration remains below 20 percent nationally \cite{worldbank2022}, and data fragmentation across government ministries, NGOs, cooperatives, and research institutions prevents the formation of a coherent national picture of agricultural production.
 
-Challenges such as yield uncertainty, resource misallocation, and lack of real-time information on crop types, expected yields, and soil health conditions can significantly affect agricultural productivity and food security. Ethiopian farmers make critical decisions about planting, fertilization, and harvesting with limited access to weather forecasts, market prices, and agronomic recommendations. Left unaddressed, these data gaps can lead to widespread crop loss and economic hardship for farmers across the nation. The Ministry of Agriculture estimates that post-harvest losses alone account for 20 to 30 percent of total production in some regions, a figure that could be substantially reduced with better data-driven decision-making.
+Recent advances in machine learning offer viable alternatives to manual systems. Gradient boosting algorithms have demonstrated strong performance for tabular agricultural data, achieving high accuracy in yield prediction across multiple crop types and regions \cite{patel2020}. The Gradient Boosting Regressor handles non-linear relationships and mixed feature types effectively on moderate-sized datasets, making it well-suited for developing-country agricultural applications without requiring specialized hardware \cite{scikit2024}.
 
-Ethiopian agriculture is frequently challenged by a wide range of data-related problems caused by lack of real-time information, poor connectivity in rural areas, and fragmented record-keeping systems. These challenges can significantly reduce the effectiveness of agricultural interventions, leading to substantial economic losses and food insecurity, especially in regions that heavily rely on agriculture. In many farming communities, especially in rural Ethiopia, access to digital tools and reliable internet connectivity is limited. According to the World Bank, internet penetration in Ethiopia remains below 20 percent, with rural areas having even lower connectivity rates \cite{worldbank2022}. This often leads to delayed or incomplete data collection, which in turn affects crop management decisions and overall farm productivity.
+The Agricultural Data Platform addresses these challenges through an integrated combination of offline synchronization for low-connectivity environments, machine learning-powered yield prediction, natural language querying via retrieval-augmented generation, and stakeholder-specific dashboards. The system is built on a full-stack JavaScript architecture (AdonisJS backend, Next.js frontend) with a Python FastAPI microservice for ML inference, and directly supports the Digital Ethiopia 2025 strategy \cite{digitalethiopia2025}.
 
-In recent years, the rapid progress of digital technologies and artificial intelligence has brought exciting new possibilities to agriculture. Machine learning models and web-based applications have become highly effective at processing and analyzing agricultural data. By learning from large collections of historical records and field observations, these systems can identify patterns, predict yields, and provide actionable insights. Gradient boosting algorithms, in particular, have demonstrated strong performance for tabular agricultural data, achieving high accuracy in yield prediction tasks across multiple crop types and geographic regions \cite{patel2020}. This kind of technology offers a great alternative to manual paper-based systems, making data collection faster, more accurate, and easier to scale.
+The key stakeholders in the Ethiopian agricultural data ecosystem include smallholder farmers who produce the majority of agricultural output but have limited access to digital tools, field agents and extension workers who serve as the primary data collectors in rural areas, agricultural cooperatives that aggregate and market produce from their members, government ministries and regional bureaus that require aggregate statistics for policy planning, NGOs and development organizations that implement agricultural programs and need monitoring data, researchers and academics who analyze agricultural trends and publish findings, and commercial traders and wholesalers who need supply forecasts for market planning.
 
-The barriers to technology adoption in Ethiopian agriculture extend beyond connectivity. Many field agents and extension workers have limited experience with digital tools, making usability a critical factor for successful adoption. The Technology Acceptance Model suggests that perceived ease of use is a primary determinant of technology adoption, particularly for users with limited technical background. The system's web-based interface, role-specific dashboard views, and natural language querying through the RAG system are all designed to lower the barrier to entry for users with varying levels of technical literacy. The system also avoids requiring specialized hardware -- it can be accessed through any standard web browser on a smartphone, tablet, or computer, maximizing accessibility for users who may only have access to basic mobile devices.
 
-Early and accurate access to agricultural data is therefore vital for effective crop management and improved productivity. The core elements of an agricultural data system include data acquisition, preprocessing, storage, analysis, and visualization. Data acquisition involves capturing information about farmers, fields, crops, and observations, typically using mobile devices or web applications. Preprocessing techniques are then applied to clean and validate the data, enhancing the accuracy of subsequent analysis. Storage involves securely maintaining data in databases for future retrieval. Analysis focuses on applying statistical or machine learning techniques to extract insights from the data. Finally, visualization involves presenting the results through dashboards, charts, and maps that make the information accessible to decision-makers.
-
-Advances in artificial intelligence, particularly in ensemble machine learning methods, have greatly improved the precision and speed of agricultural data analysis. The Gradient Boosting Regressor, in particular, has become a widely adopted algorithm for regression tasks on structured data due to its ability to handle non-linear relationships, mixed feature types, and missing values \cite{scikit2024}. Unlike deep learning approaches that require large datasets and specialized hardware, gradient boosting can achieve strong performance on moderate-sized datasets using standard computing resources, making it well-suited for agricultural applications in developing countries.
-
-This project uses modern web technologies and machine learning to create a solution that not only provides consistent and accurate results but can also operate with offline synchronization capabilities and be deployed via standard web browsers on mobile devices. The system is built on a full-stack JavaScript architecture using AdonisJS for the backend and Next.js for the frontend, with a Python FastAPI microservice for machine learning inference. This technology stack was chosen for its development efficiency, scalability, and strong community support.
-
-The problem of agricultural data fragmentation is especially acute in Ethiopia. Different stakeholders -- government ministries, regional agricultural bureaus, NGOs, cooperatives, and research institutions -- each collect data using different formats, tools, and terminology. A farmer registered with one cooperative may be recorded under a different identifier by an NGO working in the same area. Yield data collected by the Ministry of Agriculture may use different units than data collected by a research project. This fragmentation makes it nearly impossible to form a coherent national picture of agricultural production, and it means that the same farmer may be surveyed multiple times by different organizations, wasting resources and creating conflicting records.
-
-Conducting this study is essential to empower extension workers, cooperatives, and policymakers with technology-driven tools that improve decision-making, reduce crop losses, and promote sustainable agricultural practices. Furthermore, it contributes to the broader goal of integrating smart technologies into agriculture, especially in under-resourced areas where traditional support systems are limited. The Ethiopian government's Digital Ethiopia 2025 strategy \cite{digitalethiopia2025} explicitly identifies digital agriculture as a priority area, and this project directly supports that national vision.
-
-The project focuses on the development of an integrated agricultural data system using a combination of an offline synchronization queue, machine learning-powered yield prediction, natural language querying, and stakeholder-specific dashboards. The system is designed to handle agricultural data including farmer profiles, field information, crop types, yield estimates, and field observations. By addressing the limitations of traditional methods and embracing technology-driven solutions, this study contributes to the broader goal of promoting sustainable agriculture through data-driven farming technologies.
-
-The key stakeholders in the Ethiopian agricultural data ecosystem, as illustrated in Figure~\ref{fig:context}, include smallholder farmers who produce the majority of agricultural output but have limited access to digital tools, field agents and extension workers who serve as the primary data collectors in rural areas, agricultural cooperatives that aggregate and market produce from their members, government ministries and regional bureaus that require aggregate statistics for policy planning, NGOs and development organizations that implement agricultural programs and need monitoring data, researchers and academics who analyze agricultural trends and publish findings, and commercial traders and wholesalers who need supply forecasts for market planning.
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[node distance=2.5cm]
-  \node (iads) [process, fill=blue!25, minimum width=4.5cm, minimum height=1.4cm, font=\bfseries] {IADS Platform};
-  \node (field) [process, above left=2.5cm and 3cm of iads, fill=green!15, minimum width=3cm] {Field Agents};
-  \node (gov) [process, above right=2.5cm and 3cm of iads, fill=green!15, minimum width=3cm] {Government};
-  \node (ngo) [process, right=3.5cm of iads, fill=green!15, minimum width=3cm] {NGOs};
-  \node (trade) [process, below right=2.5cm and 3cm of iads, fill=green!15, minimum width=3cm] {Traders};
-  \node (research) [process, below left=2.5cm and 3cm of iads, fill=green!15, minimum width=3cm] {Researchers};
-  \node (coop) [process, left=3.5cm of iads, fill=green!15, minimum width=3cm] {Cooperatives};
-  \draw[arrow, <->] (iads) -- (field);
-  \draw[arrow, <->] (iads) -- (gov);
-  \draw[arrow, <->] (iads) -- (ngo);
-  \draw[arrow, <->] (iads) -- (trade);
-  \draw[arrow, <->] (iads) -- (research);
-  \draw[arrow, <->] (iads) -- (coop);
-\end{tikzpicture}
-\caption{System Context Diagram -- Stakeholder Interactions with IADS}
-\label{fig:context}
-\end{figure}
 
 \section{Statement of the Problem}
 Agricultural data collection and management in Ethiopia face numerous challenges, which significantly affect productivity, food security, and economic outcomes. These challenges must be accurately understood and addressed, but conventional data collection methods depend on paper surveys and manual entry, which are generally time-consuming, unreliable, and out of reach for most stakeholders because of the lack of digital tools and infrastructure.
@@ -386,11 +368,11 @@ Even when data is collected, most stakeholders lack the tools to analyze it effe
 
 The digital divide between urban and rural areas further compounds these problems. Field agents working in remote areas often have access to mobile devices but lack reliable internet connections. Without systems designed for offline operation, these field agents cannot enter data in real time and must resort to paper-based collection, which introduces delays, errors, and additional labor for later data entry.
 
-To counter these issues, this project creates an integrated agricultural data system based on offline synchronization architecture, machine learning-powered yield prediction, and natural language querying. The system is capable of collecting and synchronizing data when connections become available, providing yield predictions based on historical data, and offering stakeholders intuitive access to agricultural intelligence through dashboards and natural language queries. The system addresses the specific problems of connectivity dependence, data fragmentation, legacy data inaccessibility, and analytical capacity gaps that characterize the current state of agricultural data management in Ethiopia.
+To counter these issues, this project creates the Agricultural Data Platform based on offline synchronization architecture, machine learning-powered yield prediction, and natural language querying. The system is capable of collecting and synchronizing data when connections become available, providing yield predictions based on historical data, and offering stakeholders intuitive access to agricultural intelligence through dashboards and natural language queries. The system addresses the specific problems of connectivity dependence, data fragmentation, legacy data inaccessibility, and analytical capacity gaps that characterize the current state of agricultural data management in Ethiopia.
 
 \section{Objectives}
 \subsection{General Objective}
-The general objective of this project is to develop an integrated agricultural data system using offline-capable architecture and machine learning-powered analytics that enables reliable data collection in low-connectivity environments and provides stakeholders with actionable insights through intuitive dashboards and natural language querying.
+The general objective of this project is to develop the Agricultural Data Platform using offline-capable architecture and machine learning-powered analytics that enables reliable data collection in low-connectivity environments and provides stakeholders with actionable insights through intuitive dashboards and natural language querying.
 
 \subsection{Specific Objectives}
 To address the identified problems, the project sets forth the following specific objectives:
@@ -404,7 +386,7 @@ To address the identified problems, the project sets forth the following specifi
 
 \section{Scope and Limitation}
 \subsection{Scope}
-This project focuses on the development of an integrated agricultural data system using modern web architecture, machine learning, and natural language processing. The system is designed to handle agricultural data including farmer profiles, field information, crop types, yield estimates, and field observations. The project involves collecting and simulating agricultural data representative of Ethiopian farming conditions. The training dataset comprises 2,000 records spanning 2015 to 2024 across six Ethiopian regions (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) and eight crop types (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) across two growing seasons (Meher and Belg). The system implements a server-side synchronization queue for offline data handling with five status levels and provides role-based access control across seven user roles. The complete backend consists of 108 RESTful API endpoints across 16 controllers, and the database comprises 15 tables across five domains.
+This project focuses on the development of the Agricultural Data Platform using modern web architecture, machine learning, and natural language processing. The system is designed to handle agricultural data including farmer profiles, field information, crop types, yield estimates, and field observations. The project involves collecting and simulating agricultural data representative of Ethiopian farming conditions. The training dataset comprises 2,000 records spanning 2015 to 2024 across six Ethiopian regions (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) and eight crop types (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) across two growing seasons (Meher and Belg). The system implements a server-side synchronization queue for offline data handling with five status levels and provides role-based access control across seven user roles. The complete backend consists of 108 RESTful API endpoints across 16 controllers, and the database comprises 15 tables across five domains.
 
 The system's functional scope includes data collection through web forms and bulk import, data storage with PostgreSQL, data analysis through ML-based yield prediction and RAG-based querying, data visualization through role-specific dashboards with maps and charts, and data governance through comprehensive audit logging. The system does not include hardware-level integration with IoT sensors or farm equipment, real-time weather data feeds, satellite imagery processing, or mobile-native application development. These features are identified as potential future enhancements rather than current scope items.
 
@@ -420,32 +402,40 @@ A summary of the key deliverables and their implementation scope is presented in
 \centering
 \caption{Project Deliverables Summary}
 \label{tab:deliverables}
-\begin{tabularx}{\textwidth}{lX}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{XX}
 \toprule
-\textbf{Component} & \textbf{Scope} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Component}} & \textcolor{white}{\textbf{Scope}} \\
 \midrule
 Backend API & 108 endpoints, 16 controllers, AdonisJS 7 \\
+\rowcolor{rowalt}
 Frontend Application & 14 dashboard pages, Next.js 16 with App Router \\
 Database Schema & 15 tables, 5 domains, PostgreSQL 15 \\
+\rowcolor{rowalt}
 ML Microservice & FastAPI, GradientBoostingRegressor, 7 features \\
 Offline Sync Queue & 5 status levels, timestamp conflict resolution \\
+\rowcolor{rowalt}
 Legacy Import Module & 80+ header aliases, 20 canonical fields \\
 RAG Query System & 3 LLM providers, SQL-based retrieval, automatic fallback \\
+\rowcolor{rowalt}
 Role-Based Access Control & 7 user roles, 4 access groups \\
 Audit Logging & Full CRUD audit trail with record-level tracking \\
+\rowcolor{rowalt}
 Monetization Framework & Chapa payment gateway, subscriptions, data products \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section{Significance of the Study}
-This study holds great significance in the field of digital agriculture and agricultural data management. By developing an integrated agricultural data system powered by offline synchronization architecture, machine learning, and natural language processing, this project offers an affordable, scalable, and user-friendly solution to a widespread problem. The system empowers extension workers, cooperatives, and policymakers to access and analyze agricultural data quickly and accurately using just a mobile device or web browser.
+This study holds great significance in the field of digital agriculture and agricultural data management. By developing the Agricultural Data Platform powered by offline synchronization architecture, machine learning, and natural language processing, this project offers an affordable, scalable, and user-friendly solution to a widespread problem. The system empowers extension workers, cooperatives, and policymakers to access and analyze agricultural data quickly and accurately using just a mobile device or web browser.
 
 For system architects and engineers, the project demonstrates practical implementation patterns for offline-capable systems in resource-constrained environments, including the queue-and-check synchronization pattern, automatic schema detection for legacy data import, and SQL-based retrieval for RAG systems. For policymakers and government bodies, the system offers technical validation of digital approaches to agricultural monitoring, supporting evidence-based technology adoption within national digital strategies such as Digital Ethiopia 2025 \cite{digitalethiopia2025}. For NGOs and development organizations working in agricultural development, the platform enables evidence-based targeting of interventions, allowing resources to be directed to the areas and crops where they are most needed. For researchers and academics, the project provides a dataset and analytical platform, with the RAG query system democratizing access to data for non-technical users. For commercial stakeholders, traders and wholesalers gain access to supply forecasts and yield estimates through the trader dashboard, enabling better market planning and price discovery.
 
 % ==============================================================================
 % CHAPTER 2: LITERATURE REVIEW
 % ==============================================================================
+\clearpage
 \chapter{Literature Review}
 
 \section{Theoretical Review}
@@ -513,24 +503,29 @@ Table~\ref{tab:comparison} compares the present system with existing platforms a
 \centering
 \caption{Feature Comparison with Existing Platforms}
 \label{tab:comparison}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{X*{4}{c}}
 \toprule
-\textbf{Feature} & \textbf{DHIS2} & \textbf{OpenMRS} & \textbf{Islam et al.} & \textbf{IADS} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{DHIS2}} & \textcolor{white}{\textbf{OpenMRS}} & \textcolor{white}{\textbf{Islam et al.}} & \textcolor{white}{\textbf{ADP}} \\
 \midrule
 Offline Data Collection & --- & --- & $\checkmark$ & $\checkmark$ \\
+\rowcolor{rowalt}
 Role-Based Access & $\checkmark$ & $\checkmark$ & --- & $\checkmark$ \\
 ML Yield Prediction & --- & --- & --- & $\checkmark$ \\
+\rowcolor{rowalt}
 Natural Language Query & --- & --- & --- & $\checkmark$ \\
 Legacy Data Import & --- & --- & --- & $\checkmark$ \\
+\rowcolor{rowalt}
 Audit Logging & $\checkmark$ & $\checkmark$ & --- & $\checkmark$ \\
 Geo-Spatial Maps & --- & --- & --- & $\checkmark$ \\
+\rowcolor{rowalt}
 Dashboard Analytics & $\checkmark$ & $\checkmark$ & --- & $\checkmark$ \\
 Multi-Tenancy & $\checkmark$ & --- & --- & $\checkmark$ \\
+\rowcolor{rowalt}
 Monetization & --- & --- & --- & $\checkmark$ \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table}
 
 \subsection{Agricultural Data Interoperability Standards}
@@ -552,6 +547,7 @@ Based on the literature review, the following research gaps have been identified
 % ==============================================================================
 % CHAPTER 3: METHODOLOGY AND DESIGN
 % ==============================================================================
+\clearpage
 \chapter{Methodology and Design}
 
 \section{Methodology}
@@ -593,21 +589,27 @@ The dataset includes nine columns as described in Table~\ref{tab:features}. The 
 \centering
 \caption{Training Dataset Features}
 \label{tab:features}
-\begin{tabular}{lll}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{XXl}
 \toprule
-\textbf{Feature} & \textbf{Type} & \textbf{Description} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{Description}} \\
 \midrule
 crop\_name & Categorical & One of 8 crop types \\
+\rowcolor{rowalt}
 season & Categorical & meher or belg \\
 region & Categorical & One of 6 Ethiopian regions \\
+\rowcolor{rowalt}
 year & Numerical & Harvest year (2015--2024) \\
 area\_hectares & Numerical & Cultivated area in hectares \\
+\rowcolor{rowalt}
 rainfall\_mm & Numerical & Annual rainfall in millimeters \\
 temperature\_celsius & Numerical & Average growing season temperature \\
+\rowcolor{rowalt}
 fertilizer\_amount\_kg & Numerical & Fertilizer applied in kilograms \\
 actual\_yield\_kg & Numerical (Target) & Actual harvested yield in kilograms \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Dataset Distribution Analysis}
@@ -620,17 +622,21 @@ Table~\ref{tab:feature-stats} presents the summary statistics for numerical feat
 \centering
 \caption{Training Data Feature Statistics}
 \label{tab:feature-stats}
-\begin{tabular}{lrrr}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{Xrrr}
 \toprule
-\textbf{Feature} & \textbf{Mean} & \textbf{Std Dev} & \textbf{Range} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Feature}} & \textcolor{white}{\textbf{Mean}} & \textcolor{white}{\textbf{Std Dev}} & \textcolor{white}{\textbf{Range}} \\
 \midrule
 Area (hectares) & 10.29 & 5.76 & 1.0 -- 20.0 \\
+\rowcolor{rowalt}
 Rainfall (mm) & 1048.21 & 430.01 & 120 -- 2000 \\
 Temperature (Celsius) & 22.70 & 7.06 & 8 -- 40 \\
+\rowcolor{rowalt}
 Fertilizer (kg) & 108.00 & 45.00 & 10 -- 200 \\
 Year & 2019.43 & 2.85 & 2015 -- 2024 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Data Preprocessing}
@@ -651,19 +657,24 @@ Table~\ref{tab:hyperparams} lists the hyperparameters used for the final model. 
 \centering
 \caption{Model Hyperparameters}
 \label{tab:hyperparams}
-\begin{tabular}{lc}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{Xc}
 \toprule
-\textbf{Hyperparameter} & \textbf{Value} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Hyperparameter}} & \textcolor{white}{\textbf{Value}} \\
 \midrule
 n\_estimators & 200 \\
+\rowcolor{rowalt}
 max\_depth & 5 \\
 learning\_rate & 0.1 \\
+\rowcolor{rowalt}
 subsample & 0.8 \\
 min\_samples\_split & 2 \\
+\rowcolor{rowalt}
 min\_samples\_leaf & 1 \\
 random\_state & 42 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Model Training}
@@ -694,7 +705,7 @@ The training pipeline, implemented in \texttt{ml-service/train.py}, supports two
   \draw[arrow] (eval.east) -- node[above] {No} (decision.west);
   \draw[arrow] (decision.south) |- (serialize.east);
   \draw[arrow] (decision.north) -- node[right] {Retry} (retrain.south);
-  \draw[arrow] (retrain.west) -| (preproc.east);
+  \draw[arrow] (retrain.west) -- ++(-1.5,0) |- (preproc.east);
 \end{tikzpicture}
 \caption{ML Training Pipeline}
 \label{fig:ml-pipeline}
@@ -703,7 +714,6 @@ The training pipeline, implemented in \texttt{ml-service/train.py}, supports two
 \section{System Design and Implementation}
 \subsection{System Architecture}
 The system follows a modular, three-tier architecture as illustrated in Figure~\ref{fig:architecture}. The Presentation Layer is built with Next.js 16 using the App Router, providing a responsive web interface with server-side rendering for performance and search engine optimization. The Application Logic Layer is implemented with AdonisJS 7, a Node.js MVC framework that provides ORM integration with Lucid, authentication middleware, request validation, and routing. The Data Persistence Layer uses PostgreSQL 15 with the Neon serverless provider for scalability. The Machine Learning Microservice is a separate FastAPI application that handles model loading and inference, communicating with the main application over HTTP.
-
 
 \begin{figure}[H]
 \centering
@@ -744,12 +754,14 @@ The system follows a modular, three-tier architecture as illustrated in Figure~\
   \draw[dashed,arrow] (ui.south) -- ++(0,-0.5) -| (adonis.north);
   \draw[arrow] (adonis.south) -- (controllers.north);
   \draw[arrow] (controllers.south) -- (auth.north);
-  
-  % Auth <-> DB arrows (Wrapping around left and right, with expanded turns)
-  \draw[arrow] (auth.south) -- ++(0,-0.5) -- ++(-1.5,0) |- (pgsql.west);
+
+  % RBAC -> PostgreSQL: exit left, enter left (same side, opposite direction)
+  \draw[arrow] (auth.west) -- ++(-1.5,0) |- (pgsql.west);
+
+  % PostgreSQL -> RBAC: exit right, enter right
   \draw[arrow] (pgsql.east) -- ++(1.5,0) |- (auth.east);
-  
-  % Controllers <-> FastAPI arrows (Shifted to prevent visual overlapping lines)
+
+  % Controllers <-> FastAPI
   \draw[arrow] ([yshift=0.15cm]controllers.east) -- ++(1.5,0) |- ([yshift=0.15cm]fastapi.west);
   \draw[arrow] ([yshift=-0.15cm]fastapi.west) -- ++(-1.5,0) |- ([yshift=-0.15cm]controllers.east);
 \end{tikzpicture}
@@ -770,24 +782,29 @@ Role-based access control is enforced through AdonisJS middleware that checks th
 \centering
 \caption{User Role Permissions Matrix}
 \label{tab:roles}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccccc}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{X*{7}{c}}
 \toprule
-\textbf{Module} & \textbf{Admin} & \textbf{Super.} & \textbf{Field Ag.} & \textbf{Gov} & \textbf{NGO} & \textbf{Trader} & \textbf{Res.} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Module}} & \textcolor{white}{\textbf{Admin}} & \textcolor{white}{\textbf{Super.}} & \textcolor{white}{\textbf{Field Ag.}} & \textcolor{white}{\textbf{Gov}} & \textcolor{white}{\textbf{NGO}} & \textcolor{white}{\textbf{Trader}} & \textcolor{white}{\textbf{Res.}} \\
 \midrule
 Farmer CRUD & $\checkmark$ & $\checkmark$ & $\checkmark$ & --- & --- & --- & --- \\
+\rowcolor{rowalt}
 Plot CRUD & $\checkmark$ & $\checkmark$ & $\checkmark$ & --- & --- & --- & --- \\
 Observations & $\checkmark$ & $\checkmark$ & $\checkmark$ & --- & --- & --- & --- \\
+\rowcolor{rowalt}
 Yield Summary & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
 Predictions & $\checkmark$ & $\checkmark$ & --- & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+\rowcolor{rowalt}
 Data Import & $\checkmark$ & $\checkmark$ & --- & --- & --- & --- & --- \\
 RAG Queries & $\checkmark$ & $\checkmark$ & --- & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+\rowcolor{rowalt}
 Audit Logs & $\checkmark$ & $\checkmark$ & --- & --- & --- & --- & --- \\
 Monetization & $\checkmark$ & --- & --- & --- & --- & --- & --- \\
+\rowcolor{rowalt}
 Admin Users & $\checkmark$ & --- & --- & --- & --- & --- & --- \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table}
 
 For example, the trader role can access yield summaries and market data but cannot access individual farmer details, while the field agent role can create and edit observations but cannot access the monetization module.
@@ -862,7 +879,7 @@ The synchronization flow is illustrated in Figure~\ref{fig:sync-flow}. When a de
   \draw[arrow] (batch) -- (server);
   \draw[arrow] (server.east) -- ++(1.5,0) |- (conflict.north);
   \draw[arrow] (conflict.south) -- (flag.north);
-  \draw[arrow] (conflict.east) -- ++(1.5,0) |- (apply.east);
+  \draw[arrow] (conflict.east) -- ++(1.5,0) |- (apply.west);
   \draw[arrow] (apply) -- (done);
 \end{tikzpicture}
 \caption{Offline Synchronization Flow}
@@ -921,18 +938,23 @@ The database consists of 15 tables organized into five domains as described in T
 \centering
 \caption{Database Schema Overview}
 \label{tab:database-schema}
-\begin{tabular}{lll}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{XXl}
 \toprule
-\textbf{Domain} & \textbf{Tables} & \textbf{Purpose} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Domain}} & \textcolor{white}{\textbf{Tables}} & \textcolor{white}{\textbf{Purpose}} \\
 \midrule
 User and Organization & users, app\_users, organizations & Authentication, roles, multi-tenancy \\
+\rowcolor{rowalt}
 Agricultural Data & farmers, plots, observations, crop\_types, attachments & Core agricultural records \\
 Data Management & import\_jobs, imported\_records & Legacy data import tracking \\
+\rowcolor{rowalt}
 Analytics & predictions & ML prediction storage \\
 System & devices, sync\_queue, audit\_logs & Device management, sync, governance \\
+\rowcolor{rowalt}
 Monetization & products, subscriptions, transactions, dataset\_permissions & Data commerce \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 The \texttt{users} table stores authentication credentials with email, hashed password, email verification status, and role assignment. The \texttt{organizations} table enables multi-tenancy with fields for name, type (cooperative, government, ngo, research, commercial), and contact information. The \texttt{farmers} table stores demographic information including name, region, zone, woreda, kebele, and contact details. The \texttt{plots} table records geospatial information with latitude and longitude coordinates, area in hectares, soil type, and crop assignment. The \texttt{observations} table captures field visit data including observation date, crop condition, pest reports, growth stage, estimated yield, and photos.
@@ -954,25 +976,33 @@ The system was built using the technologies summarized in Table~\ref{tab:tech-st
 \centering
 \caption{Technology Stack Summary}
 \label{tab:tech-stack}
-\begin{tabular}{lll}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{XXl}
 \toprule
-\textbf{Category} & \textbf{Technology} & \textbf{Purpose} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Category}} & \textcolor{white}{\textbf{Technology}} & \textcolor{white}{\textbf{Purpose}} \\
 \midrule
 Backend & AdonisJS v7.3 & MVC REST API \\
+\rowcolor{rowalt}
 Frontend & Next.js v16.2 & Web application \\
 Database & PostgreSQL 15 & Data persistence \\
+\rowcolor{rowalt}
 ML Service & FastAPI v0.111 & Inference API \\
 ML Library & scikit-learn v1.4 & Gradient Boosting \\
+\rowcolor{rowalt}
 Data & pandas + NumPy & Data processing \\
 LLMs & Claude / Cerebras / OpenRouter & RAG generation \\
+\rowcolor{rowalt}
 Payments & Chapa API & Monetization \\
 Maps & Leaflet.js + OpenStreetMap & Geospatial visualization \\
+\rowcolor{rowalt}
 Charts & Recharts & Data visualization \\
 UI & Radix UI + Tailwind CSS v4.2 & Interface components \\
+\rowcolor{rowalt}
 Language & TypeScript v6.0 & Type-safe code \\
 Build & pnpm + Vite + Japa & Dev toolchain \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Security Architecture}
@@ -983,6 +1013,7 @@ Additional security measures include bcrypt password hashing with cost factor 10
 % ==============================================================================
 % CHAPTER 4: RESULT AND DISCUSSION
 % ==============================================================================
+\clearpage
 \chapter{Result and Discussion}
 
 \section{Machine Learning Yield Prediction Performance}
@@ -993,18 +1024,23 @@ The final trained model, version 20260520\_131732, was evaluated on the held-out
 \centering
 \caption{Gradient Boosting Regressor Performance Metrics}
 \label{tab:model-metrics}
-\begin{tabular}{lc}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{Xc}
 \toprule
-\textbf{Metric} & \textbf{Value} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Metric}} & \textcolor{white}{\textbf{Value}} \\
 \midrule
 Mean Absolute Error (MAE) & 863.54~kg/ha \\
+\rowcolor{rowalt}
 Root Mean Square Error (RMSE) & 1539.96~kg/ha \\
 Training Records & 1,700 \\
+\rowcolor{rowalt}
 Test Records & 300 \\
 Feature Dimension & 7 \\
+\rowcolor{rowalt}
 Model Version & 20260520\_131732 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 The MAE of 863.54~kg/ha indicates that on average, predictions deviate from actual yield by approximately 864~kg/ha. In the context of Ethiopian crop yields, which range from approximately 3,500 to 85,000~kg depending on crop type and region, this represents an average error of approximately 5 to 10 percent for moderate-yielding crops. The RMSE of 1539.96~kg/ha is 1.78 times larger than the MAE, suggesting the presence of some larger prediction errors for outlier conditions.
@@ -1016,16 +1052,18 @@ Table~\ref{tab:model-versions} compares the two model versions trained during th
 \centering
 \caption{Model Version Comparison}
 \label{tab:model-versions}
-\begin{tabular}{lcc}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{Xcc}
 \toprule
-\textbf{Version} & \textbf{MAE (kg/ha)} & \textbf{RMSE (kg/ha)} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Version}} & \textcolor{white}{\textbf{MAE (kg/ha)}} & \textcolor{white}{\textbf{RMSE (kg/ha)}} \\
 \midrule
 20260512\_112525 (initial) & 2,424.24 & 3,408.94 \\
+\rowcolor{rowalt}
 20260520\_131732 (tuned) & 863.54 & 1,539.96 \\
-\midrule
 Improvement & 64.4\% reduction & 54.8\% reduction \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 The second version achieved a 64.4 percent reduction in MAE and a 54.8 percent reduction in RMSE compared to the initial version. The improvement was driven by two factors: improved data preprocessing including careful handling of categorical encoding, and hyperparameter tuning including adjustment of the number of estimators (150 to 200), maximum tree depth (3 to 5), and learning rate (0.05 to 0.1). These changes allowed the model to capture more complex patterns while maintaining generalization through subsample-based regularization.
@@ -1080,18 +1118,23 @@ The RAG pipeline processes natural language queries through three stages: query 
 \centering
 \caption{RAG Query Type Characteristics}
 \label{tab:rag-types}
-\begin{tabular}{llll}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{XXXl}
 \toprule
-\textbf{Type} & \textbf{Keywords} & \textbf{SQL Target} & \textbf{Example} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{Keywords}} & \textcolor{white}{\textbf{SQL Target}} & \textcolor{white}{\textbf{Example}} \\
 \midrule
 Yield & yield, production, harvest & observations & "Average maize yield Oromia 2023?" \\
+\rowcolor{rowalt}
 Farmer & farmer, grower, producer & farmers & "List farmers in Sidama region" \\
 Observation & observation, pest, disease & observations & "What pests reported last?" \\
+\rowcolor{rowalt}
 Prediction & predict, forecast, estimate & predictions + ML & "Predict 5ha teff yield" \\
 Trend & trend, change, increase, decrease & observations (grouped) & "Coffee yield trend 5 years?" \\
+\rowcolor{rowalt}
 Region & region, zone, area, woreda & multi-table & "Agricultural data for Tigray" \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Each query type uses a template-based SQL construction approach. The three-tier LLM provider fallback ensures system resilience: OpenRouter is the primary provider, Cerebras (llama3.1-70b) is the first fallback, and Anthropic Claude (claude-haiku-4-5-20251001) is the final fallback.
@@ -1118,18 +1161,23 @@ Table~\ref{tab:import-aliases} illustrates sample alias mappings.
 \centering
 \caption{Example Schema Detection Alias Mappings}
 \label{tab:import-aliases}
-\begin{tabular}{ll}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{XX}
 \toprule
-\textbf{Canonical Field} & \textbf{Recognized Aliases} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Canonical Field}} & \textcolor{white}{\textbf{Recognized Aliases}} \\
 \midrule
 farmer\_name & farmer\_name, name\_of\_farmer, grower\_name, farmerName, full\_name \\
+\rowcolor{rowalt}
 crop\_type & crop\_type, crop, crop\_name, type\_of\_crop, cropName \\
 area\_hectares & area\_hectares, area, field\_size, farm\_size, hectares \\
+\rowcolor{rowalt}
 rainfall\_mm & rainfall\_mm, rainfall, rain, precipitation \\
 fertilizer\_kg & fertilizer\_amount\_kg, fertilizer, fertiliser, nutrient\_kg \\
+\rowcolor{rowalt}
 yield\_kg & actual\_yield\_kg, yield, production, harvest, output \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \section{System Architecture Verification}
@@ -1157,10 +1205,11 @@ The model's MAE of 863.54~kg/ha, while meeting the project target, may not be su
 % ==============================================================================
 % CHAPTER 5: CONCLUSION AND RECOMMENDATIONS
 % ==============================================================================
+\clearpage
 \chapter{Conclusion and Recommendations}
 
 \section{Conclusion}
-This thesis successfully developed, implemented, and validated a comprehensive Integrated Agricultural Data System addressing the critical challenge of information asymmetry in Ethiopian agriculture. The five functional modules -- offline synchronization, legacy data import, machine learning yield prediction, RAG-based querying, and stakeholder-specific dashboards -- collectively constitute a meaningful technical contribution to precision agriculture in resource-constrained environments. The system's modular architecture, comprehensive API surface of 108 endpoints, 15-table database schema, and multi-layered security design provide a robust foundation for agricultural data management.
+This thesis successfully developed, implemented, and validated a comprehensive Agricultural Data Platform addressing the critical challenge of information asymmetry in Ethiopian agriculture. The five functional modules -- offline synchronization, legacy data import, machine learning yield prediction, RAG-based querying, and stakeholder-specific dashboards -- collectively constitute a meaningful technical contribution to precision agriculture in resource-constrained environments. The system's modular architecture, comprehensive API surface of 108 endpoints, 15-table database schema, and multi-layered security design provide a robust foundation for agricultural data management.
 
 Each of the five specific objectives was achieved. The offline-capable web application was built with a server-side synchronization queue supporting five status levels and timestamp-based conflict resolution. The legacy data import module successfully recognizes over 80 column header variations. The Gradient Boosting Regressor achieved an MAE of 863.54~kg/ha, meeting the target of below 900~kg/ha. The RAG system was implemented with three LLM providers and automatic fallback, supporting six query categories. Stakeholder-specific dashboards were created with role-based access control across seven user roles.
 
@@ -1193,7 +1242,7 @@ Longitudinal impact evaluation using quasi-experimental design could measure eff
 Data privacy and security are paramount. The system's RBAC and audit logging provide technical safeguards, but clear governance policies must define data access rules. Farmers should be informed about how their data is used and have the right to access, correct, and delete their data. AI predictions should be accompanied by confidence levels and limitations. Reliance on third-party LLM providers raises data sovereignty questions that should be evaluated. Free or subsidized access should be considered for smallholder cooperatives to ensure equitable access to the system's benefits.
 
 \section{Final Remarks}
-The Integrated Agricultural Data System demonstrates that it is possible to build comprehensive, accessible, and useful agricultural data platforms even in resource-constrained environments with limited internet connectivity. The project's modular architecture, 108-endpoint API, 15-table database schema, and focus on user accessibility through role-based interfaces and natural language querying ensure it can serve as a foundation for continued development and deployment. As Ethiopia pursues its Digital Ethiopia 2025 strategy, systems like IADS will play an increasingly important role in enabling data-driven decision-making, improving agricultural productivity, and enhancing food security for millions of smallholder farmers.
+The Agricultural Data Platform demonstrates that it is possible to build comprehensive, accessible, and useful agricultural data platforms even in resource-constrained environments with limited internet connectivity. The project's modular architecture, 108-endpoint API, 15-table database schema, and focus on user accessibility through role-based interfaces and natural language querying ensure it can serve as a foundation for continued development and deployment. As Ethiopia pursues its Digital Ethiopia 2025 strategy, systems like ADP will play an increasingly important role in enabling data-driven decision-making, improving agricultural productivity, and enhancing food security for millions of smallholder farmers.
 
 The source code, documentation, and deployment instructions are maintained in the project repository and are available for further development, adaptation, and deployment. We invite researchers, developers, and agricultural organizations to build upon this work and contribute to the ongoing digital transformation of Ethiopian agriculture.
 
@@ -1207,24 +1256,25 @@ The source code, documentation, and deployment instructions are maintained in th
 % APPENDICES
 % ==============================================================================
 \begin{appendix}
+\clearpage
 \chapter{API Reference}
 \label{app:api}
 
 \section{Authentication Endpoints}
 \begin{longtable}{lll}
 \caption{Authentication API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endfirsthead
 \caption*{Authentication API Endpoints (continued)} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 POST & /api/v1/auth/signup & Create a new user account \\
 POST & /api/v1/auth/login & Authenticate and receive access token \\
@@ -1242,13 +1292,13 @@ POST & /api/v1/auth/email/verify & Verify email with token \\
 \section{Dashboard Endpoints}
 \begin{longtable}{lll}
 \caption{Dashboard API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 GET & /api/v1/dashboard & Unified overview (role-filtered) \\
 GET & /api/v1/dashboard/farmer-counts & Farmer counts per organization \\
@@ -1260,13 +1310,13 @@ GET & /api/v1/dashboard/health & API health check \\
 \section{Agricultural Data Endpoints}
 \begin{longtable}{lll}
 \caption{Agricultural Data API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 GET & /api/v1/farmers & List farmers (paginated) \\
 POST & /api/v1/farmers & Create farmer \\
@@ -1296,13 +1346,13 @@ PATCH & /api/v1/observations/:id/harvest & Record harvest data \\
 \section{Machine Learning Endpoints}
 \begin{longtable}{lll}
 \caption{ML Prediction API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 GET & /api/v1/predictions/ml-health & ML service health status \\
 POST & /api/v1/predictions & Submit single prediction \\
@@ -1316,13 +1366,13 @@ POST & /predict/yield/batch & (ML service) Batch prediction \\
 \section{Data Import Endpoints}
 \begin{longtable}{lll}
 \caption{Data Import API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 POST & /api/v1/imports & Upload CSV/Excel file \\
 GET & /api/v1/imports & List import jobs \\
@@ -1334,13 +1384,13 @@ GET & /api/v1/imports/:id/records & Get imported records \\
 \section{RAG Query and Sync Endpoints}
 \begin{longtable}{lll}
 \caption{RAG and Sync API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 GET & /api/v1/rag/status & RAG system health \\
 POST & /api/v1/rag/query & Submit natural language query \\
@@ -1357,13 +1407,13 @@ DELETE & /api/v1/sync-queue/:id & Delete sync entry \\
 \section{Administration Endpoints}
 \begin{longtable}{lll}
 \caption{Administration API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 GET & /api/v1/app-users & List application users \\
 POST & /api/v1/app-users & Create application user \\
@@ -1396,13 +1446,13 @@ DELETE & /api/v1/devices/:id & Delete device \\
 \section{Audit and Monetization Endpoints}
 \begin{longtable}{lll}
 \caption{Audit and Monetization API Endpoints} \\
-\toprule
+
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 GET & /api/v1/audit-logs & List audit logs \\
 POST & /api/v1/audit-logs & Create audit log entry \\
@@ -1419,6 +1469,7 @@ GET & /api/v1/monetization/transactions & List transactions \\
 POST & /api/v1/monetization/chapa/webhook & Chapa payment webhook \\
 \end{longtable}
 
+\clearpage
 \chapter{Deployment Configuration}
 \label{app:deployment}
 
@@ -1427,13 +1478,13 @@ The following environment variables must be configured. Sensitive values should 
 
 \begin{longtable}{ll}
 \caption{Required Environment Variables} \\
-\toprule
+
 \textbf{Variable} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 DATABASE\_URL & PostgreSQL connection string \\
 ML\_SERVICE\_URL & FastAPI microservice URL \\
@@ -1469,19 +1520,20 @@ python -m ml_service
 python -m pytest ml-service/tests/
 \end{lstlisting}
 
+\clearpage
 \chapter{Sample Training Data}
 \label{app:data}
 
 \section{Training Data Format}
 \begin{longtable}{ll}
 \caption{Training Data Column Descriptions} \\
-\toprule
+
 \textbf{Column} & \textbf{Description} \\
-\midrule
+
 \endhead
-\midrule
+
 \endfoot
-\bottomrule
+
 \endlastfoot
 crop\_name & Crop type (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) \\
 season & Growing season (meher, belg) \\
@@ -1499,22 +1551,29 @@ actual\_yield\_kg & Actual harvested yield in kilograms (target) \\
 \centering
 \caption{Sample Training Records}
 \label{tab:sample-records}
-\begin{tabular}{llllrrrrr}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{*{4}{>{\raggedright\arraybackslash}X}*{5}{>{\raggedleft\arraybackslash}X}}
 \toprule
-\textbf{Crop} & \textbf{Season} & \textbf{Region} & \textbf{Year} & \textbf{Area} & \textbf{Rain} & \textbf{Temp} & \textbf{Fert} & \textbf{Yield} \\
+\rowcolor{headerblue}
+\textcolor{white}{\textbf{Crop}} & \textcolor{white}{\textbf{Season}} & \textcolor{white}{\textbf{Region}} & \textcolor{white}{\textbf{Year}} & \textcolor{white}{\textbf{Area}} & \textcolor{white}{\textbf{Rain}} & \textcolor{white}{\textbf{Temp}} & \textcolor{white}{\textbf{Fert}} & \textcolor{white}{\textbf{Yield}} \\
 \midrule
 maize & meher & Afar & 2019 & 5.28 & 509.3 & 12.6 & 148.1 & 14242.5 \\
+\rowcolor{rowalt}
 teff & meher & Oromia & 2018 & 5.04 & 1203.0 & 24.0 & 143.2 & 9599.5 \\
 sesame & meher & Tigray & 2024 & 5.92 & 1604.0 & 29.0 & 31.9 & 5454.9 \\
+\rowcolor{rowalt}
 sorghum & belg & Oromia & 2016 & 7.91 & 838.5 & 18.6 & 52.9 & 17479.3 \\
 teff & belg & Sidama & 2016 & 19.48 & 867.8 & 23.8 & 165.9 & 30890.9 \\
+\rowcolor{rowalt}
 sorghum & meher & Oromia & 2018 & 15.57 & 1777.8 & 31.4 & 173.3 & 35483.0 \\
 sesame & belg & Tigray & 2020 & 3.67 & 832.9 & 26.8 & 140.4 & 3581.1 \\
+\rowcolor{rowalt}
 wheat & meher & Amhara & 2022 & 7.90 & 1784.3 & 26.0 & 111.4 & 22795.9 \\
 coffee & meher & Amhara & 2015 & 16.20 & 901.7 & 11.7 & 182.6 & 16957.4 \\
+\rowcolor{rowalt}
 sorghum & belg & Tigray & 2022 & 3.29 & 509.4 & 28.6 & 107.8 & 6115.2 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{itemize}

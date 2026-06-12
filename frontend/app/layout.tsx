@@ -9,7 +9,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Smart Process - Farm Management Dashboard',
+  title: 'Agricultural Data Platform - Farm Management Dashboard',
   description: 'Comprehensive agricultural management and monitoring system for farmers, organizations, and field agents',
   keywords: 'agriculture, farm management, monitoring, observations, dashboard',
   generator: 'v0.app',

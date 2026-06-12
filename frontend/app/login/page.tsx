@@ -41,7 +41,7 @@ export default function LoginPage() {
         <div className="bg-card rounded-lg shadow-lg border border-border p-8">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Smart Process</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Agricultural Data Platform</h1>
             <p className="text-muted-foreground">Farm Management System</p>
           </div>
 
