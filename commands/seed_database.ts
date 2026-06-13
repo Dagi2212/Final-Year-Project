@@ -89,11 +89,11 @@ export default class SeedDatabase extends BaseCommand {
   private async seedOrganizations(): Promise<string[]> {
     this.logger.info('[2/18] Seeding organizations...')
     const seeds = [
-      { name: 'Selam Cooperative Union', type: 'cooperative', region: 'Tigray', phone: '+251-911-001-001' },
-      { name: 'Ethiopian Agricultural Transformation Agency', type: 'government', region: 'Addis Ababa', phone: '+251-111-002-002' },
-      { name: 'Farm Africa Ethiopia', type: 'ngo', region: 'Oromia', phone: '+251-911-003-003' },
-      { name: 'Meru Agro Plc', type: 'private', region: 'Amhara', phone: '+251-922-004-004' },
-      { name: 'Sidama Coffee Farmers Cooperative', type: 'cooperative', region: 'Sidama', phone: '+251-933-005-005' },
+      { name: 'Selam Cooperative Union', type: 'cooperative', region: 'Tigray', contact_phone: '+251-911-001-001' },
+      { name: 'Ethiopian Agricultural Transformation Agency', type: 'government', region: 'Addis Ababa', contact_phone: '+251-111-002-002' },
+      { name: 'Farm Africa Ethiopia', type: 'ngo', region: 'Oromia', contact_phone: '+251-911-003-003' },
+      { name: 'Meru Agro Plc', type: 'private', region: 'Amhara', contact_phone: '+251-922-004-004' },
+      { name: 'Sidama Coffee Farmers Cooperative', type: 'cooperative', region: 'Sidama', contact_phone: '+251-933-005-005' },
     ]
     return this.seedUuidTable('organizations', seeds.map(s => ({ ...s, id: randomUUID() })), 'name')
   }
@@ -115,11 +115,11 @@ export default class SeedDatabase extends BaseCommand {
     }
 
     const additional = [
-      { name: 'Coffee', localName: 'ቡና', category: 'cash_crop', description: 'Arabica coffee — Ethiopia\'s flagship export' },
-      { name: 'Sesame', localName: 'ሰሊጥ', category: 'oilseed', description: 'High-value oilseed grown in Humera, Gondar' },
-      { name: 'Khat', localName: 'ጫት', category: 'cash_crop', description: 'Fresh leaf stimulant crop' },
-      { name: 'Haricot Bean', localName: 'ባቄላ', category: 'pulse', description: 'Common dry bean for local consumption and export' },
-      { name: 'Enset', localName: 'እንሰት', category: 'staple', description: 'False banana — traditional staple in SNNPR' },
+      { name: 'Coffee', local_name: 'ቡና', category: 'cash_crop', description: 'Arabica coffee — Ethiopia\'s flagship export' },
+      { name: 'Sesame', local_name: 'ሰሊጥ', category: 'oilseed', description: 'High-value oilseed grown in Humera, Gondar' },
+      { name: 'Khat', local_name: 'ጫት', category: 'cash_crop', description: 'Fresh leaf stimulant crop' },
+      { name: 'Haricot Bean', local_name: 'ባቄላ', category: 'pulse', description: 'Common dry bean for local consumption and export' },
+      { name: 'Enset', local_name: 'እንሰት', category: 'staple', description: 'False banana — traditional staple in SNNPR' },
     ]
 
     const existingNames = new Set(existing.map((r: any) => r.name.toLowerCase()))
@@ -142,11 +142,11 @@ export default class SeedDatabase extends BaseCommand {
   private async seedProducts(): Promise<string[]> {
     this.logger.info('[4/18] Seeding products...')
     const seeds = [
-      { name: 'Yield Dataset Export', description: 'Export yield prediction data as CSV/Excel', productType: 'dataset_export', priceUsd: 49.99, isActive: true },
-      { name: 'Seasonal Analytics Report', description: 'Detailed analytics report for a growing season', productType: 'analytics_report', priceUsd: 99.99, isActive: true },
-      { name: 'Pro Subscription — 6 months', description: 'Full platform access for 6 months', productType: 'subscription', priceUsd: 199.99, isActive: true },
-      { name: 'Pay-per-Query (RAG)', description: 'One-time AI query against the knowledge base', productType: 'pay_per_query', priceUsd: 4.99, isActive: true },
-      { name: 'Enterprise Dataset Access', description: 'Full access to all historical yield datasets', productType: 'dataset_export', priceUsd: 299.99, isActive: true },
+      { name: 'Yield Dataset Export', description: 'Export yield prediction data as CSV/Excel', product_type: 'dataset_export', price_usd: 49.99, is_active: true },
+      { name: 'Seasonal Analytics Report', description: 'Detailed analytics report for a growing season', product_type: 'analytics_report', price_usd: 99.99, is_active: true },
+      { name: 'Pro Subscription — 6 months', description: 'Full platform access for 6 months', product_type: 'subscription', price_usd: 199.99, is_active: true },
+      { name: 'Pay-per-Query (RAG)', description: 'One-time AI query against the knowledge base', product_type: 'pay_per_query', price_usd: 4.99, is_active: true },
+      { name: 'Enterprise Dataset Access', description: 'Full access to all historical yield datasets', product_type: 'dataset_export', price_usd: 299.99, is_active: true },
     ]
     return this.seedUuidTable('products', seeds.map(s => ({ id: randomUUID(), ...s })), 'name')
   }
@@ -207,8 +207,8 @@ export default class SeedDatabase extends BaseCommand {
     const seeds: { userId: string; deviceName: string; deviceUuid: string; lastSyncAt: any }[] = []
     // Assign ~2 devices per app_user, up to ~14 total
     for (let i = 0; i < Math.min(appUserIds.length, 7); i++) {
-      seeds.push({ userId: appUserIds[i], deviceName: brands[i % brands.length], deviceUuid: randomUUID(), lastSyncAt: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 72)} hours'`) })
-      seeds.push({ userId: appUserIds[i], deviceName: brands[(i + 1) % brands.length], deviceUuid: randomUUID(), lastSyncAt: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 168)} hours'`) })
+      seeds.push({ user_id: appUserIds[i], device_name: brands[i % brands.length], device_uuid: randomUUID(), last_sync_at: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 72)} hours'`) })
+      seeds.push({ user_id: appUserIds[i], device_name: brands[(i + 1) % brands.length], device_uuid: randomUUID(), last_sync_at: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 168)} hours'`) })
     }
     return this.seedUuidTable('devices', seeds.map(s => ({ id: randomUUID(), ...s })), 'device_uuid')
   }
