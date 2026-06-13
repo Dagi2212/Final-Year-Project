@@ -218,7 +218,6 @@ export default class SeedDatabase extends BaseCommand {
   // ────────────────────────────────────────────────────────────────
   private async seedFarmers(orgIds: string[], appUserIds: string[], deviceIds: string[]): Promise<string[]> {
     this.logger.info('[7/18] Seeding farmers...')
-    const regions = ['Tigray', 'Amhara', 'Oromia', 'SNNPR', 'Sidama', 'Somali']
     const seeds = [
       { fullName: 'Abebe Kebede', phone: '+251-944-010-001', region: 'Tigray', zone: 'Mekelle', woreda: 'Enderta', hh: 6, orgIdx: 0, notes: 'Experienced teff and wheat farmer' },
       { fullName: 'Lemlem Hailu', phone: '+251-944-010-002', region: 'Tigray', zone: 'Adwa', woreda: 'Adwa', hh: 4, orgIdx: 0, notes: 'Female-headed household, grows sorghum' },
@@ -265,7 +264,6 @@ export default class SeedDatabase extends BaseCommand {
   // ────────────────────────────────────────────────────────────────
   private async seedPlots(farmerIds: string[], appUserIds: string[], deviceIds: string[]): Promise<string[]> {
     this.logger.info('[8/18] Seeding plots...')
-    const soilTypes = ['Vertisol', 'Nitosol', 'Cambisol', 'Luvisol', 'Andosol']
     const seeds: { farmerIdx: number; name: string; areaSqm: number; areaLocal: string; lat: number; lng: number; alt: number; soil: string; irrig: boolean }[] = [
       { farmerIdx: 0, name: 'Kuda Field', areaSqm: 20000, areaLocal: '2 hectares', lat: 13.4967, lng: 39.4667, alt: 2100, soil: 'Vertisol', irrig: false },
       { farmerIdx: 0, name: 'May Hibey Plot', areaSqm: 15000, areaLocal: '1.5 hectares', lat: 13.4980, lng: 39.4680, alt: 2080, soil: 'Vertisol', irrig: false },
@@ -316,8 +314,6 @@ export default class SeedDatabase extends BaseCommand {
   // ────────────────────────────────────────────────────────────────
   private async seedObservations(plotIds: string[], cropTypeIds: string[], appUserIds: string[], deviceIds: string[]): Promise<string[]> {
     this.logger.info('[9/18] Seeding observations...')
-    const growthStages = ['flowering', 'grain_filling', 'maturity', 'harvested', 'vegetative']
-    const healthStatuses = ['good', 'fair', 'poor']
     const seeds: { plotIdx: number; cropIdx: number; planting: string; expected: number; actual: number | null; stage: string; health: string; pests: string | null; fertilizer: boolean; notes: string }[] = [
       { plotIdx: 0, cropIdx: 0, planting: '2025-06-15', expected: 4500, actual: 4200, stage: 'harvested', health: 'good', pests: null, fertilizer: true, notes: 'Good teff yield despite low rainfall' },
       { plotIdx: 1, cropIdx: 0, planting: '2025-06-20', expected: 4000, actual: 3800, stage: 'harvested', health: 'fair', pests: 'Minor armyworm', fertilizer: true, notes: 'Slight pest pressure in early stage' },
