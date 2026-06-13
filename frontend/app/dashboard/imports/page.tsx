@@ -102,7 +102,7 @@ export default function ImportsPage() {
 
       const token = apiClient.getToken();
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333'}/api/v1/imports`,
+        `${process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production' ? 'https://iads-api.onrender.com' : 'http://localhost:3333')}/api/v1/imports`,
         {
           method: 'POST',
           headers: token ? { Authorization: `Bearer ${token}` } : {},

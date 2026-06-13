@@ -1,4 +1,6 @@
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333') + '/api/v1';
+const IS_VERCEL_PROD = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+const DEFAULT_API_URL = IS_VERCEL_PROD ? 'https://iads-api.onrender.com' : 'http://localhost:3333'
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL) + '/api/v1';
 
 export interface ApiResponse<T> {
   data?: T;
