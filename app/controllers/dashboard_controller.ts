@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
+import AppUser from '#models/app_user'
 import { ROLES } from '#services/role_constants'
 
 export default class DashboardController {
@@ -10,7 +11,11 @@ export default class DashboardController {
    */
   async index({ auth, response }: HttpContext) {
     const user = auth.user as any
-    const role: string = user?.role ?? ''
+    let role: string = user?.role ?? ''
+    if (!role && user?.email) {
+      const appUser = await AppUser.query().where('email', user.email).first()
+      role = appUser?.role ?? 'researcher'
+    }
 
     const [farmerCounts, yieldSummary, syncStatus, summary, recentLogs] = await Promise.all([
       db.from('dashboard_farmer_counts').select('*').orderBy('farmer_count', 'desc'),

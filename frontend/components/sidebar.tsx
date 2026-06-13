@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { hasRoleAccess } from '@/lib/role-permissions';
 import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
@@ -19,7 +20,6 @@ import {
   Sparkles,
   TrendingUp,
   FileSpreadsheet,
-  CreditCard,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -46,6 +46,10 @@ export function Sidebar() {
   const pathname = usePathname();
   const { logout, user } = useAuth();
 
+  const visibleItems = navItems.filter((item) =>
+    user ? hasRoleAccess(user.role, item.href) : false
+  );
+
   return (
     <aside className="w-64 bg-card border-r border-border h-screen flex flex-col">
       {/* Header */}
@@ -60,7 +64,8 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-4 space-y-4">
         {NAV_GROUPS.map((group) => {
-          const items = navItems.filter((i) => i.group === group);
+          const items = visibleItems.filter((i) => i.group === group);
+          if (items.length === 0) return null;
           return (
             <div key={group}>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-2 mb-1">{group}</p>

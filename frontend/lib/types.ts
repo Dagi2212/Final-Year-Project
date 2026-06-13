@@ -218,6 +218,19 @@ export interface DashboardRecentLog {
 }
 
 
+export interface DashboardImportStats {
+  totalJobs: number;
+  completedJobs: number;
+  failedJobs: number;
+  totalImportedRows: number;
+}
+
+export interface DashboardPredictionStats {
+  total: number;
+  completed: number;
+  avgPredictedYieldKg: number | null;
+}
+
 export interface DashboardIndexResponse {
   summary: {
     totalFarmers: number;
@@ -226,10 +239,12 @@ export interface DashboardIndexResponse {
     totalActualYieldKg: number;
     pendingSyncs: number;
   };
-  farmerCounts: DashboardFarmerCount[];
+  farmerCounts?: DashboardFarmerCount[];
   yieldSummary: DashboardYieldSummary[];
-  syncStatus: DashboardSyncStatus[];
-  recentLogs: DashboardRecentLog[];
+  syncStatus?: DashboardSyncStatus[];
+  recentLogs?: DashboardRecentLog[];
+  importStats?: DashboardImportStats;
+  predictionStats?: DashboardPredictionStats;
 }
 
 

@@ -330,21 +330,27 @@ export default class SeedDatabase extends BaseCommand {
   // ────────────────────────────────────────────────────────────────
   private async seedObservations(plotIds: string[], cropTypeIds: string[], appUserIds: string[], deviceIds: string[]): Promise<string[]> {
     this.logger.info('[9/18] Seeding observations...')
+    const existing = await db.from('observations').select('id').first()
+    if (existing) {
+      this.logger.info(`  · observations already seeded — skipping`)
+      const all = await db.from('observations').select('id')
+      return all.map((r: any) => r.id)
+    }
     const seeds: { plotIdx: number; cropIdx: number; planting: string; expected: number; actual: number | null; stage: string; health: string; pests: string | null; fertilizer: boolean; notes: string }[] = [
-      { plotIdx: 0, cropIdx: 0, planting: '2025-06-15', expected: 4500, actual: 4200, stage: 'harvested', health: 'good', pests: null, fertilizer: true, notes: 'Good teff yield despite low rainfall' },
-      { plotIdx: 1, cropIdx: 0, planting: '2025-06-20', expected: 4000, actual: 3800, stage: 'harvested', health: 'fair', pests: 'Minor armyworm', fertilizer: true, notes: 'Slight pest pressure in early stage' },
-      { plotIdx: 2, cropIdx: 3, planting: '2025-07-01', expected: 5000, actual: 4700, stage: 'grain_filling', health: 'good', pests: null, fertilizer: true, notes: 'Good rainfall this season' },
-      { plotIdx: 3, cropIdx: 2, planting: '2025-05-01', expected: 8000, actual: 7600, stage: 'harvested', health: 'good', pests: 'Stem borer (treated)', fertilizer: true, notes: 'Irrigation supplemented rain' },
-      { plotIdx: 4, cropIdx: 4, planting: '2025-06-01', expected: 3500, actual: 3200, stage: 'flowering', health: 'good', pests: null, fertilizer: false, notes: 'Organic farming, no chemicals' },
-      { plotIdx: 5, cropIdx: 1, planting: '2025-07-15', expected: 6000, actual: 5800, stage: 'maturity', health: 'good', pests: 'Aphids (controlled)', fertilizer: true, notes: 'Arsi produces best wheat in country' },
-      { plotIdx: 6, cropIdx: 5, planting: '2024-04-01', expected: 2500, actual: 2800, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Coffee cherry harvest above target' },
-      { plotIdx: 7, cropIdx: 9, planting: '2024-03-01', expected: 18000, actual: 16500, stage: 'harvested', health: 'fair', pests: 'Mealybug (localized)', fertilizer: false, notes: 'Enset is drought resistant' },
-      { plotIdx: 8, cropIdx: 8, planting: '2025-02-01', expected: 12000, actual: null, stage: 'vegetative', health: 'good', pests: null, fertilizer: false, notes: 'New planting, still growing' },
-      { plotIdx: 9, cropIdx: 5, planting: '2024-05-01', expected: 3000, actual: 2700, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Organic shade-grown coffee' },
-      { plotIdx: 10, cropIdx: 0, planting: '2025-07-01', expected: 3800, actual: 3500, stage: 'grain_filling', health: 'fair', pests: 'Grasshoppers (sprayed)', fertilizer: true, notes: 'Dryland farming with irrigation' },
-      { plotIdx: 11, cropIdx: 6, planting: '2025-08-01', expected: 1500, actual: null, stage: 'flowering', health: 'good', pests: null, fertilizer: true, notes: 'First sesame trial in Shinile' },
-      { plotIdx: 12, cropIdx: 4, planting: '2025-05-15', expected: 4000, actual: 3800, stage: 'maturity', health: 'good', pests: null, fertilizer: false, notes: 'Highland barley for local beer' },
-      { plotIdx: 13, cropIdx: 5, planting: '2024-06-01', expected: 2200, actual: 2400, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Coffee intercropped with enset' },
+      { plotIdx: 0, cropIdx: 0, planting: '2026-06-10', expected: 4800, actual: null, stage: 'flowering', health: 'good', pests: null, fertilizer: true, notes: 'Promising teff crop this season' },
+      { plotIdx: 1, cropIdx: 0, planting: '2026-06-15', expected: 4200, actual: null, stage: 'vegetative', health: 'good', pests: 'Minor armyworm (treated)', fertilizer: true, notes: 'Early pest treatment applied' },
+      { plotIdx: 2, cropIdx: 3, planting: '2026-05-20', expected: 5500, actual: null, stage: 'grain_filling', health: 'good', pests: null, fertilizer: true, notes: 'Good rainfall this season' },
+      { plotIdx: 3, cropIdx: 2, planting: '2026-04-15', expected: 8500, actual: 8200, stage: 'harvested', health: 'good', pests: 'Stem borer (treated)', fertilizer: true, notes: 'Irrigation supplemented rain, excellent yield' },
+      { plotIdx: 4, cropIdx: 4, planting: '2026-05-01', expected: 3800, actual: 3600, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Organic farming, good results' },
+      { plotIdx: 5, cropIdx: 1, planting: '2026-03-10', expected: 6500, actual: 6200, stage: 'harvested', health: 'good', pests: 'Aphids (controlled)', fertilizer: true, notes: 'Arsi produces best wheat in country' },
+      { plotIdx: 6, cropIdx: 5, planting: '2026-02-20', expected: 2800, actual: 3000, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Coffee cherry harvest above target' },
+      { plotIdx: 7, cropIdx: 9, planting: '2025-03-01', expected: 18000, actual: 16500, stage: 'harvested', health: 'fair', pests: 'Mealybug (localized)', fertilizer: false, notes: 'Enset is drought resistant' },
+      { plotIdx: 8, cropIdx: 8, planting: '2025-02-01', expected: 12000, actual: 11000, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Good enset yield' },
+      { plotIdx: 9, cropIdx: 5, planting: '2025-05-01', expected: 3200, actual: 2900, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Organic shade-grown coffee' },
+      { plotIdx: 10, cropIdx: 0, planting: '2026-05-20', expected: 4000, actual: null, stage: 'grain_filling', health: 'fair', pests: 'Grasshoppers (sprayed)', fertilizer: true, notes: 'Dryland farming with irrigation support' },
+      { plotIdx: 11, cropIdx: 6, planting: '2026-06-01', expected: 1800, actual: null, stage: 'seedling', health: 'good', pests: null, fertilizer: true, notes: 'Sesame trial showing promise' },
+      { plotIdx: 12, cropIdx: 4, planting: '2025-05-15', expected: 4200, actual: 3900, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Highland barley for local beer' },
+      { plotIdx: 13, cropIdx: 5, planting: '2025-06-01', expected: 2400, actual: 2500, stage: 'harvested', health: 'good', pests: null, fertilizer: false, notes: 'Coffee intercropped with enset' },
     ]
     const ids: string[] = []
     for (let i = 0; i < seeds.length; i++) {
@@ -363,7 +369,7 @@ export default class SeedDatabase extends BaseCommand {
         pest_issues: s.pests,
         fertilizer_used: s.fertilizer,
         notes: s.notes,
-        metadata: db.raw(`'{"source":"mobile_app","season":"${['meher','belg','meher','meher','belg','meher','meher','meher','belg','meher','meher','meher','meher','meher'][i]}"}'::jsonb`),
+        metadata: db.raw(`'{"source":"mobile_app","season":"${['meher','meher','meher','belg','belg','belg','belg','belg','belg','belg','meher','meher','belg','meher'][i]}"}'::jsonb`),
         created_by: appUserIds[i % appUserIds.length],
         device_id: deviceIds[i % deviceIds.length],
         version: 1,
