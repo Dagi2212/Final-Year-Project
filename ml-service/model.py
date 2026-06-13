@@ -16,6 +16,25 @@ from typing import Any
 import numpy as np
 
 # ---------------------------------------------------------------------------
+# Pickle compatibility with newer scikit-learn (≥1.9)
+# Older sklearn pickles reference the bare Cython extension module "_loss"
+# whose classes have __module__ = "_loss" instead of "sklearn._loss._loss".
+# ---------------------------------------------------------------------------
+
+_SKLEARN_MODULE_REMAP = {
+    "_loss": "sklearn._loss._loss",
+}
+
+
+class _CompatibilityUnpickler(pickle.Unpickler):
+    """Unpickler that remaps old sklearn internal module paths."""
+
+    def find_class(self, module: str, name: str) -> Any:
+        module = _SKLEARN_MODULE_REMAP.get(module, module)
+        return super().find_class(module, name)
+
+
+# ---------------------------------------------------------------------------
 # Feature definitions
 # ---------------------------------------------------------------------------
 
@@ -74,7 +93,7 @@ def load_model_version(version: str) -> tuple[Any, str, dict[str, Any]]:
     FEATURE_COLUMNS = meta.get("feature_columns", [])
 
     with open(model_dir / "model.pkl", "rb") as f:
-        model = pickle.load(f)
+        model = _CompatibilityUnpickler(f).load()
 
     return model, version, meta
 
