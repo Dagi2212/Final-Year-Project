@@ -204,13 +204,29 @@ export default class SeedDatabase extends BaseCommand {
   private async seedDevices(appUserIds: string[]): Promise<string[]> {
     this.logger.info('[6/18] Seeding devices...')
     const brands = ['Samsung Galaxy Tab A8', 'Samsung Galaxy A14', 'Tecno Spark 10', 'Infinix Note 30', 'Huawei Y9']
-    const seeds: { userId: string; deviceName: string; deviceUuid: string; lastSyncAt: any }[] = []
-    // Assign ~2 devices per app_user, up to ~14 total
+    const ids: string[] = []
     for (let i = 0; i < Math.min(appUserIds.length, 7); i++) {
-      seeds.push({ user_id: appUserIds[i], device_name: brands[i % brands.length], device_uuid: randomUUID(), last_sync_at: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 72)} hours'`) })
-      seeds.push({ user_id: appUserIds[i], device_name: brands[(i + 1) % brands.length], device_uuid: randomUUID(), last_sync_at: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 168)} hours'`) })
+      for (let j = 0; j < 2; j++) {
+        const id = randomUUID()
+        const deviceUuid = randomUUID()
+        const existing = await db.from('devices').where('device_uuid', deviceUuid).first()
+        if (existing) {
+          ids.push(existing.id)
+          continue
+        }
+        await db.table('devices').insert({
+          id,
+          user_id: appUserIds[i],
+          device_name: brands[(i + j) % brands.length],
+          device_uuid: deviceUuid,
+          last_sync_at: db.raw(`NOW() - INTERVAL '${Math.floor(Math.random() * 168)} hours'`),
+          created_at: db.raw('NOW()'),
+        })
+        ids.push(id)
+      }
     }
-    return this.seedUuidTable('devices', seeds.map(s => ({ id: randomUUID(), ...s })), 'device_uuid')
+    this.logger.info(`  · ${ids.length} devices created`)
+    return ids
   }
 
   // ────────────────────────────────────────────────────────────────

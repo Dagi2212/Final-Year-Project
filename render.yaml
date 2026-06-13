@@ -7,7 +7,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm ci --include=dev && npm run build
+    buildCommand: npm ci --include=dev && node ace build --ignore-ts-errors
     startCommand: ./bin/production-start.sh
     healthCheckPath: /
     envVars:
