@@ -18,7 +18,7 @@ const corsConfig = defineConfig({
    * In development, allow every origin to simplify local front/backend setup.
    * In production, use FRONTEND_URL env var so the frontend can call the API.
    */
-  origin: app.inDev ? true : [env.get('FRONTEND_URL', '')].filter(Boolean),
+  origin: app.inDev ? true : [env.get('FRONTEND_URL', ''), 'https://agri-data-iota.vercel.app'].filter(Boolean),
 
   /**
    * HTTP methods accepted for cross-origin requests.
