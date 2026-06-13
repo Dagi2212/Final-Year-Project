@@ -56,7 +56,7 @@
 \newcommand{\term}[1]{\textit{#1}}
 
 % ── Document info ─────────────────────────────────────────────────────────────
-\title{Integrated Agricultural Data System}
+\title{Integrated agricultural product data System}
 \author{%
   Kidan Dibekulu \quad Kaleab Kebede \\
   Kalkidan Yishak \quad Dagmawi Shewaye
@@ -76,7 +76,7 @@
 {\large College of Engineering}\\[0.2cm]
 {\large Department of Electrical and Computer Engineering}\\[1.5cm]
 
-{\Huge\bfseries Integrated Agricultural Data System}\\[1.5cm]
+{\Huge\bfseries Integrated agricultural product data System}\\[1.5cm]
 
 {\large Final Year Project Report}\\[1cm]
 
@@ -105,7 +105,7 @@ Dagmawi Shewaye & ETS0425/14 \\
 \chapter*{Declaration}
 \addcontentsline{toc}{chapter}{Declaration}
 
-We, the undersigned, hereby declare that the project work entitled ``Integrated Agricultural Data System'' is our original work and has been carried out in partial fulfillment of the requirements for the Bachelor of Science Degree in Computer Engineering at Addis Ababa Science and Technology University.
+We, the undersigned, hereby declare that the project work entitled ``Integrated agricultural product data System'' is our original work and has been carried out in partial fulfillment of the requirements for the Bachelor of Science Degree in Computer Engineering at Addis Ababa Science and Technology University.
 
 This project has not been submitted, in whole or in part, to any other institution or university for the award of any academic degree or diploma. All sources of information used during the course of this research have been duly acknowledged and referenced.
 
@@ -174,7 +174,7 @@ DB     & Database \\
 FAO    & Food and Agriculture Organization \\
 GB     & Gradient Boosting \\
 HTTP   & Hypertext Transfer Protocol \\
-IADS   & Integrated Agricultural Data System \\
+IADS   & Integrated agricultural product data System \\
 JWT    & JSON Web Token \\
 LLM    & Large Language Model \\
 MAE    & Mean Absolute Error \\
@@ -201,13 +201,13 @@ XLSX   & Microsoft Excel Open XML Spreadsheet \\
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-Agricultural data collection and management in Ethiopia face significant challenges due to unreliable internet connectivity, fragmented record-keeping systems, and lack of access to predictive analytics. Traditional methods relying on paper-based surveys are time-consuming, error-prone, and inaccessible in many rural and under-resourced areas. This study presents the development of an Integrated Agricultural Data System, an offline-capable geospatial crop monitoring platform that combines offline-first architecture, AI-powered analytics, and stakeholder-specific dashboards to address these challenges.
+agricultural product data collection and management in Ethiopia face significant challenges due to unreliable internet connectivity, fragmented record-keeping systems, and lack of access to predictive analytics. Traditional methods relying on paper-based surveys are time-consuming, error-prone, and inaccessible in many rural and under-resourced areas. This study presents the development of an Integrated agricultural product data System, an offline-capable geospatial crop monitoring platform that combines offline-first architecture, AI-powered analytics, and stakeholder-specific dashboards to address these challenges.
 
-The system integrates five core components: an offline data synchronization module using a queue-and-check mechanism for reliable field data collection, a legacy data import tool for bulk ingestion of CSV and Excel files with automatic schema detection, a scikit-learn-based Gradient Boosting Regressor for yield prediction achieving a Mean Absolute Error of 863.54~kg/ha and RMSE of 1539.96~kg/ha, a Retrieval-Augmented Generation system using Anthropic Claude or Cerebras LLMs enabling natural language queries on agricultural datasets, and stakeholder-specific dynamic dashboards tailored for government, NGO, trader, and researcher users with role-based access control.
+The system integrates five core components: an offline data synchronization module using a queue-and-check mechanism for reliable field data collection, a legacy data import tool for bulk ingestion of CSV and Excel files with automatic schema detection, a scikit-learn-based Gradient Boosting Regressor for yield prediction achieving a Mean Absolute Error of 863.54~kg/ha and RMSE of 1539.96~kg/ha, a Retrieval-Augmented Generation system using Anthropic Claude or Cerebras LLMs enabling natural language queries on agricultural product data sets, and stakeholder-specific dynamic dashboards tailored for government, NGO, trader, and researcher users with role-based access control.
 
 The training dataset consisted of 2,000 crop yield records spanning 2015 to 2024 across six major Ethiopian regions (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) covering eight crop types (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) across two growing seasons (Meher and Belg). The Gradient Boosting model was trained on seven features including area, rainfall, temperature, fertilizer amount, year, crop type, and season.
 
-Integrated into a full-stack web application built with AdonisJS and Next.js, the system enables field agents to collect data with offline synchronization, upload historical datasets, and allows stakeholders to query agricultural data using natural language through the RAG interface. The system implements role-based dashboards with interactive maps using Leaflet.js and charts using Recharts, along with comprehensive audit logging and data governance features.
+Integrated into a full-stack web application built with AdonisJS and Next.js, the system enables field agents to collect data with offline synchronization, upload historical datasets, and allows stakeholders to query agricultural product data using natural language through the RAG interface. The system implements role-based dashboards with interactive maps using Leaflet.js and charts using Recharts, along with comprehensive audit logging and data governance features.
 
 This project contributes to the field of digital agriculture by offering a comprehensive, accessible, and accurate platform that empowers stakeholders to make timely decisions, reduce crop losses, and promote sustainable farming practices in connectivity-constrained environments, directly supporting Ethiopia's Digital Ethiopia 2025 strategy.
 

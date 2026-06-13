@@ -10,7 +10,7 @@ The development methodology followed five sequential but iterative phases, each 
 
 \subsection{Phase 1: Requirements Analysis}
 
-Technical documentation review and architectural pattern evaluation were conducted to identify core functional requirements. This phase involved reviewing existing agricultural data systems, studying available agricultural datasets, and consulting with domain experts to understand the data needs of different stakeholder groups including government officials, NGOs, traders, researchers, and field agents.
+Technical documentation review and architectural pattern evaluation were conducted to identify core functional requirements. This phase involved reviewing existing agricultural product data systems, studying available agricultural product data sets, and consulting with domain experts to understand the data needs of different stakeholder groups including government officials, NGOs, traders, researchers, and field agents.
 
 The requirements analysis identified the following key functional requirements:
 \begin{itemize}
@@ -18,7 +18,7 @@ The requirements analysis identified the following key functional requirements:
   \item CRUD operations for farmers, plots, observations, crop types, and organizations
   \item CSV and Excel file import with automatic schema detection
   \item Machine learning-based crop yield prediction
-  \item Natural language querying of agricultural data
+  \item Natural language querying of agricultural product data 
   \item Offline data collection with synchronization
   \item Stakeholder-specific dashboards with interactive visualizations
   \item Audit logging for data governance
@@ -29,7 +29,7 @@ The requirements analysis identified the following key functional requirements:
 
 Detailed system diagrams, database entity-relationship models, interface wireframes, and API specifications were produced. The technology stack was finalized during this phase based on an evaluation of alternatives against the criteria of offline capability, development efficiency, and deployment cost.
 
-The database schema was designed with 15 tables organized into six domains: user management, organizations, entity tracking, agricultural data, data management, analytics, and system operations. Database views were designed for dashboard aggregation queries to optimize read performance.
+The database schema was designed with 15 tables organized into six domains: user management, organizations, entity tracking, agricultural product data , data management, analytics, and system operations. Database views were designed for dashboard aggregation queries to optimize read performance.
 
 The API was designed following RESTful conventions with resource-oriented URLs, standard HTTP methods, and consistent response formats. Authentication was designed using database-backed access tokens with token refresh and revocation capabilities.
 
@@ -63,7 +63,7 @@ Comprehensive technical documentation was produced covering API endpoints, datab
 
 \subsection{Dataset Description}
 
-The data collection process involved sourcing a comprehensive dataset of crop yield records representative of Ethiopian agricultural conditions. The training dataset was compiled from publicly available agricultural data sources covering Ethiopian crop production across major regions and crop types.
+The data collection process involved sourcing a comprehensive dataset of crop yield records representative of Ethiopian agricultural conditions. The training dataset was compiled from publicly available agricultural product data sources covering Ethiopian crop production across major regions and crop types.
 
 The complete dataset contains 2,000 crop yield records spanning ten years (2015 to 2024) across six major agricultural regions of Ethiopia: Afar, Amhara, Oromia, Sidama, SNNPR, and Tigray. The data covers eight crop types: teff, wheat, maize, barley, sorghum, sesame, chickpea, and coffee. These crops represent the major staple and cash crops of Ethiopian agriculture. Two growing seasons are represented: Meher (the main rainy season with harvest from June to September) and Belg (the short rainy season with harvest from February to May).
 
@@ -287,7 +287,7 @@ Data Sources & PostgreSQL or CSV \\
 
 \subsection{System Architecture}
 
-The Integrated Agricultural Data System follows a modular, three-tier architecture with clear separation of concerns between the presentation layer, application logic layer, and data persistence layer.
+The Integrated agricultural product data System follows a modular, three-tier architecture with clear separation of concerns between the presentation layer, application logic layer, and data persistence layer.
 
 \subsubsection{Architecture Layers}
 
@@ -338,7 +338,7 @@ User roles are defined in the application and stored in the app\_users table. Th
 
 \subsubsection{Data Management Controllers}
 
-The backend implements resource-oriented RESTful controllers for all agricultural data entities:
+The backend implements resource-oriented RESTful controllers for all agricultural product data entities:
 
 \begin{description}
   \item[Farmers Controller:] Endpoints for creating, reading, updating, and soft-deleting farmer records. Each farmer record includes personal information (name, phone), location data (region, zone, woreda), household size, and organizational affiliation. Support for geospatial queries through organization and device associations.
@@ -577,7 +577,7 @@ The database schema consists of 15 tables organized by domain:
   \item \textbf{organizations:} Agricultural organizations (cooperatives, NGOs, government, private)
 \end{itemize}
 
-\subsubsection{Agricultural Data Domain}
+\subsubsection{agricultural product data Domain}
 \begin{itemize}
   \item \textbf{farmers:} Farmer records with personal information, location, and household data
   \item \textbf{plots:} Agricultural plots with area, GPS coordinates, soil type, and irrigation status
@@ -589,7 +589,7 @@ The database schema consists of 15 tables organized by domain:
 \subsubsection{Data Management Domain}
 \begin{itemize}
   \item \textbf{import\_jobs:} Track CSV/Excel import operations with status, row counts, and validation errors
-  \item \textbf{imported\_records:} Individual imported records with all agricultural data fields
+  \item \textbf{imported\_records:} Individual imported records with all agricultural product data fields
 \end{itemize}
 
 \subsubsection{Analytics Domain}

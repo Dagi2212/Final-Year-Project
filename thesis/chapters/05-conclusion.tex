@@ -6,13 +6,13 @@
 
 \section{Conclusion}
 
-This thesis has successfully addressed the critical challenge of information asymmetry in Ethiopian agriculture by developing, implementing, and validating a comprehensive Integrated Agricultural Data System. The project was motivated by the recognition that Ethiopia's agricultural sector --- which sustains the livelihoods of over 80 percent of the population --- is severely hampered by disconnected data systems, inaccessible analytical tools, and the absence of intelligent interfaces that could make agricultural data useful to non-technical stakeholders.
+This thesis has successfully addressed the critical challenge of information asymmetry in Ethiopian agriculture by developing, implementing, and validating a comprehensive Integrated agricultural product data System. The project was motivated by the recognition that Ethiopia's agricultural sector --- which sustains the livelihoods of over 80 percent of the population --- is severely hampered by disconnected data systems, inaccessible analytical tools, and the absence of intelligent interfaces that could make agricultural product data useful to non-technical stakeholders.
 
 The five functional modules collectively constitute a meaningful technical contribution to precision agriculture in resource-constrained environments. Each module was designed, implemented, and validated to address specific challenges identified in the problem analysis.
 
 \subsection{Legacy Data Import Module}
 
-The Legacy Data Import Module addresses the critical problem of untapped historical agricultural data stored in paper records and spreadsheets. The module successfully demonstrates the feasibility of digitizing existing spreadsheet-based agricultural records through automatic schema detection, validation, and normalization.
+The Legacy Data Import Module addresses the critical problem of untapped historical agricultural product data stored in paper records and spreadsheets. The module successfully demonstrates the feasibility of digitizing existing spreadsheet-based agricultural records through automatic schema detection, validation, and normalization.
 
 The module supports both CSV and Excel (XLSX) file formats and maps over 80 column header variations to 20 canonical database fields using a comprehensive alias dictionary. The validation system enforces data quality through range checks, type coercion, date normalization, and outlier detection. Each imported record is classified as valid, invalid, or skipped, with detailed error reporting for failed records. This capability significantly reduces the barrier to digital adoption for organizations with existing manual record-keeping systems.
 
@@ -20,17 +20,17 @@ The module supports both CSV and Excel (XLSX) file formats and maps over 80 colu
 
 The Machine Learning Yield Prediction Engine utilizes a Gradient Boosting Regressor trained on 2,000 records of Ethiopian crop data spanning 2015 to 2024 across six regions and eight crop types. The model achieves a Mean Absolute Error of 863.54~kg/ha and Root Mean Square Error of 1539.96~kg/ha, demonstrating the viability of ensemble tree-based methods for agricultural yield prediction in data-constrained environments.
 
-The feature engineering pipeline, comprising z-score normalization for numerical features and label encoding for categorical features, effectively transforms raw agricultural data into a format suitable for gradient boosting. The model versioning system enables continuous improvement as more training data becomes available, with the second model version achieving a 64.4 percent reduction in MAE compared to the first version.
+The feature engineering pipeline, comprising z-score normalization for numerical features and label encoding for categorical features, effectively transforms raw agricultural product data into a format suitable for gradient boosting. The model versioning system enables continuous improvement as more training data becomes available, with the second model version achieving a 64.4 percent reduction in MAE compared to the first version.
 
 The model is deployed as a FastAPI microservice separate from the main backend, providing single-record and batch prediction endpoints. This architectural separation allows the ML service to be scaled independently and updated without affecting the main application.
 
 \subsection{Retrieval-Augmented Generation System}
 
-The Retrieval-Augmented Generation system represents the project's most innovative technical contribution to making agricultural data accessible to non-technical users. By grounding AI responses in live database queries through SQL-based retrieval rather than vector similarity search, the system achieves factual reliability that general-purpose language models cannot guarantee when queried without context.
+The Retrieval-Augmented Generation system represents the project's most innovative technical contribution to making agricultural product data accessible to non-technical users. By grounding AI responses in live database queries through SQL-based retrieval rather than vector similarity search, the system achieves factual reliability that general-purpose language models cannot guarantee when queried without context.
 
 The RAG system processes user questions through a three-stage pipeline: query classification and data retrieval via keyword-driven SQL queries, context assembly with citations to specific data sources, and LLM-based response generation with an Ethiopian agricultural context system prompt. The system supports multiple LLM providers (Anthropic Claude, Cerebras, OpenRouter) with automatic fallback, ensuring operational resilience.
 
-The system's approach of using SQL-based retrieval for structured agricultural data is a deliberate design choice that differs from most RAG systems that focus on unstructured text retrieval. This approach is better suited for agricultural data where precise numerical aggregation and comparison are required.
+The system's approach of using SQL-based retrieval for structured agricultural product data is a deliberate design choice that differs from most RAG systems that focus on unstructured text retrieval. This approach is better suited for agricultural product data where precise numerical aggregation and comparison are required.
 
 \subsection{Stakeholder-Specific Dashboards}
 
@@ -59,15 +59,15 @@ The project directly supports Ethiopia's Digital Agriculture strategy as outline
 This project makes the following specific contributions to the field of digital agriculture:
 
 \begin{enumerate}
-  \item \textbf{Reference architecture:} A modular, three-tier system architecture combining AdonisJS, Next.js, FastAPI, and PostgreSQL that can serve as a blueprint for similar agricultural data systems in developing countries.
+  \item \textbf{Reference architecture:} A modular, three-tier system architecture combining AdonisJS, Next.js, FastAPI, and PostgreSQL that can serve as a blueprint for similar agricultural product data systems in developing countries.
   
-  \item \textbf{Offline synchronization pattern:} A server-side queue-based synchronization mechanism with timestamp-based conflict resolution, applicable to agricultural data collection in low-connectivity environments.
+  \item \textbf{Offline synchronization pattern:} A server-side queue-based synchronization mechanism with timestamp-based conflict resolution, applicable to agricultural product data collection in low-connectivity environments.
   
-  \item \textbf{SQL-based RAG for structured agricultural data:} A RAG implementation that uses SQL retrieval instead of vector similarity search, demonstrating how to provide accurate, grounded responses to natural language queries on structured agricultural datasets.
+  \item \textbf{SQL-based RAG for structured agricultural product data :} A RAG implementation that uses SQL retrieval instead of vector similarity search, demonstrating how to provide accurate, grounded responses to natural language queries on structured agricultural product data sets.
   
   \item \textbf{Role-based agricultural dashboard:} A dashboard architecture with role-based data filtering that addresses the diverse information needs of government, NGO, trader, and researcher stakeholders.
   
-  \item \textbfAutomated schema detection for agricultural data:} An import module capable of recognizing over 80 column header variations across 20 agricultural data fields, reducing the barrier to digitizing legacy records.
+  \item \textbfAutomated schema detection for agricultural product data :} An import module capable of recognizing over 80 column header variations across 20 agricultural product data fields, reducing the barrier to digitizing legacy records.
   
   \item \textbf{Gradient boosting for Ethiopian crop yield prediction:} A trained and validated Gradient Boosting Regressor for yield prediction across eight Ethiopian crops, with documented performance metrics and versioning.
 \end{enumerate}
@@ -174,7 +174,7 @@ Exploring federated learning approaches would enable privacy-preserving model im
 \begin{itemize}
   \item Heterogeneous data distributions across cooperatives
   \item Communication efficiency for federated training rounds
-  \item Model convergence guarantees for agricultural data
+  \item Model convergence guarantees for agricultural product data 
   \item Incentive mechanisms for cooperative participation
 \end{itemize}
 
@@ -196,7 +196,7 @@ Integrating multiple data modalities would create a more comprehensive agricultu
 
 \section{Final Remarks}
 
-The Integrated Agricultural Data System represents a step forward in the application of modern web technologies, machine learning, and natural language processing to agricultural data management in Ethiopia. The system successfully demonstrates that it is possible to build comprehensive, accessible, and useful agricultural data platforms even in resource-constrained environments with limited internet connectivity.
+The Integrated agricultural product data System represents a step forward in the application of modern web technologies, machine learning, and natural language processing to agricultural product data management in Ethiopia. The system successfully demonstrates that it is possible to build comprehensive, accessible, and useful agricultural product data platforms even in resource-constrained environments with limited internet connectivity.
 
 The project's modular architecture, comprehensive API design, and focus on user accessibility ensure that it can serve as a foundation for continued development and deployment in real agricultural settings. The lessons learned through this project --- about technology choices, architectural patterns, feature engineering approaches, and user interface design --- provide valuable guidance for future work in this domain.
 

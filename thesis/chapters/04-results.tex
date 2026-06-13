@@ -4,7 +4,7 @@
 
 \chapter{Result and Discussion}
 
-This chapter presents the empirical results of the deployed Integrated Agricultural Data System with particular emphasis on the performance of the Gradient Boosting Regressor for crop yield prediction, the offline synchronization architecture, the RAG-based intelligent query system, the stakeholder-specific dashboards, and the legacy data import module. Qualitative evaluation of the system is supplemented by quantitative test set analysis and performance benchmarking.
+This chapter presents the empirical results of the deployed Integrated agricultural product data System with particular emphasis on the performance of the Gradient Boosting Regressor for crop yield prediction, the offline synchronization architecture, the RAG-based intelligent query system, the stakeholder-specific dashboards, and the legacy data import module. Qualitative evaluation of the system is supplemented by quantitative test set analysis and performance benchmarking.
 
 \section{Machine Learning Yield Prediction Performance}
 
@@ -61,7 +61,7 @@ The significant improvement between version 1 (MAE 2,424.24) and version 2 (MAE 
 
 \subsection{Feature Engineering Results}
 
-The preprocessing pipeline successfully transformed raw agricultural data into a format suitable for gradient boosting. The seven-feature vector (five numerical normalized, two categorical encoded) provided the model with sufficient information to capture the key factors influencing crop yields in Ethiopia.
+The preprocessing pipeline successfully transformed raw agricultural product data into a format suitable for gradient boosting. The seven-feature vector (five numerical normalized, two categorical encoded) provided the model with sufficient information to capture the key factors influencing crop yields in Ethiopia.
 
 The categorical encoding successfully captured eight crop types and two seasons. The label encoding approach was chosen over one-hot encoding because gradient boosting can effectively handle label-encoded categorical features through its tree-based splitting mechanism. The mapping of unseen categories to a default value of 0 ensures graceful degradation when the model encounters crop types or seasons not present in the training data.
 
@@ -122,7 +122,7 @@ The system successfully manages field devices through a dedicated device registr
 
 \section{RAG-Based Intelligent Query Performance}
 
-The RAG query system was tested with natural language questions covering various aspects of agricultural data including yield trends, regional comparisons, crop performance, and seasonal patterns.
+The RAG query system was tested with natural language questions covering various aspects of agricultural product data including yield trends, regional comparisons, crop performance, and seasonal patterns.
 
 \subsection{Query Processing Pipeline}
 
@@ -160,7 +160,7 @@ Each section includes citations describing the data source and row count, enabli
 
 The assembled context is sent to the configured LLM along with a system prompt that provides:
 \begin{itemize}
-  \item Role definition: "agricultural data analyst assistant for Ethiopia's Integrated Agricultural Data System"
+  \item Role definition: "agricultural product data analyst assistant for Ethiopia's Integrated agricultural product data System"
   \item Target audience: government officials, NGOs, researchers, traders
   \item Response guidelines: use only provided data, cite specific numbers, highlight patterns, acknowledge limitations
   \item Ethiopian context: main crops, seasons, regions
@@ -376,11 +376,11 @@ The system implements a multi-layered security architecture:
 
 \subsection{Key Achievements}
 
-The Gradient Boosting Regressor, achieving a test MAE of 863.54~kg/ha, provides a robust analytical core for crop yield prediction. The feature engineering approach using z-score normalization for numerical features and label encoding for categorical features proved effective for the agricultural dataset. The model versioning system enables continuous improvement as more training data becomes available.
+The Gradient Boosting Regressor, achieving a test MAE of 863.54~kg/ha, provides a robust analytical core for crop yield prediction. The feature engineering approach using z-score normalization for numerical features and label encoding for categorical features proved effective for the agricultural product data set. The model versioning system enables continuous improvement as more training data becomes available.
 
-The offline synchronization architecture provides a practical solution for agricultural data management in low-connectivity environments. The server-side queue-and-check mechanism, combined with device tracking and timestamp-based conflict resolution, addresses the fundamental challenge of data collection in rural Ethiopia where internet connectivity is unreliable. The five-state status tracking provides transparency into the synchronization process.
+The offline synchronization architecture provides a practical solution for agricultural product data management in low-connectivity environments. The server-side queue-and-check mechanism, combined with device tracking and timestamp-based conflict resolution, addresses the fundamental challenge of data collection in rural Ethiopia where internet connectivity is unreliable. The five-state status tracking provides transparency into the synchronization process.
 
-The RAG-based intelligent query system represents a significant advancement in making agricultural data accessible to non-technical users. By grounding LLM responses in actual database records through SQL-based retrieval and providing citations to specific data sources, the system achieves factual reliability that general-purpose language models cannot guarantee. The support for multiple LLM providers ensures operational resilience.
+The RAG-based intelligent query system represents a significant advancement in making agricultural product data accessible to non-technical users. By grounding LLM responses in actual database records through SQL-based retrieval and providing citations to specific data sources, the system achieves factual reliability that general-purpose language models cannot guarantee. The support for multiple LLM providers ensures operational resilience.
 
 The stakeholder-specific dashboards with role-based access control successfully address the diverse information needs of different user groups. The dashboard controller's role-filtering mechanism ensures that government users can access macro-level statistics for policy planning, NGO users can identify priority intervention areas, traders can access market-relevant data, and researchers can access detailed records for analysis.
 
@@ -404,8 +404,8 @@ Image-based disease detection using convolutional neural networks, while mention
 
 \subsection{Implications for Practice}
 
-The Integrated Agricultural Data System demonstrates the feasibility of combining modern web technologies, machine learning, and natural language processing to address agricultural data management challenges in developing countries. The system's modular architecture and comprehensive API design provide a blueprint that can be adapted for other agricultural contexts beyond Ethiopia.
+The Integrated agricultural product data System demonstrates the feasibility of combining modern web technologies, machine learning, and natural language processing to address agricultural product data management challenges in developing countries. The system's modular architecture and comprehensive API design provide a blueprint that can be adapted for other agricultural contexts beyond Ethiopia.
 
 For agricultural extension services, the system provides a practical tool for digitizing their data collection workflows and accessing analytical insights. The offline synchronization capability ensures that the system remains useful even in areas with limited connectivity, addressing a key barrier to digital adoption in rural areas.
 
-For policymakers, the system demonstrates how agricultural data can be made accessible for evidence-based decision-making through role-based dashboards and natural language querying. The comprehensive audit logging ensures data accountability and supports regulatory compliance.
+For policymakers, the system demonstrates how agricultural product data can be made accessible for evidence-based decision-making through role-based dashboards and natural language querying. The comprehensive audit logging ensures data accountability and supports regulatory compliance.

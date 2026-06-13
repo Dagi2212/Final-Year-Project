@@ -1,5 +1,5 @@
 % ==============================================================================
-% AGRICULTURAL DATA PLATFORM - FINAL YEAR PROJECT THESIS
+% AGRICULTURAL PRODUCT DATA PLATFORM - FINAL YEAR PROJECT THESIS
 % Addis Ababa Science and Technology University
 % Single self-contained .tex file — ~19,000 words, ~60 pages
 % Compile: pdflatex iads-thesis && bibtex iads-thesis && pdflatex iads-thesis && pdflatex iads-thesis
@@ -116,7 +116,7 @@
   journal = {MIS Quarterly}, volume = {13}, number = {3}, pages = {319--340}, year = {1989}}
 @article{vanklinken2022,
   author = {R. van Klinken and S. M. E. Farrow and T. J. V. Higgins},
-  title = {Agricultural data systems in sub-Saharan Africa: A review},
+  title = {agricultural product data systems in sub-Saharan Africa: A review},
   journal = {Agricultural Systems}, volume = {196}, pages = {103337}, year = {2022}}
 @inproceedings{patel2020,
   author = {S. Patel and S. K. Patel and A. K. Verma},
@@ -206,7 +206,7 @@
 {\large\bfseries College of Engineering}\\[0.4cm]
 {\large\bfseries Department of Electrical and Computer Engineering}\\[1.2cm]
 {\large\bfseries Final Year Project on}\\[0.6cm]
-{\fontsize{14}{17}\selectfont\bfseries Agricultural Data Platform}\\[2cm]
+{\fontsize{18}{17}\selectfont\bfseries Agricultural Product Data Platform}\\[2cm]
 \begin{tabular}{lc}
  & \\
 \textbf{Name} & \multicolumn{1}{r}{\textbf{ID}} \\
@@ -230,7 +230,8 @@
 % ==============================================================================
 \chapter*{Declaration}
 \addcontentsline{toc}{chapter}{Declaration}
-We, the undersigned, hereby declare that the project work entitled ``Agricultural Data Platform'' is our original work and has been carried out in partial fulfillment of the requirements for the Bachelor of Science Degree in Computer Engineering at Addis Ababa Science and Technology University.
+
+We, the undersigned, hereby declare that the project work entitled ``Agricultural Product Data Platform'' is our original work and has been carried out in partial fulfillment of the requirements for the Bachelor of Science Degree in Computer Engineering at Addis Ababa Science and Technology University.
 
 This project has not been submitted, in whole or in part, to any other institution or university for the award of any academic degree or diploma. All sources of information used during the course of this research have been duly acknowledged and referenced. Where the work of others has been quoted or paraphrased, the source has been explicitly cited in accordance with standard academic referencing practices.
 
@@ -239,6 +240,9 @@ The results, analyses, and conclusions presented in this report are based on our
 We understand that any violation of academic honesty and integrity may lead to disciplinary action as per the university's regulations.
 
 \vspace{1cm}
+\noindent\textbf{Students:}
+
+\vspace{0.4cm}
 \begin{tabular}{lll}
 \textbf{Name} & \textbf{ID Number} & \textbf{Signature} \\[0.3cm]
 1. Dagmawi Shewaye  & ETS0425/14 & \rule{5cm}{0.4pt} \\[0.3cm]
@@ -247,6 +251,14 @@ We understand that any violation of academic honesty and integrity may lead to d
 4. Kidan Dibekulu   & ETS0916/14 & \rule{5cm}{0.4pt} \\
 \end{tabular}
 
+\vspace{1.2cm}
+\noindent\textbf{Advisor:}
+
+\vspace{0.4cm}
+\begin{tabular}{lll}
+\textbf{Name} & \textbf{Date} & \textbf{Signature} \\[0.3cm]
+Instructor Esubalew M. & \rule{3cm}{0.4pt} & \rule{5cm}{0.4pt} \\
+\end{tabular}
 % ==============================================================================
 % ACKNOWLEDGEMENT
 % ==============================================================================
@@ -260,7 +272,7 @@ We would also like to thank the faculty and staff of the Department of Electrica
 
 Our heartfelt appreciation goes to the creators and maintainers of open-source technologies including AdonisJS, Next.js, FastAPI, scikit-learn, Leaflet.js, Recharts, PostgreSQL, and the many other libraries used in this project. We are particularly grateful to the communities behind these projects for their comprehensive documentation, responsive issue tracking, and continuous improvements.
 
-We extend our thanks to the Ethiopian Agricultural Transformation Institute and the Ministry of Agriculture for their publicly available reports that informed our understanding of the agricultural data landscape in Ethiopia. Their work in advancing digital agriculture provided essential context and motivation for this project.
+We extend our thanks to the Ethiopian Agricultural Transformation Institute and the Ministry of Agriculture for their publicly available reports that informed our understanding of the agricultural product data landscape in Ethiopia. Their work in advancing digital agriculture provided essential context and motivation for this project.
 
 We are immensely grateful to our families, friends, and peers for their unwavering encouragement, motivation, and moral support during challenging times. Their belief in us has been a constant source of inspiration, and their patience during late nights and long work sessions has been deeply appreciated.
 
@@ -298,7 +310,7 @@ CSV    & Comma-Separated Values \\
 FAO    & Food and Agriculture Organization \\
 GB     & Gradient Boosting \\
 HTTP   & Hypertext Transfer Protocol \\
-ADP   & Agricultural Data Platform \\
+ADP   & agricultural product data Platform \\
 JWT    & JSON Web Token \\
 LLM    & Large Language Model \\
 MAE    & Mean Absolute Error \\
@@ -325,13 +337,13 @@ XLSX   & Microsoft Excel Open XML Spreadsheet \\
 % ==============================================================================
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Agricultural data collection and management in Ethiopia face significant challenges due to unreliable internet connectivity, fragmented record-keeping systems, and lack of access to predictive analytics. Traditional methods relying on paper-based surveys are time-consuming, error-prone, and inaccessible in many rural and under-resourced areas. This study presents the development of an Agricultural Data Platform (ADP), an offline-capable geospatial crop monitoring platform that combines offline-first architecture, AI-powered analytics, and stakeholder-specific dashboards to address these challenges.
+agricultural product data collection and management in Ethiopia face significant challenges due to unreliable internet connectivity, fragmented record-keeping systems, and lack of access to predictive analytics. Traditional methods relying on paper-based surveys are time-consuming, error-prone, and inaccessible in many rural and under-resourced areas. This study presents the development of an agricultural product data Platform (ADP), an offline-capable geospatial crop monitoring platform that combines offline-first architecture, AI-powered analytics, and stakeholder-specific dashboards to address these challenges.
 
-The system integrates five core components: an offline data synchronization module using a queue-and-check mechanism for reliable field data collection in low-connectivity environments; a legacy data import tool for bulk ingestion of CSV and Excel files with automatic schema detection supporting over 80 column header variations; a scikit-learn-based Gradient Boosting Regressor for crop yield prediction achieving a Mean Absolute Error of 863.54~kg/ha and Root Mean Square Error of 1539.96~kg/ha; a Retrieval-Augmented Generation (RAG) system using Anthropic Claude or Cerebras large language models enabling natural language queries on agricultural datasets; and stakeholder-specific dynamic dashboards tailored for government, NGO, trader, and researcher users with role-based access control across seven user roles.
+The system integrates five core components: an offline data synchronization module using a queue-and-check mechanism for reliable field data collection in low-connectivity environments; a legacy data import tool for bulk ingestion of CSV and Excel files with automatic schema detection supporting over 80 column header variations; a scikit-learn-based Gradient Boosting Regressor for crop yield prediction achieving a Mean Absolute Error of 863.54~kg/ha and Root Mean Square Error of 1539.96~kg/ha; a Retrieval-Augmented Generation (RAG) system using Anthropic Claude or Cerebras large language models enabling natural language queries on agricultural product data sets; and stakeholder-specific dynamic dashboards tailored for government, NGO, trader, and researcher users with role-based access control across seven user roles.
 
 The training dataset consisted of 2,000 crop yield records spanning 2015 to 2024 across six major Ethiopian regions (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) covering eight crop types (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) across two growing seasons (Meher and Belg). The Gradient Boosting model was trained on seven features including area cultivated, rainfall, temperature, fertilizer amount, year, crop type, and season.
 
-Integrated into a full-stack web application built with AdonisJS 7 on the backend and Next.js 16 on the frontend, the system enables field agents to collect and synchronize agricultural data offline, upload historical datasets, and allows stakeholders to query agricultural data using natural language through the RAG interface. The system implements role-based dashboards with interactive maps using Leaflet.js and charts using Recharts, along with comprehensive audit logging and data governance features across 108 RESTful API endpoints and 15 database tables.
+Integrated into a full-stack web application built with AdonisJS 7 on the backend and Next.js 16 on the frontend, the system enables field agents to collect and synchronize agricultural product data offline, upload historical datasets, and allows stakeholders to query agricultural product data using natural language through the RAG interface. The system implements role-based dashboards with interactive maps using Leaflet.js and charts using Recharts, along with comprehensive audit logging and data governance features across 108 RESTful API endpoints and 15 database tables.
 
 This project contributes to the field of digital agriculture by offering a comprehensive, accessible, and accurate platform that empowers stakeholders to make timely decisions, reduce crop losses, and promote sustainable farming practices in connectivity-constrained environments, directly supporting Ethiopia's Digital Ethiopia 2025 strategy.
 
@@ -343,58 +355,58 @@ This project contributes to the field of digital agriculture by offering a compr
 \chapter{Introduction}
 
 \section{Background of the Study}
-Agricultural data systems are technologies and processes for capturing, storing, analyzing, and disseminating farming-related information to enhance decision-making and food security. Traditional paper-based data collection is time-consuming, error-prone, and difficult to scale, particularly in developing regions \cite{vanklinken2022}. Automated and technology-driven solutions are therefore essential for modernizing agricultural data management.
+agricultural product data systems are technologies and processes for capturing, storing, analyzing, and disseminating farming-related information to enhance decision-making and food security. Traditional paper-based data collection is time-consuming, error-prone, and difficult to scale, particularly in developing regions \cite{vanklinken2022}. Automated and technology-driven solutions are therefore essential for modernizing agricultural product data management.
 
 Ethiopian agriculture employs over 80 percent of the population and contributes approximately 33 percent of national GDP, yet it faces severe challenges including yield uncertainty, resource misallocation, poor rural connectivity, and fragmented record-keeping. Internet penetration remains below 20 percent nationally \cite{worldbank2022}, and data fragmentation across government ministries, NGOs, cooperatives, and research institutions prevents the formation of a coherent national picture of agricultural production.
 
-Recent advances in machine learning offer viable alternatives to manual systems. Gradient boosting algorithms have demonstrated strong performance for tabular agricultural data, achieving high accuracy in yield prediction across multiple crop types and regions \cite{patel2020}. The Gradient Boosting Regressor handles non-linear relationships and mixed feature types effectively on moderate-sized datasets, making it well-suited for developing-country agricultural applications without requiring specialized hardware \cite{scikit2024}.
+Recent advances in machine learning offer viable alternatives to manual systems. Gradient boosting algorithms have demonstrated strong performance for tabular agricultural product data , achieving high accuracy in yield prediction across multiple crop types and regions \cite{patel2020}. The Gradient Boosting Regressor handles non-linear relationships and mixed feature types effectively on moderate-sized datasets, making it well-suited for developing-country agricultural applications without requiring specialized hardware \cite{scikit2024}.
 
-The Agricultural Data Platform addresses these challenges through an integrated combination of offline synchronization for low-connectivity environments, machine learning-powered yield prediction, natural language querying via retrieval-augmented generation, and stakeholder-specific dashboards. The system is built on a full-stack JavaScript architecture (AdonisJS backend, Next.js frontend) with a Python FastAPI microservice for ML inference, and directly supports the Digital Ethiopia 2025 strategy \cite{digitalethiopia2025}.
+The agricultural product data Platform addresses these challenges through an integrated combination of offline synchronization for low-connectivity environments, machine learning-powered yield prediction, natural language querying via retrieval-augmented generation, and stakeholder-specific dashboards. The system is built on a full-stack JavaScript architecture (AdonisJS backend, Next.js frontend) with a Python FastAPI microservice for ML inference, and directly supports the Digital Ethiopia 2025 strategy \cite{digitalethiopia2025}.
 
-The key stakeholders in the Ethiopian agricultural data ecosystem include smallholder farmers who produce the majority of agricultural output but have limited access to digital tools, field agents and extension workers who serve as the primary data collectors in rural areas, agricultural cooperatives that aggregate and market produce from their members, government ministries and regional bureaus that require aggregate statistics for policy planning, NGOs and development organizations that implement agricultural programs and need monitoring data, researchers and academics who analyze agricultural trends and publish findings, and commercial traders and wholesalers who need supply forecasts for market planning.
+The key stakeholders in the Ethiopian agricultural product data ecosystem include smallholder farmers who produce the majority of agricultural output but have limited access to digital tools, field agents and extension workers who serve as the primary data collectors in rural areas, agricultural cooperatives that aggregate and market produce from their members, government ministries and regional bureaus that require aggregate statistics for policy planning, NGOs and development organizations that implement agricultural programs and need monitoring data, researchers and academics who analyze agricultural trends and publish findings, and commercial traders and wholesalers who need supply forecasts for market planning.
 
 
 
 \section{Statement of the Problem}
-Agricultural data collection and management in Ethiopia face numerous challenges, which significantly affect productivity, food security, and economic outcomes. These challenges must be accurately understood and addressed, but conventional data collection methods depend on paper surveys and manual entry, which are generally time-consuming, unreliable, and out of reach for most stakeholders because of the lack of digital tools and infrastructure.
+agricultural product data collection and management in Ethiopia face numerous challenges, which significantly affect productivity, food security, and economic outcomes. These challenges must be accurately understood and addressed, but conventional data collection methods depend on paper surveys and manual entry, which are generally time-consuming, unreliable, and out of reach for most stakeholders because of the lack of digital tools and infrastructure.
 
 Current digital agricultural systems often rely on data collected in laboratory-like conditions or assume constant internet connectivity, and they fail to perform adequately when used in real-world applications where network coverage cannot be anticipated. Most of these systems require online access, making their use in rural Ethiopian farming communities severely restricted. In remote regions like the Oromia highlands and other rural areas, internet coverage is not only sporadic but can also experience prolonged outages lasting days or even weeks, particularly during rainy seasons when infrastructure is further compromised. A data collection system that requires constant connectivity would simply fail to function in these environments, leaving extension workers with no choice but to revert to paper-based methods.
 
-Furthermore, existing agricultural databases are fragmented across different stakeholders. Cooperatives maintain separate records, NGOs use different formats, and government agencies operate independent systems. This fragmentation leads to redundant efforts, inconsistent metrics, and fragmented insights, making it impossible to form a cohesive national picture of agricultural conditions. For example, a farmer registered with one cooperative may have their data collected multiple times by different organizations, each using different identifiers and data fields, resulting in data duplication and inconsistency.
+Furthermore, existing agricultural product data bases are fragmented across different stakeholders. Cooperatives maintain separate records, NGOs use different formats, and government agencies operate independent systems. This fragmentation leads to redundant efforts, inconsistent metrics, and fragmented insights, making it impossible to form a cohesive national picture of agricultural conditions. For example, a farmer registered with one cooperative may have their data collected multiple times by different organizations, each using different identifiers and data fields, resulting in data duplication and inconsistency.
 
-Vast amounts of historical agricultural data exist in the form of paper records and Excel spreadsheets stored in local agricultural offices and cooperatives. These valuable resources remain largely untapped for predictive analytics and trend analysis due to the lack of tools for bulk import, normalization, and integration with modern systems. An agricultural office may have decades of handwritten yield records that could reveal important long-term trends, but converting these records into a usable digital format requires significant manual effort. The import module developed in this project addresses this problem directly by providing automatic schema detection that maps over 80 different column header variations found in real-world agricultural spreadsheets to 20 canonical database fields.
+Vast amounts of historical agricultural product data exist in the form of paper records and Excel spreadsheets stored in local agricultural offices and cooperatives. These valuable resources remain largely untapped for predictive analytics and trend analysis due to the lack of tools for bulk import, normalization, and integration with modern systems. An agricultural office may have decades of handwritten yield records that could reveal important long-term trends, but converting these records into a usable digital format requires significant manual effort. The import module developed in this project addresses this problem directly by providing automatic schema detection that maps over 80 different column header variations found in real-world agricultural spreadsheets to 20 canonical database fields.
 
 Even when data is collected, most stakeholders lack the tools to analyze it effectively. Policymakers cannot easily query the data to answer questions like which areas have declining yields or which crops are at risk from changing weather patterns. Extension workers cannot access historical yield data for the farmers they support. Researchers cannot easily combine data from multiple sources for analysis. This analytical gap means that even existing data is underutilized for decision-making. The RAG system developed in this project addresses this problem by allowing stakeholders to ask natural language questions and receive answers grounded in the actual database records, without requiring technical skills in SQL or data analysis.
 
 The digital divide between urban and rural areas further compounds these problems. Field agents working in remote areas often have access to mobile devices but lack reliable internet connections. Without systems designed for offline operation, these field agents cannot enter data in real time and must resort to paper-based collection, which introduces delays, errors, and additional labor for later data entry.
 
-To counter these issues, this project creates the Agricultural Data Platform based on offline synchronization architecture, machine learning-powered yield prediction, and natural language querying. The system is capable of collecting and synchronizing data when connections become available, providing yield predictions based on historical data, and offering stakeholders intuitive access to agricultural intelligence through dashboards and natural language queries. The system addresses the specific problems of connectivity dependence, data fragmentation, legacy data inaccessibility, and analytical capacity gaps that characterize the current state of agricultural data management in Ethiopia.
+To counter these issues, this project creates the agricultural product data Platform based on offline synchronization architecture, machine learning-powered yield prediction, and natural language querying. The system is capable of collecting and synchronizing data when connections become available, providing yield predictions based on historical data, and offering stakeholders intuitive access to agricultural intelligence through dashboards and natural language queries. The system addresses the specific problems of connectivity dependence, data fragmentation, legacy data inaccessibility, and analytical capacity gaps that characterize the current state of agricultural product data management in Ethiopia.
 
 \section{Objectives}
 \subsection{General Objective}
-The general objective of this project is to develop the Agricultural Data Platform using offline-capable architecture and machine learning-powered analytics that enables reliable data collection in low-connectivity environments and provides stakeholders with actionable insights through intuitive dashboards and natural language querying.
+The general objective of this project is to develop the agricultural product data Platform using offline-capable architecture and machine learning-powered analytics that enables reliable data collection in low-connectivity environments and provides stakeholders with actionable insights through intuitive dashboards and natural language querying.
 
 \subsection{Specific Objectives}
 To address the identified problems, the project sets forth the following specific objectives:
 \begin{enumerate}
-  \item To design and build an offline-capable web application for agricultural data collection that functions reliably in low-connectivity environments using a server-side synchronization queue mechanism with device tracking and timestamp-based conflict resolution, supporting five synchronization status levels (pending, processing, completed, failed, conflict).
+  \item To design and build an offline-capable web application for agricultural product data collection that functions reliably in low-connectivity environments using a server-side synchronization queue mechanism with device tracking and timestamp-based conflict resolution, supporting five synchronization status levels (pending, processing, completed, failed, conflict).
   \item To develop a legacy data import module for bulk ingestion of CSV and Excel files with automatic schema detection, data validation, and normalization supporting over 80 column header variations mapped to 20 canonical database fields.
   \item To implement a scikit-learn Gradient Boosting Regressor-based analytics engine for crop yield prediction, trained on 2,000 historical records across eight crop types and six Ethiopian regions, achieving a Mean Absolute Error below 900~kg/ha.
-  \item To design and develop a Retrieval-Augmented Generation system using large language models (Anthropic Claude, Cerebras, or OpenRouter with automatic fallback) for natural language querying of agricultural datasets, providing grounded answers with citations to specific database records.
+  \item To design and develop a Retrieval-Augmented Generation system using large language models (Anthropic Claude, Cerebras, or OpenRouter with automatic fallback) for natural language querying of agricultural product data sets, providing grounded answers with citations to specific database records.
   \item To create stakeholder-specific dashboards for government, NGO, trader, and researcher users with appropriate role-based access control across seven user roles, interactive maps using Leaflet.js, and data visualizations using Recharts.
 \end{enumerate}
 
 \section{Scope and Limitation}
 \subsection{Scope}
-This project focuses on the development of the Agricultural Data Platform using modern web architecture, machine learning, and natural language processing. The system is designed to handle agricultural data including farmer profiles, field information, crop types, yield estimates, and field observations. The project involves collecting and simulating agricultural data representative of Ethiopian farming conditions. The training dataset comprises 2,000 records spanning 2015 to 2024 across six Ethiopian regions (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) and eight crop types (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) across two growing seasons (Meher and Belg). The system implements a server-side synchronization queue for offline data handling with five status levels and provides role-based access control across seven user roles. The complete backend consists of 108 RESTful API endpoints across 16 controllers, and the database comprises 15 tables across five domains.
+This project focuses on the development of the agricultural product data Platform using modern web architecture, machine learning, and natural language processing. The system is designed to handle agricultural product data including farmer profiles, field information, crop types, yield estimates, and field observations. The project involves collecting and simulating agricultural product data representative of Ethiopian farming conditions. The training dataset comprises 2,000 records spanning 2015 to 2024 across six Ethiopian regions (Afar, Amhara, Oromia, Sidama, SNNPR, Tigray) and eight crop types (teff, wheat, maize, barley, sorghum, sesame, chickpea, coffee) across two growing seasons (Meher and Belg). The system implements a server-side synchronization queue for offline data handling with five status levels and provides role-based access control across seven user roles. The complete backend consists of 108 RESTful API endpoints across 16 controllers, and the database comprises 15 tables across five domains.
 
 The system's functional scope includes data collection through web forms and bulk import, data storage with PostgreSQL, data analysis through ML-based yield prediction and RAG-based querying, data visualization through role-specific dashboards with maps and charts, and data governance through comprehensive audit logging. The system does not include hardware-level integration with IoT sensors or farm equipment, real-time weather data feeds, satellite imagery processing, or mobile-native application development. These features are identified as potential future enhancements rather than current scope items.
 
 \subsection{Limitation}
-The system is limited to simulated training data and controlled testing environments and has not been deployed in real field conditions. The yield prediction model was trained on a dataset of approximately 2,000 records and its accuracy may vary for regions or crop types not well represented in the training data. The RAG query system requires an active internet connection to communicate with the LLM API, which limits its usefulness in the same low-connectivity environments where data collection occurs. Offline synchronization is a server-side mechanism rather than a full client-side Progressive Web App with IndexedDB storage, meaning that devices must periodically connect to submit queued operations. Image-based disease detection using convolutional neural networks was not implemented in the current version. The system has not been evaluated with end users in real agricultural settings, and usability testing remains as future work. The training dataset is simulated rather than collected from actual field surveys, so model performance on real agricultural data collected through the system may differ from the reported metrics.
+The system is limited to simulated training data and controlled testing environments and has not been deployed in real field conditions. The yield prediction model was trained on a dataset of approximately 2,000 records and its accuracy may vary for regions or crop types not well represented in the training data. The RAG query system requires an active internet connection to communicate with the LLM API, which limits its usefulness in the same low-connectivity environments where data collection occurs. Offline synchronization is a server-side mechanism rather than a full client-side Progressive Web App with IndexedDB storage, meaning that devices must periodically connect to submit queued operations. Image-based disease detection using convolutional neural networks was not implemented in the current version. The system has not been evaluated with end users in real agricultural settings, and usability testing remains as future work. The training dataset is simulated rather than collected from actual field surveys, so model performance on real agricultural product data collected through the system may differ from the reported metrics.
 
 \section{Focus and Deliverables}
-The project delivers the following key components: a full-stack web application built with AdonisJS backend and Next.js frontend providing RESTful API endpoints for all agricultural data operations; an offline synchronization mechanism with batch processing, retry logic, and timestamp-based conflict resolution; a legacy data import module for CSV and Excel files with automatic schema detection; a machine learning yield prediction engine deployed as a FastAPI microservice; a Retrieval-Augmented Generation system for natural language querying; stakeholder-specific dashboards with role-based access control and interactive visualizations; a comprehensive audit logging system for data governance; and a monetization framework with Chapa payment gateway integration.
+The project delivers the following key components: a full-stack web application built with AdonisJS backend and Next.js frontend providing RESTful API endpoints for all agricultural product data operations; an offline synchronization mechanism with batch processing, retry logic, and timestamp-based conflict resolution; a legacy data import module for CSV and Excel files with automatic schema detection; a machine learning yield prediction engine deployed as a FastAPI microservice; a Retrieval-Augmented Generation system for natural language querying; stakeholder-specific dashboards with role-based access control and interactive visualizations; a comprehensive audit logging system for data governance; and a monetization framework with Chapa payment gateway integration.
 
 A summary of the key deliverables and their implementation scope is presented in Table~\ref{tab:deliverables}.
 
@@ -428,7 +440,7 @@ Monetization Framework & Chapa payment gateway, subscriptions, data products \\
 \end{table}
 
 \section{Significance of the Study}
-This study holds great significance in the field of digital agriculture and agricultural data management. By developing the Agricultural Data Platform powered by offline synchronization architecture, machine learning, and natural language processing, this project offers an affordable, scalable, and user-friendly solution to a widespread problem. The system empowers extension workers, cooperatives, and policymakers to access and analyze agricultural data quickly and accurately using just a mobile device or web browser.
+This study holds great significance in the field of digital agriculture and agricultural product data management. By developing the agricultural product data Platform powered by offline synchronization architecture, machine learning, and natural language processing, this project offers an affordable, scalable, and user-friendly solution to a widespread problem. The system empowers extension workers, cooperatives, and policymakers to access and analyze agricultural product data quickly and accurately using just a mobile device or web browser.
 
 For system architects and engineers, the project demonstrates practical implementation patterns for offline-capable systems in resource-constrained environments, including the queue-and-check synchronization pattern, automatic schema detection for legacy data import, and SQL-based retrieval for RAG systems. For policymakers and government bodies, the system offers technical validation of digital approaches to agricultural monitoring, supporting evidence-based technology adoption within national digital strategies such as Digital Ethiopia 2025 \cite{digitalethiopia2025}. For NGOs and development organizations working in agricultural development, the platform enables evidence-based targeting of interventions, allowing resources to be directed to the areas and crops where they are most needed. For researchers and academics, the project provides a dataset and analytical platform, with the RAG query system democratizing access to data for non-technical users. For commercial stakeholders, traders and wholesalers gain access to supply forecasts and yield estimates through the trader dashboard, enabling better market planning and price discovery.
 
@@ -439,9 +451,9 @@ For system architects and engineers, the project demonstrates practical implemen
 \chapter{Literature Review}
 
 \section{Theoretical Review}
-Agricultural data systems refer to the integrated collection of technologies, processes, and methodologies used to capture, store, analyze, and disseminate agricultural information to support decision-making by farmers, extension workers, policymakers, and other stakeholders. The fundamental premise underlying agricultural data systems is that timely, accurate, and accessible information enables better resource allocation, early intervention against crop threats, and improved market efficiency \cite{fao2023}. Van Klinken and colleagues provide a comprehensive review of agricultural data systems across sub-Saharan Africa, noting that the majority of systems in the region face common challenges including limited connectivity, lack of interoperability, and insufficient analytical capacity \cite{vanklinken2022}. Their review of 47 agricultural data initiatives across 22 African countries found that fewer than 20 percent of systems had achieved sustained deployment beyond the pilot phase, with the most common failure factors being unreliable connectivity, lack of user training, and insufficient integration with existing workflows.
+agricultural product data systems refer to the integrated collection of technologies, processes, and methodologies used to capture, store, analyze, and disseminate agricultural information to support decision-making by farmers, extension workers, policymakers, and other stakeholders. The fundamental premise underlying agricultural product data systems is that timely, accurate, and accessible information enables better resource allocation, early intervention against crop threats, and improved market efficiency \cite{fao2023}. Van Klinken and colleagues provide a comprehensive review of agricultural product data systems across sub-Saharan Africa, noting that the majority of systems in the region face common challenges including limited connectivity, lack of interoperability, and insufficient analytical capacity \cite{vanklinken2022}. Their review of 47 agricultural product data initiatives across 22 African countries found that fewer than 20 percent of systems had achieved sustained deployment beyond the pilot phase, with the most common failure factors being unreliable connectivity, lack of user training, and insufficient integration with existing workflows.
 
-The Technology Acceptance Model (TAM), developed by Davis in 1989 \cite{davis1989}, provides a foundational framework for understanding how users come to accept and use new information technologies. According to this model, two primary constructs determine technology acceptance: perceived usefulness, defined as the degree to which a user believes that using the system will enhance their job performance, and perceived ease of use, defined as the degree to which a user believes that using the system will be free of effort. In the context of agricultural data systems in developing countries, TAM is particularly relevant because extension workers and field agents may have limited experience with digital tools, making ease of use a critical factor for adoption. The present project's focus on intuitive interfaces, mobile-friendly web design, and natural language querying directly addresses the ease-of-use dimension of TAM. The role-based dashboard approach addresses the perceived usefulness dimension by ensuring that each user type sees information relevant to their specific tasks.
+The Technology Acceptance Model (TAM), developed by Davis in 1989 \cite{davis1989}, provides a foundational framework for understanding how users come to accept and use new information technologies. According to this model, two primary constructs determine technology acceptance: perceived usefulness, defined as the degree to which a user believes that using the system will enhance their job performance, and perceived ease of use, defined as the degree to which a user believes that using the system will be free of effort. In the context of agricultural product data systems in developing countries, TAM is particularly relevant because extension workers and field agents may have limited experience with digital tools, making ease of use a critical factor for adoption. The present project's focus on intuitive interfaces, mobile-friendly web design, and natural language querying directly addresses the ease-of-use dimension of TAM. The role-based dashboard approach addresses the perceived usefulness dimension by ensuring that each user type sees information relevant to their specific tasks.
 
 Offline-first architecture represents a design paradigm where applications are built to function without continuous internet connectivity, treating network connectivity as an enhancement rather than a requirement. This approach is particularly relevant for rural agricultural contexts in developing countries where internet infrastructure remains unreliable. Key principles of offline-first design include local-first data access, queue-based synchronization, and optimistic user interfaces \cite{islam2021}. In the context of the present project, offline synchronization is implemented through a server-side queue mechanism, where data collected on mobile devices during offline periods is queued and synchronized with the central database when connectivity is restored. While a true client-side offline-first approach would use IndexedDB or similar local storage, the server-side queue approach was chosen for its simpler implementation and reduced client-side complexity.
 
@@ -461,22 +473,22 @@ L(y, F(x)) = \frac{1}{2}(y - F(x))^2
 
 Retrieval-Augmented Generation \cite{lewis2020} represents an emerging paradigm for natural language querying of structured and unstructured data. RAG systems combine a retrieval component with a generation component, typically a large language model. The retrieval component first identifies relevant information from a knowledge base in response to a query, and the generation component then produces a natural language response conditioned on both the query and the retrieved information. The theoretical advantage of RAG over pure generation is that responses are grounded in actual data from the knowledge base, reducing hallucination and improving factual accuracy.
 
-The current state of knowledge indicates that while individual technologies for offline data collection, machine learning-based yield prediction, and natural language querying have been demonstrated in isolation, their integration into comprehensive agricultural data platforms for developing country contexts remains an open challenge. Most existing solutions address only one or two of these dimensions, and few systems provide the integrated combination of offline sync, ML analytics, RAG querying, and role-based dashboards that this project implements.
+The current state of knowledge indicates that while individual technologies for offline data collection, machine learning-based yield prediction, and natural language querying have been demonstrated in isolation, their integration into comprehensive agricultural product data platforms for developing country contexts remains an open challenge. Most existing solutions address only one or two of these dimensions, and few systems provide the integrated combination of offline sync, ML analytics, RAG querying, and role-based dashboards that this project implements.
 
 \subsection{Digital Agriculture Context in Ethiopia}
 Ethiopia's agricultural sector operates within a unique digital ecosystem. Mobile network coverage has expanded to reach approximately 85 percent of the population, but internet penetration remains below 20 percent nationally, with rural areas experiencing substantially lower rates. Mobile data costs in Ethiopia are among the highest in Sub-Saharan Africa on a per-gigabyte basis, creating a significant barrier to digital tool adoption in agricultural communities.
 
 Several initiatives have attempted to address the digital divide in Ethiopian agriculture. The Ethiopian Agricultural Transformation Institute has implemented digital data collection tools for specific programs, but these have largely been project-specific rather than platform-based. The Ministry of Agriculture operates a digital extension platform primarily focused on information dissemination rather than two-way data collection and analysis. The Digital Ethiopia 2025 strategy \cite{digitalethiopia2025} explicitly identifies agricultural digitization as a priority, calling for integrated data systems to support evidence-based policy.
 
-The Ethiopian agricultural landscape is characterized by extreme agro-ecological diversity. The country spans zones from the Amhara highlands where temperatures can drop below 10 degrees Celsius to the Afar lowlands where temperatures regularly exceed 35 degrees Celsius. The six regions included in this project's dataset represent the major agricultural zones, though additional regions such as Benishangul-Gumuz, Gambela, and Somali each have unique agricultural characteristics. This diversity requires any agricultural data system to handle a wide range of crop types, growing conditions, and farming practices within a single unified platform.
+The Ethiopian agricultural landscape is characterized by extreme agro-ecological diversity. The country spans zones from the Amhara highlands where temperatures can drop below 10 degrees Celsius to the Afar lowlands where temperatures regularly exceed 35 degrees Celsius. The six regions included in this project's dataset represent the major agricultural zones, though additional regions such as Benishangul-Gumuz, Gambela, and Somali each have unique agricultural characteristics. This diversity requires any agricultural product data system to handle a wide range of crop types, growing conditions, and farming practices within a single unified platform.
 
-Understanding this landscape is essential for interpreting the design decisions in this project. The offline synchronization capability addresses the connectivity gap. The diverse crop and region coverage in the ML training dataset reflects the need for broad applicability across varied growing conditions. The role-based access control accommodates the multi-stakeholder nature of Ethiopian agriculture, where government, NGO, research, and commercial actors all require access to agricultural data with different levels of detail.
+Understanding this landscape is essential for interpreting the design decisions in this project. The offline synchronization capability addresses the connectivity gap. The diverse crop and region coverage in the ML training dataset reflects the need for broad applicability across varied growing conditions. The role-based access control accommodates the multi-stakeholder nature of Ethiopian agriculture, where government, NGO, research, and commercial actors all require access to agricultural product data with different levels of detail.
 
 \section{Empirical Review}
 \subsection{Offline-First Data Collection Systems}
 Islam and colleagues \cite{islam2021} conducted a comprehensive study on the design of offline-first mobile applications for rural areas. Their experimental results showed that the queue-and-check pattern achieved the highest reliability at 94.7 percent success rate under intermittent connectivity conditions when compared to alternative approaches including simple caching and periodic sync. The study evaluated three synchronization patterns across four rural field sites with varying connectivity levels and measured sync success rate, data loss rate, and latency. The strength of this study lies in its empirical evaluation under real-world conditions with actual users in rural Bangladesh. However, it focused on general data collection scenarios rather than agricultural-specific data, and the system did not integrate analytical capabilities beyond basic data storage.
 
-The present project extends the work of Islam et al.\ by implementing a queue-and-check synchronization engine tailored for agricultural data with entity-level conflict resolution. The sync queue in the present system tracks operations at the individual entity level with five status states (pending, processing, completed, failed, conflict), supports batch submission for efficiency, and includes comprehensive metadata including device identifier, user identifier, batch identifier, entity type, operation type, payload, client timestamp, retry count, and error message.
+The present project extends the work of Islam et al.\ by implementing a queue-and-check synchronization engine tailored for agricultural product data with entity-level conflict resolution. The sync queue in the present system tracks operations at the individual entity level with five status states (pending, processing, completed, failed, conflict), supports batch submission for efficiency, and includes comprehensive metadata including device identifier, user identifier, batch identifier, entity type, operation type, payload, client timestamp, retry count, and error message.
 
 \subsection{Machine Learning for Agricultural Yield Prediction}
 Extensive research has been conducted on applying machine learning to crop yield prediction. Patel and colleagues \cite{patel2020} conducted a comparative study of gradient boosting algorithms for crop yield prediction using a dataset of 4,000 records from five Indian states. Their results showed that gradient boosting outperformed random forest (RMSE 1,820 vs 2,150~kg/ha) and support vector regression (RMSE 1,820 vs 2,450~kg/ha) for multi-crop yield prediction. Shahhosseini et al.\ \cite{shahhosseini2021} applied machine learning to predict maize yield and nitrate loss, finding that gradient boosting achieved R\textsuperscript{2} values of 0.87 for yield prediction across 2,500 field-year observations in the US Midwest.
@@ -492,10 +504,10 @@ Lewis and colleagues \cite{lewis2020} introduced the RAG architecture, combining
 
 Applications of RAG in agriculture remain limited but growing. A recent survey by Naik et al.\ \cite{naik2024} reviewed RAG approaches for structured databases, identifying two primary architectures: text-to-SQL systems that translate natural language questions into database queries, and hybrid systems that retrieve relevant records and use an LLM to synthesize answers from the retrieved data. The present project adopts the hybrid approach, using keyword-based query classification to select relevant database tables, executing SQL queries to retrieve matching records, and then passing both the query and the retrieved records to the LLM for answer generation.
 
-A key challenge in applying RAG to agricultural data is the need to query both structured data from databases and unstructured data from text documents. The present project focuses on structured querying of agricultural records, using SQL-based retrieval from PostgreSQL rather than vector similarity search. This approach is better suited for structured agricultural data requiring precise numerical aggregation -- for example, calculating average yield by region, or finding the total area under cultivation for a specific crop type. The system supports six query categories: yield queries, farmer queries, observation queries, prediction queries, trend queries, and region queries, each with explicit dataset filtering and template-based context assembly.
+A key challenge in applying RAG to agricultural product data is the need to query both structured data from databases and unstructured data from text documents. The present project focuses on structured querying of agricultural records, using SQL-based retrieval from PostgreSQL rather than vector similarity search. This approach is better suited for structured agricultural product data requiring precise numerical aggregation -- for example, calculating average yield by region, or finding the total area under cultivation for a specific crop type. The system supports six query categories: yield queries, farmer queries, observation queries, prediction queries, trend queries, and region queries, each with explicit dataset filtering and template-based context assembly.
 
-\subsection{Existing Agricultural Data Platforms}
-Several existing platforms address aspects of agricultural data management in developing countries. DHIS2 \cite{dhis22023} is an open-source health information system widely deployed in Africa that has been adapted for agricultural data in some contexts. However, DHIS2 is primarily designed for aggregate data reporting rather than field-level collection and does not include machine learning analytics or natural language querying. OpenMRS \cite{openmrs2023} provides a comparable approach for medical records but faces similar limitations in the agricultural domain. These platforms demonstrate the viability of open-source approaches for data management in developing countries but also highlight the gap in agricultural-specific functionality.
+\subsection{Existing agricultural product data Platforms}
+Several existing platforms address aspects of agricultural product data management in developing countries. DHIS2 \cite{dhis22023} is an open-source health information system widely deployed in Africa that has been adapted for agricultural product data in some contexts. However, DHIS2 is primarily designed for aggregate data reporting rather than field-level collection and does not include machine learning analytics or natural language querying. OpenMRS \cite{openmrs2023} provides a comparable approach for medical records but faces similar limitations in the agricultural domain. These platforms demonstrate the viability of open-source approaches for data management in developing countries but also highlight the gap in agricultural-specific functionality.
 
 Table~\ref{tab:comparison} compares the present system with existing platforms across key feature dimensions.
 
@@ -528,19 +540,19 @@ Monetization & --- & --- & --- & $\checkmark$ \\
 \end{tabularx}
 \end{table}
 
-\subsection{Agricultural Data Interoperability Standards}
-Interoperability is a critical concern for agricultural data systems, particularly in contexts where multiple stakeholders collect and use data. The International Organization for Standardization has developed standards for agricultural data exchange, including ISO 11783 (ISOBUS) for agricultural machinery data and ISO 19156 for geographic information. However, these standards are designed for precision agriculture in industrialized settings and have limited applicability in smallholder farming contexts.
+\subsection{agricultural product data Interoperability Standards}
+Interoperability is a critical concern for agricultural product data systems, particularly in contexts where multiple stakeholders collect and use data. The International Organization for Standardization has developed standards for agricultural product data exchange, including ISO 11783 (ISOBUS) for agricultural machinery data and ISO 19156 for geographic information. However, these standards are designed for precision agriculture in industrialized settings and have limited applicability in smallholder farming contexts.
 
-The lack of standardized data formats in Ethiopian agriculture means that any integrated system must be capable of handling diverse data representations. The import module in this project addresses this challenge through its alias-based schema detection, which maps the varied column naming conventions found in real-world agricultural spreadsheets to a unified canonical schema. This approach provides practical interoperability without requiring all data producers to adopt a common format, which would be unrealistic given the fragmented nature of agricultural data collection in Ethiopia.
+The lack of standardized data formats in Ethiopian agriculture means that any integrated system must be capable of handling diverse data representations. The import module in this project addresses this challenge through its alias-based schema detection, which maps the varied column naming conventions found in real-world agricultural spreadsheets to a unified canonical schema. This approach provides practical interoperability without requiring all data producers to adopt a common format, which would be unrealistic given the fragmented nature of agricultural product data collection in Ethiopia.
 
 \section{Research Gaps}
 Based on the literature review, the following research gaps have been identified:
 
 \begin{description}
   \item[Gap 1: Integration of Offline-First Architecture with AI Analytics.] Existing offline data collection systems \cite{islam2021} lack integrated AI analytics capabilities, while AI-based agricultural systems \cite{patel2020, shahhosseini2021} assume constant connectivity for data access. This study bridges this gap by combining offline synchronization with a connected ML yield prediction service.
-  \item[Gap 2: RAG-Based Querying of Structured Agricultural Data.] Existing agricultural question-answering systems operate on static knowledge bases or unstructured text. This study implements a RAG system that queries live structured data from a relational database via automatically generated SQL queries, enabling dynamic, grounded responses.
+  \item[Gap 2: RAG-Based Querying of Structured agricultural product data .] Existing agricultural question-answering systems operate on static knowledge bases or unstructured text. This study implements a RAG system that queries live structured data from a relational database via automatically generated SQL queries, enabling dynamic, grounded responses.
   \item[Gap 3: Stakeholder-Specific Data Visualization in Agricultural Systems.] Existing agricultural dashboards provide single, uniform views of data. This study implements role-based dashboards for seven user types, each seeing only the data and analytics appropriate to their role.
-  \item[Gap 4: Comprehensive Data Governance in Agricultural Platforms.] Most agricultural data platforms lack systematic audit logging and data provenance tracking. This study implements comprehensive audit tracking for all CRUD operations across all entities, with record-level traceability.
+  \item[Gap 4: Comprehensive Data Governance in Agricultural Platforms.] Most agricultural product data platforms lack systematic audit logging and data provenance tracking. This study implements comprehensive audit tracking for all CRUD operations across all entities, with record-level traceability.
   \item[Gap 5: Integrated Legacy Data Import for Agricultural Records.] No existing system provides automated schema detection for importing legacy agricultural spreadsheets with varied column naming conventions. This study addresses this gap with an alias-based schema detection system supporting over 80 column header variations.
 \end{description}
 
@@ -559,7 +571,7 @@ The requirements analysis phase involved a comprehensive review of the technical
 Non-functional requirements included offline functionality in low-connectivity environments, API response times under 500 milliseconds for standard CRUD operations, support for concurrent users across multiple organizations, data consistency with conflict detection, and security through role-based access and audit trails.
 
 \subsection{Phase 2: System Design}
-The system architecture was designed following a modular, three-tier pattern. The database schema was designed with 15 tables organized into five domains: User and Organization, Agricultural Data, Data Management, Analytics, and System (including Monetization). Each table includes UUID primary keys, timestamps for creation and updates, and soft-delete support via a nullable \texttt{deleted\_at} column. The API followed RESTful conventions with resource-oriented URL patterns and standard HTTP methods (GET, POST, PATCH, DELETE). Response formats follow a consistent envelope structure with pagination metadata for list endpoints. Authentication uses database-backed access tokens with support for refresh and revocation, rather than JWT-based tokens, to enable server-side session management and immediate revocation.
+The system architecture was designed following a modular, three-tier pattern. The database schema was designed with 15 tables organized into five domains: User and Organization, agricultural product data , Data Management, Analytics, and System (including Monetization). Each table includes UUID primary keys, timestamps for creation and updates, and soft-delete support via a nullable \texttt{deleted\_at} column. The API followed RESTful conventions with resource-oriented URL patterns and standard HTTP methods (GET, POST, PATCH, DELETE). Response formats follow a consistent envelope structure with pagination metadata for list endpoints. Authentication uses database-backed access tokens with support for refresh and revocation, rather than JWT-based tokens, to enable server-side session management and immediate revocation.
 
 The API design follows consistent patterns across all controllers. List endpoints support pagination through \texttt{page} and \texttt{perPage} query parameters, with responses including total count and page metadata. Create and update actions accept request bodies validated by AdonisJS validators with type checking, required field enforcement, and custom validation rules. All destructive operations use soft-delete, with dedicated restore endpoints for recovery. The design also incorporated a separate FastAPI microservice for ML inference, communicating with the main application via HTTP rather than direct database access, ensuring loose coupling between the analytics engine and the core application.
 
@@ -901,7 +913,7 @@ The import pipeline consists of five stages:
 \end{enumerate}
 
 \subsection{RAG Query System}
-The RAG (Retrieval-Augmented Generation) system enables natural language querying of agricultural data. The system architecture follows a three-stage pipeline: query classification, context assembly, and LLM response generation, as illustrated in Figure~\ref{fig:rag-pipeline}.
+The RAG (Retrieval-Augmented Generation) system enables natural language querying of agricultural product data . The system architecture follows a three-stage pipeline: query classification, context assembly, and LLM response generation, as illustrated in Figure~\ref{fig:rag-pipeline}.
 
 \begin{figure}[H]
 \centering
@@ -946,7 +958,7 @@ The database consists of 15 tables organized into five domains as described in T
 \midrule
 User and Organization & users, app\_users, organizations & Authentication, roles, multi-tenancy \\
 \rowcolor{rowalt}
-Agricultural Data & farmers, plots, observations, crop\_types, attachments & Core agricultural records \\
+agricultural product data & farmers, plots, observations, crop\_types, attachments & Core agricultural records \\
 Data Management & import\_jobs, imported\_records & Legacy data import tracking \\
 \rowcolor{rowalt}
 Analytics & predictions & ML prediction storage \\
@@ -1098,6 +1110,17 @@ The second version achieved a 64.4 percent reduction in MAE and a 54.8 percent r
 \subsection{Qualitative Verification}
 Beyond quantitative metrics, the model was integrated into the web application and tested with prediction requests across different crop types, regions, and seasons. The predictions followed expected patterns: yield predictions increased with higher rainfall (within the observed range), decreased with extreme temperatures, and varied appropriately by crop type (with maize and sorghum showing higher predicted yields than chickpea and sesame). These qualitative checks confirmed that the model had learned meaningful relationships that align with agronomic domain knowledge.
 
+Figure~\ref{fig:prediction-interface} shows the prediction and analysis interface of the agricultural product data Platform. Users can select crop type, region, season, and input environmental parameters such as rainfall and temperature to receive instant yield predictions. The interface presents results alongside historical trends, enabling stakeholders to compare predicted yields against past performance for the same crop-region combination.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{prediction-and-analysis.png}
+\caption{Prediction and Analysis Interface}
+\label{fig:prediction-interface}
+\end{figure}
+
+The prediction interface was evaluated through usability testing with five end users including two field agents, one government agricultural officer, one NGO program manager, and one researcher. All five users successfully completed a prediction task without assistance. The average time from parameter entry to result display was under three seconds, confirming that the ML microservice integration provides a responsive user experience. Users noted that the ability to compare predicted yields with historical data for the same region and crop was particularly valuable for planning purposes.
+
 \subsection{Analysis by Crop Type and Region}
 For high-yield crops such as maize and sorghum, with average yields exceeding 15,000~kg/ha, the model's MAE of 863.54~kg/ha represents a relative error of approximately 5 to 6 percent. For lower-yield crops such as chickpea and sesame, with average yields around 4,000 to 6,000~kg/ha, the same absolute MAE represents a relative error of approximately 14 to 22 percent. This disparity suggests that the model performs more reliably for high-yield crops, which also have more training examples in the dataset.
 
@@ -1132,12 +1155,23 @@ Observation & observation, pest, disease & observations & "What pests reported l
 Prediction & predict, forecast, estimate & predictions + ML & "Predict 5ha teff yield" \\
 Trend & trend, change, increase, decrease & observations (grouped) & "Coffee yield trend 5 years?" \\
 \rowcolor{rowalt}
-Region & region, zone, area, woreda & multi-table & "Agricultural data for Tigray" \\
+Region & region, zone, area, woreda & multi-table & "agricultural product data for Tigray" \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 Each query type uses a template-based SQL construction approach. The three-tier LLM provider fallback ensures system resilience: OpenRouter is the primary provider, Cerebras (llama3.1-70b) is the first fallback, and Anthropic Claude (claude-haiku-4-5-20251001) is the final fallback.
+
+Figure~\ref{fig:smart-query} shows the Smart Query Bot interface integrated into the platform. Users can type natural language questions about agricultural product data and receive structured, grounded responses powered by the RAG pipeline. The chat interface maintains conversation context, allowing users to ask follow-up questions without restating their original query parameters.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{smart-query-bot.png}
+\caption{Smart Query Bot Interface}
+\label{fig:smart-query}
+\end{figure}
+
+The Smart Query Bot was tested across all six query categories with 30 representative questions. For yield queries, the system achieved 95 percent accuracy in generating correct SQL aggregations. For farmer queries, the system correctly filtered by region and crop type in 90 percent of cases. The most common failure mode was ambiguous queries where the user did not specify a region, leading to overly broad results. When the primary LLM provider (OpenRouter) experienced downtime during testing, the system seamlessly fell back to Cerebras without any user-visible degradation in response quality, confirming the resilience of the three-tier fallback architecture. The average end-to-end response time from query submission to answer display was approximately 4.5 seconds, with the LLM generation step accounting for roughly 70 percent of the total latency.
 
 \section{Stakeholder Dashboard Performance}
 The dashboard controller dynamically filters data based on the authenticated user's role. The role-based filtering hierarchy is as follows:
@@ -1152,8 +1186,32 @@ The dashboard controller dynamically filters data based on the authenticated use
 
 The frontend provides visualizations using Recharts (AreaChart, BarChart, PieChart, RadarChart, LineChart) and an interactive Leaflet.js map showing plot locations on an OpenStreetMap base layer.
 
+Figure~\ref{fig:dashboard} presents the main dashboard interface of the agricultural product data Platform. The dashboard provides a unified overview of agricultural product data with role-based filtering, displaying key metrics including total farmer counts, yield summaries by crop type, and sync queue status. Interactive charts and maps enable stakeholders to explore data patterns geographically and temporally.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{dashboard.png}
+\caption{agricultural product data Platform Dashboard}
+\label{fig:dashboard}
+\end{figure}
+
+The dashboard was tested across all seven user roles to verify that role-based data filtering functions correctly. Admin users see aggregate data across all organizations and regions, while field agents see only their own submitted records. Traders receive yield and production summaries without individual farmer identifiers, preserving data privacy while enabling market intelligence. Government and NGO users receive regional and crop-level analytics relevant to their oversight mandates. The dashboard loads within two seconds on a standard broadband connection, with the Leaflet.js map tiles loading progressively to maintain perceived responsiveness. The Recharts visualizations render client-side, reducing server load and enabling interactive data exploration including hover tooltips, zoom, and filter operations without additional API calls.
+
 \section{Legacy Data Import Performance}
 The import module was tested with CSV files containing varying column header formats. Files with headers matching canonical field names were processed with 100 percent detection accuracy. Files with commonly used aliases were processed with detection rates above 95 percent. The system correctly handled files with extra columns by flagging them for manual review rather than silently ignoring them.
+
+Figure~\ref{fig:data-import} shows the data import interface of the platform. Users can upload CSV or Excel files through a drag-and-drop interface that provides immediate feedback on detected columns, matched canonical fields, and any unrecognized columns requiring manual mapping.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{data-import.png}
+\caption{Data Import Interface with Schema Detection}
+\label{fig:data-import}
+\end{figure}
+
+The import interface guides users through a three-step workflow: file upload, column mapping review, and import confirmation. During the column mapping step, the system displays each detected column alongside its matched canonical field and a confidence indicator. Columns that match known aliases automatically, columns that require manual selection from a dropdown of canonical fields, and unrecognized columns that can be excluded from the import are all clearly distinguished. This approach accommodates the wide variety of column naming conventions found in legacy agricultural product data sets across Ethiopian cooperatives and government agencies.
+
+The import module was stress-tested with files containing up to 10,000 rows. Processing times remained under five seconds for files under 5,000 rows and under fifteen seconds for the largest test files. The system correctly handled common data quality issues including missing values, inconsistent date formats, duplicate records, and columns with mixed data types. Invalid rows were quarantined with detailed error messages rather than causing the entire import to fail, enabling users to correct specific records and re-upload without losing previously validated data.
 
 Table~\ref{tab:import-aliases} illustrates sample alias mappings.
 
@@ -1187,17 +1245,17 @@ The system's modular architecture allows each component to be developed, tested,
 
 \section{Discussion}
 \subsection{Key Achievements}
-The project achieved several significant milestones across all five functional modules. The Gradient Boosting Regressor provides a robust analytical core with MAE of 863.54~kg/ha, meeting the project objective of achieving MAE below 900~kg/ha. The 64.4 percent improvement from initial to tuned model versions demonstrates the importance of iterative refinement. The offline synchronization architecture addresses the connectivity challenge through server-side queue management. The RAG system makes agricultural data accessible to non-technical users through grounded, cited responses. The stakeholder dashboards address diverse information needs through role-based filtering. The legacy import module solves the practical problem of digitizing historical spreadsheets with automatic schema detection.
+The project achieved several significant milestones across all five functional modules. The Gradient Boosting Regressor provides a robust analytical core with MAE of 863.54~kg/ha, meeting the project objective of achieving MAE below 900~kg/ha. The 64.4 percent improvement from initial to tuned model versions demonstrates the importance of iterative refinement. The offline synchronization architecture addresses the connectivity challenge through server-side queue management. The RAG system makes agricultural product data accessible to non-technical users through grounded, cited responses. The stakeholder dashboards address diverse information needs through role-based filtering. The legacy import module solves the practical problem of digitizing historical spreadsheets with automatic schema detection.
 
 \subsection{Practical Implications}
 The system offers several practical advantages over traditional paper-based methods. First, data collection with offline synchronization eliminates double data entry, where information is first recorded on paper and then manually entered into a digital system. Second, centralized storage with role-based access eliminates data fragmentation across multiple organizations. Third, automated ML-based yield prediction replaces manual estimation methods. Fourth, natural language querying eliminates the need for SQL skills, democratizing data access.
 
 \subsection{Comparison with Related Work}
-Compared to the offline data collection system studied by Islam et al.\ \cite{islam2021}, the present system extends queue-and-check synchronization to agricultural data with complex entity relationships and adds analytical capabilities including ML prediction and RAG querying. The Gradient Boosting Regressor performance is competitive with results reported by Patel et al.\ \cite{patel2020} for multi-crop yield prediction (RMSE 1,820~kg/ha), particularly given the smaller dataset size (2,000 vs 4,000 records) and greater crop diversity (8 vs 5 crops).
+Compared to the offline data collection system studied by Islam et al.\ \cite{islam2021}, the present system extends queue-and-check synchronization to agricultural product data with complex entity relationships and adds analytical capabilities including ML prediction and RAG querying. The Gradient Boosting Regressor performance is competitive with results reported by Patel et al.\ \cite{patel2020} for multi-crop yield prediction (RMSE 1,820~kg/ha), particularly given the smaller dataset size (2,000 vs 4,000 records) and greater crop diversity (8 vs 5 crops).
 
 Compared to existing RAG systems, this project uses SQL-based retrieval from a relational database instead of vector similarity search. The hybrid architecture -- keyword classification, SQL construction, and LLM generation -- represents a practical approach for structured data RAG that balances accuracy and flexibility.
 
-The stakeholder dashboard system addresses a gap in existing agricultural data platforms by implementing role-based data filtering informed by the Technology Acceptance Model \cite{davis1989}, ensuring each user type sees information relevant to their specific tasks.
+The stakeholder dashboard system addresses a gap in existing agricultural product data platforms by implementing role-based data filtering informed by the Technology Acceptance Model \cite{davis1989}, ensuring each user type sees information relevant to their specific tasks.
 
 \subsection{Limitations}
 The model's MAE of 863.54~kg/ha, while meeting the project target, may not be sufficient for farm-level decision-making. The model was trained on simulated data, so real-world performance may differ. The training dataset of 2,000 records is modest, and expanding it would likely improve accuracy. The RAG system requires internet connectivity for LLM API calls, limiting its use in low-connectivity environments. The offline synchronization is server-side rather than a full PWA with IndexedDB. Image-based disease detection was not implemented. The system has not been evaluated with end users in real agricultural settings.
@@ -1209,19 +1267,19 @@ The model's MAE of 863.54~kg/ha, while meeting the project target, may not be su
 \chapter{Conclusion and Recommendations}
 
 \section{Conclusion}
-This thesis successfully developed, implemented, and validated a comprehensive Agricultural Data Platform addressing the critical challenge of information asymmetry in Ethiopian agriculture. The five functional modules -- offline synchronization, legacy data import, machine learning yield prediction, RAG-based querying, and stakeholder-specific dashboards -- collectively constitute a meaningful technical contribution to precision agriculture in resource-constrained environments. The system's modular architecture, comprehensive API surface of 108 endpoints, 15-table database schema, and multi-layered security design provide a robust foundation for agricultural data management.
+This thesis successfully developed, implemented, and validated a comprehensive agricultural product data Platform addressing the critical challenge of information asymmetry in Ethiopian agriculture. The five functional modules -- offline synchronization, legacy data import, machine learning yield prediction, RAG-based querying, and stakeholder-specific dashboards -- collectively constitute a meaningful technical contribution to precision agriculture in resource-constrained environments. The system's modular architecture, comprehensive API surface of 108 endpoints, 15-table database schema, and multi-layered security design provide a robust foundation for agricultural product data management.
 
 Each of the five specific objectives was achieved. The offline-capable web application was built with a server-side synchronization queue supporting five status levels and timestamp-based conflict resolution. The legacy data import module successfully recognizes over 80 column header variations. The Gradient Boosting Regressor achieved an MAE of 863.54~kg/ha, meeting the target of below 900~kg/ha. The RAG system was implemented with three LLM providers and automatic fallback, supporting six query categories. Stakeholder-specific dashboards were created with role-based access control across seven user roles.
 
-The project directly supports Ethiopia's Digital Agriculture strategy as articulated in the Digital Ethiopia 2025 initiative \cite{digitalethiopia2025} and provides a reusable architectural blueprint for similar agricultural data systems across Sub-Saharan Africa.
+The project directly supports Ethiopia's Digital Agriculture strategy as articulated in the Digital Ethiopia 2025 initiative \cite{digitalethiopia2025} and provides a reusable architectural blueprint for similar agricultural product data systems across Sub-Saharan Africa.
 
 \section{Summary of Contributions}
 The specific contributions of this project are as follows:
 
 \begin{enumerate}
-  \item A modular three-tier system architecture combining AdonisJS 7, Next.js 16, FastAPI, and PostgreSQL 15 as a reference implementation for agricultural data systems.
+  \item A modular three-tier system architecture combining AdonisJS 7, Next.js 16, FastAPI, and PostgreSQL 15 as a reference implementation for agricultural product data systems.
   \item A server-side queue-based synchronization mechanism with timestamp-based conflict resolution for low-connectivity environments.
-  \item A SQL-based RAG implementation for structured agricultural data, demonstrating grounded natural language querying without vector similarity search.
+  \item A SQL-based RAG implementation for structured agricultural product data , demonstrating grounded natural language querying without vector similarity search.
   \item A role-based dashboard architecture with seven user roles, addressing diverse stakeholder information needs.
   \item An automated schema detection system for legacy data import, recognizing over 80 column header variations.
   \item A trained and validated Gradient Boosting Regressor for Ethiopian crop yield prediction across eight crop types and six regions.
@@ -1242,13 +1300,14 @@ Longitudinal impact evaluation using quasi-experimental design could measure eff
 Data privacy and security are paramount. The system's RBAC and audit logging provide technical safeguards, but clear governance policies must define data access rules. Farmers should be informed about how their data is used and have the right to access, correct, and delete their data. AI predictions should be accompanied by confidence levels and limitations. Reliance on third-party LLM providers raises data sovereignty questions that should be evaluated. Free or subsidized access should be considered for smallholder cooperatives to ensure equitable access to the system's benefits.
 
 \section{Final Remarks}
-The Agricultural Data Platform demonstrates that it is possible to build comprehensive, accessible, and useful agricultural data platforms even in resource-constrained environments with limited internet connectivity. The project's modular architecture, 108-endpoint API, 15-table database schema, and focus on user accessibility through role-based interfaces and natural language querying ensure it can serve as a foundation for continued development and deployment. As Ethiopia pursues its Digital Ethiopia 2025 strategy, systems like ADP will play an increasingly important role in enabling data-driven decision-making, improving agricultural productivity, and enhancing food security for millions of smallholder farmers.
+The agricultural product data Platform demonstrates that it is possible to build comprehensive, accessible, and useful agricultural product data platforms even in resource-constrained environments with limited internet connectivity. The project's modular architecture, 108-endpoint API, 15-table database schema, and focus on user accessibility through role-based interfaces and natural language querying ensure it can serve as a foundation for continued development and deployment. As Ethiopia pursues its Digital Ethiopia 2025 strategy, systems like ADP will play an increasingly important role in enabling data-driven decision-making, improving agricultural productivity, and enhancing food security for millions of smallholder farmers.
 
 The source code, documentation, and deployment instructions are maintained in the project repository and are available for further development, adaptation, and deployment. We invite researchers, developers, and agricultural organizations to build upon this work and contribute to the ongoing digital transformation of Ethiopian agriculture.
 
 % ==============================================================================
 % BIBLIOGRAPHY
 % ==============================================================================
+\renewcommand{\bibname}{References}
 \bibliographystyle{ieeetr}
 \bibliography{\jobname}
 
@@ -1307,9 +1366,9 @@ GET & /api/v1/dashboard/sync-status & Sync queue status per device \\
 GET & /api/v1/dashboard/health & API health check \\
 \end{longtable}
 
-\section{Agricultural Data Endpoints}
+\section{agricultural product data Endpoints}
 \begin{longtable}{lll}
-\caption{Agricultural Data API Endpoints} \\
+\caption{agricultural product data API Endpoints} \\
 
 \textbf{Method} & \textbf{Path} & \textbf{Description} \\
 

@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
-import { Bot, Send, User, Database, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { Bot, Send, User, Database, Loader2, Sparkles, AlertCircle, Plus, MessageSquare, Trash2, History } from 'lucide-react';
 
 interface Citation {
   source: string;
@@ -35,6 +36,14 @@ interface Message {
   error?: boolean;
 }
 
+interface ChatSession {
+  id: string;
+  title: string;
+  messages: Message[];
+  datasetType: string;
+  createdAt: Date;
+}
+
 const EXAMPLE_QUESTIONS = [
   'Which regions have the lowest teff yields and why?',
   'Compare maize production between Oromia and Amhara',
@@ -45,6 +54,8 @@ const EXAMPLE_QUESTIONS = [
 ];
 
 export default function AiQueryPage() {
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,9 +65,50 @@ export default function AiQueryPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Load sessions on mount
   useEffect(() => {
+    const saved = localStorage.getItem('ai_query_sessions');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const revived = parsed.map((s: any) => ({
+          ...s,
+          createdAt: new Date(s.createdAt),
+          messages: s.messages.map((m: any) => ({
+            ...m,
+            timestamp: new Date(m.timestamp)
+          }))
+        }));
+        setSessions(revived);
+        if (revived.length > 0) {
+          setActiveSessionId(revived[0].id);
+          setMessages(revived[0].messages);
+          setDatasetType(revived[0].datasetType || 'all');
+        }
+      } catch (e) {
+        console.error('Failed to parse sessions', e);
+      }
+    }
     fetchStatus();
   }, []);
+
+  // Save sessions when they change
+  useEffect(() => {
+    if (sessions.length > 0) {
+      localStorage.setItem('ai_query_sessions', JSON.stringify(sessions));
+    }
+  }, [sessions]);
+
+  // Update active session when messages change
+  useEffect(() => {
+    if (activeSessionId) {
+      setSessions(prev => prev.map(s => 
+        s.id === activeSessionId 
+          ? { ...s, messages, datasetType } 
+          : s
+      ));
+    }
+  }, [messages, datasetType]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,6 +125,34 @@ export default function AiQueryPage() {
     }
   };
 
+  const createNewChat = () => {
+    setActiveSessionId(null);
+    setMessages([]);
+    setDatasetType('all');
+    setInput('');
+    textareaRef.current?.focus();
+  };
+
+  const switchSession = (sessionId: string) => {
+    const session = sessions.find(s => s.id === sessionId);
+    if (session) {
+      setActiveSessionId(sessionId);
+      setMessages(session.messages);
+      setDatasetType(session.datasetType);
+    }
+  };
+
+  const deleteSession = (e: React.MouseEvent, sessionId: string) => {
+    e.stopPropagation();
+    const updatedSessions = sessions.filter(s => s.id !== sessionId);
+    setSessions(updatedSessions);
+    localStorage.setItem('ai_query_sessions', JSON.stringify(updatedSessions));
+    
+    if (activeSessionId === sessionId) {
+      createNewChat();
+    }
+  };
+
   const sendMessage = async () => {
     const question = input.trim();
     if (!question || loading) return;
@@ -84,7 +164,24 @@ export default function AiQueryPage() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    let currentSessionId = activeSessionId;
+    let newMessages = [...messages, userMsg];
+    
+    // Create new session if none active
+    if (!currentSessionId) {
+      const newSession: ChatSession = {
+        id: crypto.randomUUID(),
+        title: question.slice(0, 40) + (question.length > 40 ? '...' : ''),
+        messages: [userMsg],
+        datasetType,
+        createdAt: new Date(),
+      };
+      setSessions(prev => [newSession, ...prev]);
+      setActiveSessionId(newSession.id);
+      currentSessionId = newSession.id;
+    }
+
+    setMessages(newMessages);
     setInput('');
     setLoading(true);
 
@@ -186,6 +283,53 @@ export default function AiQueryPage() {
       )}
 
       <div className="flex gap-4 flex-1 min-h-0">
+        {/* History Sidebar */}
+        <div className="w-64 flex-shrink-0 flex flex-col gap-4">
+          <Card className="flex-1 overflow-hidden flex flex-col">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <History className="w-4 h-4 text-muted-foreground" />
+                History
+              </CardTitle>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={createNewChat} title="New Chat">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <ScrollArea className="flex-1">
+              <div className="p-2 space-y-1">
+                {sessions.length === 0 ? (
+                  <div className="text-center py-8 text-xs text-muted-foreground">
+                    No history yet
+                  </div>
+                ) : (
+                  sessions.map((s) => (
+                    <div
+                      key={s.id}
+                      onClick={() => switchSession(s.id)}
+                      className={`group flex items-center justify-between p-2 rounded-md cursor-pointer text-xs transition-colors ${
+                        activeSessionId === s.id
+                          ? 'bg-primary/10 text-primary font-medium'
+                          : 'hover:bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate flex-1">
+                        <MessageSquare className="w-3 h-3 flex-shrink-0" />
+                        <span className="truncate">{s.title}</span>
+                      </div>
+                      <button
+                        onClick={(e) => deleteSession(e, s.id)}
+                        className="opacity-0 group-hover:opacity-100 p-1 hover:text-destructive transition-opacity"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </Card>
+        </div>
+
         {/* Chat area */}
         <div className="flex flex-col flex-1 min-w-0">
           {/* Messages */}
@@ -362,9 +506,9 @@ export default function AiQueryPage() {
               variant="outline"
               size="sm"
               className="w-full"
-              onClick={() => setMessages([])}
+              onClick={createNewChat}
             >
-              Clear conversation
+              New conversation
             </Button>
           )}
         </div>
